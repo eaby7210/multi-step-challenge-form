@@ -1,0 +1,182 @@
+import React, { useState } from 'react';
+import Step1 from './components/Step1';
+import Step2 from './components/Step2';
+import Step3 from './components/Step3';
+import Step4 from './components/Step4';
+import Step5 from './components/Step5';
+import Step6 from './components/Step6';
+import './App.css';
+
+export default function App() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState({});
+  
+  // Handles all input types: text, checkbox, custom (multi-select)
+  const handleChange = (e) => {
+    if (e && e.target) {
+      const { name, value, type, checked } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    } else if (e && e.name && e.value !== undefined) {
+      if (e.remove) {
+        setFormData((prev) => {
+          const copy = { ...prev };
+          delete copy[e.name];
+          return copy;
+        });
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [e.name]: e.value,
+        }));
+      }
+    }
+  };
+
+  const steps = [
+    {
+      id: 1,
+      title: "Unit Selection",
+      component: <Step1 formData={formData} handleChange={handleChange} />,
+      validate: () => true, // Replace with actual function
+      getNextStep: () =>  1, 
+      getPrevStep: () => null, // No previous step for the first step
+    },
+    {
+      id: 2,
+      title: "Property Information",
+      component: <Step2 formData={formData} handleChange={handleChange} />,
+      validate: () => true,
+      getNextStep: () => 2,
+      getPrevStep: () => 0,
+    },
+    {
+      id: 3,
+      title: "Service Type",
+      component: <Step3 formData={formData} handleChange={handleChange} />,
+      validate: () => true,
+      getNextStep: (formData) => {
+        if (formData.serviceType === 'a_la_carte') return 4;
+        return 3;
+      },
+      getPrevStep: () => 1,
+    },
+    {
+      id: 4,
+      title: "Bundled Services",
+      component: <Step4 formData={formData} handleChange={handleChange} />,
+      validate: () => true,
+      getNextStep: () => 4, 
+      getPrevStep: () => 2,
+    },
+    {
+      id: 5,
+      title: "A La Carte Menu",
+      component: <Step5 formData={formData} handleChange={handleChange} />,
+      validate: () => true,
+      getNextStep: () => 5,
+      getPrevStep: (formData) => {
+        if (formData.serviceType === 'a_la_carte') return 2;
+        return 3;
+      },
+    },
+    {
+      id: 6,
+      title: "Property Access",
+      component: <Step6 formData={formData} handleChange={handleChange} />,
+      validate: () => true,
+      getNextStep: () => null,
+      getPrevStep: () => 4,
+    }
+  ];
+
+  const nextStep = () => {
+    if (steps[currentStep].validate()) {
+      const getNext = steps[currentStep].getNextStep;
+      console.log("formData", formData);
+      const next = getNext ? getNext(formData) : currentStep + 1;
+      if (next !== null && next < steps.length) {
+        setCurrentStep(next);
+      }
+    }
+  };
+
+  const prevStep = () => {
+    const getPrev = steps[currentStep].getPrevStep;
+    const prev = getPrev ? getPrev(formData) : currentStep - 1;
+    if (prev !== null && prev >= 0) {
+      setCurrentStep(prev);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (steps[currentStep].validate()) {
+      console.log("formData", formData);
+      alert("Form submitted successfully!\n" + JSON.stringify(formData, null, 2));
+      // submit logic
+    }
+  };
+
+  return (
+    <div className="bg-main flex items-center justify-center">
+      <div className="container mx-auto p-4">
+        <div className="bg-card rounded-lg shadow-lg p-6 md:p-10 max-w-3xl mx-auto">
+          <h1 className="text-3xl font-bold text-center mb-8 text-primary">Let’s Get Your Property Order Started</h1>
+
+          {/* Step Titles */}
+          <div className="mb-8 flex flex-col items-start">
+            <div className="relative w-full flex justify-start">
+              <span
+                key={steps[currentStep].id}
+                className={`font-semibold inline-block py-1 px-4 uppercase rounded-full text-primary bg-secondary shadow-md transition-all duration-500 scale-100 opacity-100 text-xs`}
+                style={{ minWidth: '120px', fontSize: '0.85rem', letterSpacing: '0.05em' }}
+              >
+                {steps[currentStep].title}
+              </span>
+            </div>
+            <div className="overflow-hidden h-2 mt-4 text-xs flex rounded bg-green-200 w-full mx-auto" style={{maxWidth: '100%'}}>
+              <div
+                className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500 transition-all duration-500 ease-in-out"
+                style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+
+          {/* Step Content */}
+          <form>
+            {steps[currentStep].component}
+
+            <div className="flex justify-between mt-8">
+              <button
+                type="button"
+                className={`px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none ${currentStep === 0 ? "invisible" : ""}`}
+                onClick={prevStep}
+              >
+                Previous
+              </button>
+              {currentStep < steps.length - 1 ? (
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none"
+                  onClick={nextStep}
+                >
+                  Next
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none"
+                  onClick={handleSubmit}
+                >
+                  Submit
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
