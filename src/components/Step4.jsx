@@ -185,7 +185,7 @@ const Step4 = ({ formData = {}, handleChange }) => {
                 </span>
               )}
             </div>
-            <div className="text-primary font-bold text-lg mb-1">${item.price}</div>
+            <div className={`text-lg font-bold mb-1 ${selectedItemIdx === idx ? 'text-inverse' : 'text-primary'}`}>${item.price}</div>
           </div>
         ))}
       </div>
