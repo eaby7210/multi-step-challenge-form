@@ -8,6 +8,7 @@ import Step6 from './components/Step6';
 import Step7 from './components/Step7';
 import './App.css';
 import { Home, MapPin, Layers, Package, ListChecks, KeyRound, Calendar } from 'lucide-react';
+import logoBlack from './assets/logo_black.png';
 
 export default function App() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -149,7 +150,8 @@ export default function App() {
   return (
     <div className="bg-main flex min-h-screen">
       {/* Sidebar Progress Tracker (desktop) */}
-      <aside className="hidden md:flex flex-col items-center py-10 px-4 bg-white shadow-lg min-w-[180px] sticky top-0 h-screen z-30">
+      <aside className="hidden md:flex flex-col items-center py-10 px-4 bg-white shadow-lg min-w-[180px] h-screen z-30">
+        <img src={logoBlack} alt="InvestorBootz Logo" className="mb-8 w-36 h-auto" />
         <h2 className="text-lg font-bold text-primary mb-8 tracking-wide">Order Progress</h2>
         <ol className="flex flex-col gap-6 w-full">
           {steps.map((step, idx) => (
@@ -170,26 +172,31 @@ export default function App() {
       {/* Main Content + Mobile Progress Bar */}
       <div className="flex-1 flex flex-col">
         {/* Mobile Progress Bar */}
-        <div className="md:hidden sticky top-0 z-30 bg-main pb-2 pt-2" style={{ boxShadow: '0 2px 8px 0 rgba(0,0,0,0.03)' }}>
-          <div className="flex items-center justify-between w-full max-w-2xl mx-auto px-2">
-            {steps.map((step, idx) => (
-              <div key={step.id} className="flex flex-col items-center flex-1 min-w-0">
-                <div className={`flex items-center justify-center rounded-full border-2 font-bold transition-all duration-300
-                  ${idx === currentStep ? 'bg-primary text-white border-primary scale-110 shadow-lg' : idx < currentStep ? 'bg-primary text-white border-primary' : 'bg-gray-200 text-gray-400 border-gray-200'}
-                `}
-                  style={{ width: 28, height: 28 }}
-                >
-                  {stepIcons[idx]}
-                </div>
-              </div>
-            ))}
+        <div className="md:hidden bg-main pb-2 pt-2" style={{ boxShadow: '0 2px 8px 0 rgba(0,0,0,0.03)' }}>
+          <div className="flex flex-col items-center w-full max-w-2xl mx-auto px-2">
+            <img src={logoBlack} alt="InvestorBootz Logo" className="mb-2 w-32 h-auto" />
           </div>
-          {/* Active step name and number */}
-          <div className="flex items-center justify-center gap-2 mt-2 text-xs font-semibold text-primary">
-            <span className="bg-secondary px-2 py-1 rounded-full shadow text-primary font-bold">
-              {steps[currentStep].title}
-            </span>
-            <span className="text-gray-500 font-medium">Step {currentStep + 1} of {steps.length}</span>
+          <div className="sticky top-0 z-30 bg-main">
+            <div className="flex items-center justify-between w-full">
+              {steps.map((step, idx) => (
+                <div key={step.id} className="flex flex-col items-center flex-1 min-w-0">
+                  <div className={`flex items-center justify-center rounded-full border-2 font-bold transition-all duration-300
+                    ${idx === currentStep ? 'bg-primary text-white border-primary scale-110 shadow-lg' : idx < currentStep ? 'bg-primary text-white border-primary' : 'bg-gray-200 text-gray-400 border-gray-200'}
+                  `}
+                    style={{ width: 28, height: 28 }}
+                  >
+                    {stepIcons[idx]}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Active step name and number */}
+            <div className="flex items-center justify-center gap-2 mt-2 text-xs font-semibold">
+              <span className={`bg-secondary px-2 py-1 rounded-full shadow font-bold text-inverse`}>
+                {steps[currentStep].title}
+              </span>
+              <span className="text-gray-500 font-medium">Step {currentStep + 1} of {steps.length}</span>
+            </div>
           </div>
         </div>
         <div className="bg-card rounded-lg shadow-lg p-4 md:p-10 max-w-3xl mx-auto mt-4 md:mt-10">

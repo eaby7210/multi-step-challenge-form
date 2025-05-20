@@ -132,22 +132,22 @@ const Step4 = ({ formData = {}, handleChange }) => {
 
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">Choose Your Bundled Service</h2>
+      <h2 className="text-xl font-semibold text-main mb-6 text-center">Choose Your Bundled Service</h2>
       {/* Group selection */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center mb-8 pb-8">
         {bundles.map((bundle, idx) => (
           <button
             key={bundle.group}
             type="button"
-            className={`px-5 py-3 rounded-lg border-2 font-semibold text-sm transition-all flex items-center gap-2 shadow-sm bg-gray-50 hover:bg-secondary w-full h-full
-              ${selectedGroupIdx === idx ? 'border-primary ring-2 ring-primary bg-secondary text-primary' : 'border-gray-200 text-gray-900'}`}
+            className={`px-5 py-3 rounded-lg border-2 font-semibold text-sm transition-all flex items-center gap-2 shadow-sm bg-card hover:label-active-gradient w-full h-full
+              ${selectedGroupIdx === idx ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 text-main'}`}
             onClick={() => handleGroupSelect(idx)}
             onMouseEnter={() => setHovered({ group: idx, item: null })}
             onMouseLeave={() => setHovered({ group: null, item: null })}
             style={{ minHeight: '90px' }}
           >
             <div className="flex flex-col items-start w-full">
-              <span className="flex items-center text-left w-full">
+              <span className={`flex items-center text-left w-full ${selectedGroupIdx === idx ? 'text-inverse' : ''}`}>
                 {bundle.group}
                 {idx === 0 && (
                   <span className="flex items-center gap-1 bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-semibold ml-2">
@@ -156,9 +156,9 @@ const Step4 = ({ formData = {}, handleChange }) => {
                 )}
               </span>
               <span className="relative flex items-center mt-1">
-                <HelpCircle className="w-4 h-4 text-primary ml-1" />
+                <HelpCircle className={`w-4 h-4 ml-1 ${selectedGroupIdx === idx ? 'text-inverse' : 'text-primary'}`} />
                 {hovered.group === idx && (
-                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-white border border-gray-300 rounded-lg shadow-lg p-3 text-sm text-gray-700 z-10">
+                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-card border border-gray-300 rounded-lg shadow-lg p-3 text-sm text-main z-10">
                     {bundle.tagline}
                   </div>
                 )}
@@ -167,18 +167,18 @@ const Step4 = ({ formData = {}, handleChange }) => {
           </button>
         ))}
       </div>
-      <hr className="my-6 border-t-2 border-e-gray-400" />
+      <hr className="my-6 border-t-2 border-gray-300" />
       {/* Items of selected group */}
       <div className="flex flex-wrap gap-4 justify-center">
         {selectedGroup.items.map((item, idx) => (
           <div
             key={item.name}
-            className={`relative bg-white border rounded-lg p-4 flex flex-col items-start min-w-[220px] shadow hover:shadow-lg transition-all cursor-pointer group
-              ${selectedItemIdx === idx ? 'border-primary ring-2 ring-primary bg-secondary' : 'border-gray-200'}`}
+            className={`relative bg-card border rounded-lg p-4 flex flex-col items-start min-w-[220px] shadow hover:shadow-lg transition-all cursor-pointer group
+              ${selectedItemIdx === idx ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 text-main'}`}
             onClick={() => handleItemSelect(idx)}
           >
             <div className="flex items-center gap-2 mb-2">
-              <span className="font-semibold text-gray-900">{item.name}</span>
+              <span className={`font-semibold ${selectedItemIdx === idx ? 'text-inverse' : 'text-main'}`}>{item.name}</span>
               {item.badge && (
                 <span className="flex items-center gap-1 bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-semibold ml-2">
                   <Star className="w-3 h-3 text-green-500" /> {item.badge}

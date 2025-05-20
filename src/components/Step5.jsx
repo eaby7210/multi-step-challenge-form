@@ -150,7 +150,7 @@ const Step5 = ({ formData = {}, handleChange }) => {
   const [modal, setModal] = useState(null); // { item, addOns, submenu, ... }
   const [submenuState, setSubmenuState] = useState({});
   const [addOnState, setAddOnState] = useState({});
-  const [hovered, setHovered] = useState(null);
+  // const [hovered, setHovered] = useState(null);
 
   // Determine if an item is selected (exists in formData)
   const isSelected = (item) => !!formData[`a_la_carte_${item.key}`];
@@ -195,29 +195,27 @@ const Step5 = ({ formData = {}, handleChange }) => {
 
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center">A La Carte Menu</h2>
+      <h2 className="text-xl font-semibold text-main mb-4 text-center">A La Carte Menu</h2>
       <div className="flex flex-col gap-2 items-center w-full max-w-2xl mx-auto">
         {A_LA_CARTE_ITEMS.map((item) => {
           const selected = isSelected(item);
           return (
             <div
               key={item.key}
-              className={`relative bg-white border rounded-md p-2 flex flex-col w-full min-h-[70px] max-w-xl shadow-sm hover:shadow-md transition-all cursor-pointer group
-                ${selected ? 'border-primary ring-1 ring-primary bg-secondary' : 'border-gray-200'}`}
-              style={{ minHeight: '70px', height: '70px', justifyContent: 'space-between', overflow: 'hidden' }}
+              className={`relative bg-card border rounded-md p-2 flex flex-col w-full min-h-[70px] max-w-xl shadow-sm hover:shadow-md transition-all cursor-pointer group
+                ${selected ? 'border-primary ring-1 ring-primary label-active-gradient text-inverse' : 'border-gray-200 text-main'}`}
+              style={{ minHeight: '70px', height: 'auto', justifyContent: 'space-between', overflow: 'visible' }}
               onClick={() => openModal(item)}
-              onMouseEnter={() => setHovered(item.key)}
-              onMouseLeave={() => setHovered(null)}
               tabIndex={0}
               role="button"
             >
               <div className="flex items-center w-full justify-between gap-2 mb-1 overflow-hidden">
-                <span className="font-medium text-gray-900 text-sm flex items-center truncate max-w-[60%]">
+                <span className={`font-medium text-sm flex items-center truncate max-w-[60%] ${selected ? 'text-inverse' : 'text-main'}`}>
                   {item.name}
-                  <HelpCircle className="w-3 h-3 text-primary ml-1 shrink-0" />
+                  <HelpCircle className={`w-3 h-3 ml-1 shrink-0 ${selected ? 'text-inverse' : 'text-primary'}`} />
                 </span>
                 {item.price && (
-                  <span className="text-primary font-semibold text-base ml-2 whitespace-nowrap">${item.price}</span>
+                  <span className={`text-base font-semibold ml-2 whitespace-nowrap ${selected ? 'text-inverse' : 'text-primary'}`}>${item.price}</span>
                 )}
                 {selected && (
                   <span className="ml-2 text-green-600 font-bold shrink-0" title="Selected">
@@ -225,16 +223,12 @@ const Step5 = ({ formData = {}, handleChange }) => {
                   </span>
                 )}
               </div>
-              {hovered === item.key && (
-                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-56 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs text-gray-700 z-10 overflow-auto max-h-40">
-                  {item.description}
-                </div>
-              )}
-              {item.prompt && <div className="text-xs text-gray-500 italic truncate w-full">{item.prompt}</div>}
+              <div className={`text-xs mt-1 ${selected ? 'text-inverse opacity-80' : 'text-main opacity-80'}`}>{item.description}</div>
+              {item.prompt && <div className="text-xs text-main opacity-60 italic truncate w-full">{item.prompt}</div>}
               {selected && (
                 <button
                   type="button"
-                  className="mt-1 text-xs text-red-500 underline hover:text-red-700 z-20"
+                  className="mt-1 px-2 py-1 rounded bg-danger text-inverse text-xs font-semibold shadow hover:bg-danger-dark border-none z-20"
                   onClick={e => { e.stopPropagation(); e.preventDefault(); handleRemove(item); }}
                   tabIndex={0}
                 >
@@ -248,18 +242,18 @@ const Step5 = ({ formData = {}, handleChange }) => {
       {/* Modal for add-ons and submenus */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(100,116,139,0.18)] backdrop-blur-md">
-          <div className="bg-white rounded-lg shadow-2xl p-6 w-full max-w-lg relative">
-            <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-700" onClick={closeModal}><X className="w-6 h-6" /></button>
-            <h3 className="text-lg font-bold mb-2">{modal.item.name}</h3>
-            <div className="mb-2 text-gray-700">{modal.item.description}</div>
+          <div className="bg-card rounded-lg shadow-2xl p-6 w-full max-w-lg relative">
+            <button className="absolute top-3 right-3 text-main hover:text-primary" onClick={closeModal}><X className="w-6 h-6" /></button>
+            <h3 className="text-lg font-bold mb-2 text-main">{modal.item.name}</h3>
+            <div className="mb-2 text-main">{modal.item.description}</div>
             {/* Submenu logic */}
             {modal.item.submenu && (
               <div className="mb-4">
                 {modal.item.submenu.options && (
                   <div className="mb-2">
-                    <label className="block font-semibold mb-1">Choose an option:</label>
+                    <label className="block font-semibold mb-1 text-main">Choose an option:</label>
                     <select
-                      className="w-full border rounded p-2"
+                      className="w-full border border-primary rounded p-2 text-main"
                       value={submenuState.option || ''}
                       onChange={e => handleSubmenuChange('option', e.target.value)}
                     >
@@ -272,10 +266,10 @@ const Step5 = ({ formData = {}, handleChange }) => {
                 )}
                 {modal.item.submenu.prompt && (
                   <div className="mb-2">
-                    <label className="block font-semibold mb-1">{modal.item.submenu.prompt}</label>
+                    <label className="block font-semibold mb-1 text-main">{modal.item.submenu.prompt}</label>
                     <input
                       type={modal.item.submenu.inputType || 'text'}
-                      className="w-full border rounded p-2"
+                      className="w-full border border-primary rounded p-2 text-main"
                       value={submenuState.amount || ''}
                       onChange={e => handleSubmenuChange('amount', e.target.value)}
                     />
@@ -286,9 +280,9 @@ const Step5 = ({ formData = {}, handleChange }) => {
             {/* Special textarea for maintenance */}
             {modal.item.inputType === 'textarea' && (
               <div className="mb-4">
-                <label className="block font-semibold mb-1">Describe the request:</label>
+                <label className="block font-semibold mb-1 text-main">Describe the request:</label>
                 <textarea
-                  className="w-full border rounded p-2"
+                  className="w-full border border-primary rounded p-2 text-main"
                   rows={3}
                   value={submenuState.maintenance_desc || ''}
                   onChange={e => handleSubmenuChange('maintenance_desc', e.target.value)}
@@ -297,23 +291,23 @@ const Step5 = ({ formData = {}, handleChange }) => {
             )}
             {/* Add-ons */}
             <div className="mb-4">
-              <div className="font-semibold mb-1">Need an add-on?</div>
+              <div className="font-semibold mb-1 text-main">Need an add-on?</div>
               <div className="flex flex-wrap gap-3">
                 {ADD_ONS.map(addon => (
-                  <label key={addon.key} className="flex items-center gap-2 cursor-pointer border rounded px-3 py-1 bg-gray-50 hover:bg-secondary">
+                  <label key={addon.key} className="flex items-center gap-2 cursor-pointer border border-primary rounded px-3 py-1 bg-card hover:label-active-gradient hover:text-inverse">
                     <input
                       type="checkbox"
                       checked={!!addOnState[addon.key]}
                       onChange={e => handleAddOnChange(addon.key, e.target.checked)}
                     />
-                    <span>{addon.label} <span className="text-primary font-semibold">${addon.price}</span></span>
+                    <span className="text-main">{addon.label} <span className="text-primary font-semibold">${addon.price}</span></span>
                   </label>
                 ))}
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-4">
-              <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400" onClick={closeModal}>Cancel</button>
-              <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600" onClick={handleSave}>Save</button>
+              <button className="px-4 py-2 bg-secondary text-inverse rounded-lg hover:bg-primary hover:text-inverse" onClick={closeModal}>Cancel</button>
+              <button className="px-4 py-2 bg-primary text-inverse rounded-lg hover:bg-cyan" onClick={handleSave}>Save</button>
             </div>
           </div>
         </div>
