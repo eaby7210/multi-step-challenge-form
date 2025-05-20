@@ -8,7 +8,7 @@ import Step6 from './components/Step6';
 import Step7 from './components/Step7';
 import './App.css';
 import { Home, MapPin, Layers, Package, ListChecks, KeyRound, Calendar } from 'lucide-react';
-import logoBlack from './assets/logo_black.png';
+import logoBlack from './assets/logo_color_black.png';
 
 export default function App() {
   const [currentStep, setCurrentStep] = useState(0);
