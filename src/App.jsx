@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Step1 from './components/Step1';
 import Step2 from './components/Step2';
 import Step3 from './components/Step3';
@@ -13,6 +13,8 @@ import logoBlack from './assets/logo_color_black.png';
 export default function App() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({});
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const termsRef = useRef(null);
   
   // Handles all input types: text, checkbox, custom (multi-select)
   const handleChange = (e) => {
@@ -39,11 +41,7 @@ export default function App() {
   };
 
   const handleSubmit = () => {
-    if (steps[currentStep].validate()) {
-      console.log("formData", formData);
-      alert("Form submitted successfully!\n" + JSON.stringify(formData, null, 2));
-      // submit logic
-    }
+    setShowTermsModal(true);
   };
 
   const steps = [
@@ -147,8 +145,118 @@ export default function App() {
     <Calendar className="w-5 h-5" />  // Schedule
   ];
 
+  // Terms of Service Modal
+  const TermsModal = () => {
+    // Accept button and tooltip are separated to avoid re-rendering the whole modal
+    const AcceptButtonWithTooltip = React.memo(({ termsRef }) => {
+      const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
+      const [showTooltip, setShowTooltip] = useState(false);
+      const [checked, setChecked] = useState(false);
+      const handleScroll = React.useCallback((e) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.target;
+        if (!hasScrolledToBottom && scrollTop + clientHeight >= scrollHeight - 5) {
+          setHasScrolledToBottom(true);
+        }
+      }, [hasScrolledToBottom]);
+      React.useEffect(() => {
+        const node = termsRef.current;
+        if (!node) return;
+        node.addEventListener('scroll', handleScroll);
+        return () => node.removeEventListener('scroll', handleScroll);
+      }, [termsRef, handleScroll]);
+      // Reset checkbox if modal reopens
+      React.useEffect(() => { setChecked(false); }, [hasScrolledToBottom]);
+      const handleAccept = () => {
+        if (hasScrolledToBottom && checked) {
+          setShowTermsModal(false);
+          setShowTooltip(false);
+          const submittedData = { ...formData, acceptedAt: new Date().toISOString() };
+          alert("Form submitted successfully!\n" + JSON.stringify(submittedData, null, 2));
+          // submit logic here if needed
+        }
+      };
+      const acceptEnabled = hasScrolledToBottom && checked;
+      return (
+        <div className="flex w-full items-center justify-between gap-3 mt-2">
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="accept-tos"
+              className="mr-2 accent-primary"
+              disabled={!hasScrolledToBottom}
+              checked={checked}
+              onChange={e => setChecked(e.target.checked)}
+            />
+            <label htmlFor="accept-tos" className={`text-sm select-none ${!hasScrolledToBottom ? 'text-gray-400' : 'text-main'}`}>I accept the Terms of Service</label>
+          </div>
+          <div className="flex gap-3">
+            {/* <button
+              className="px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300"
+              onClick={() => setShowTermsModal(false)}
+              type="button"
+            >
+              Cancel
+            </button> */}
+            <div className="relative group">
+              <div
+                onMouseEnter={() => { if (!acceptEnabled) setShowTooltip(true); }}
+                onMouseLeave={() => setShowTooltip(false)}
+                className="inline-block"
+              >
+                <button
+                  className={`px-4 py-2 rounded font-semibold transition-all duration-200 ${acceptEnabled ? 'bg-primary text-white hover:bg-blue-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none'}`}
+                  disabled={!acceptEnabled}
+                  tabIndex={0}
+                  onClick={handleAccept}
+                  type="button"
+                >
+                  Submit
+                </button>
+                {/* Tooltip for disabled Accept */}
+                {!acceptEnabled && showTooltip && (
+                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 bg-black text-white text-xs rounded px-2 py-1 whitespace-nowrap shadow-lg z-50">
+                    Please read the Terms of Service and check the box.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    });
+    // Modal body
+    const handleClose = () => {
+      setShowTermsModal(false);
+    };
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+        <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 relative flex flex-col">
+          <h2 className="text-xl font-bold mb-4 text-primary">Terms of Service</h2>
+          <div
+            ref={termsRef}
+            className="overflow-y-auto border rounded p-4 mb-6 h-64 text-sm text-main bg-main"
+            tabIndex={0}
+          >
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, urna eu tincidunt consectetur, nisi nisl aliquam nunc, eget aliquam massa nisl quis neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at dictum sem. Etiam euismod, urna eu tincidunt consectetur, nisi nisl aliquam nunc, eget aliquam massa nisl quis neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at dictum sem. Etiam euismod, urna eu tincidunt consectetur, nisi nisl aliquam nunc, eget aliquam massa nisl quis neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at dictum sem.</p>
+            <p>More lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, urna eu tincidunt consectetur, nisi nisl aliquam nunc, eget aliquam massa nisl quis neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at dictum sem. Etiam euismod, urna eu tincidunt consectetur, nisi nisl aliquam nunc, eget aliquam massa nisl quis neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at dictum sem.</p>
+          </div>
+          <div className="flex justify-end gap-3 mt-2">
+            <button
+              className="px-4 py-2 rounded bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300"
+              onClick={handleClose}
+            >
+              Cancel
+            </button>
+            <AcceptButtonWithTooltip termsRef={termsRef} />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-main flex min-h-screen">
+      {showTermsModal && <TermsModal />}
       {/* Sidebar Progress Tracker (desktop) */}
       <aside className="hidden md:flex flex-col items-center py-10 px-4 bg-white shadow-lg min-w-[180px] h-screen z-30">
         <img src={logoBlack} alt="InvestorBootz Logo" className="mb-8 w-36 h-auto" />
