@@ -12,11 +12,11 @@ const Step3 = ({ formData, handleChange }) => {
     <>
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-main mb-6 text-center">Service Type Selection</h2>
-        <div className="flex gap-6 justify-center">
+        <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
           {/* Bundled Services Option */}
           <label
             htmlFor="service-bundled"
-            className={`flex flex-col items-center justify-center cursor-pointer px-8 py-6 rounded-xl border-2 transition-all text-center shadow-sm
+            className={`flex flex-col items-center justify-center cursor-pointer px-6 py-4 md:px-8 md:py-6 rounded-xl border-2 transition-all text-center shadow-sm w-full md:w-auto
               ${formData.serviceType !== 'a_la_carte' ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
           >
             <input
@@ -35,7 +35,7 @@ const Step3 = ({ formData, handleChange }) => {
           {/* A La Carte Services Option */}
           <label
             htmlFor="service-a-la-carte"
-            className={`flex flex-col items-center justify-center cursor-pointer px-8 py-6 rounded-xl border-2 transition-all text-center shadow-sm
+            className={`flex flex-col items-center justify-center cursor-pointer px-6 py-4 md:px-8 md:py-6 rounded-xl border-2 transition-all text-center shadow-sm w-full md:w-auto
               ${formData.serviceType === 'a_la_carte' ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
           >
             <input

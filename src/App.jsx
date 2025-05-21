@@ -307,8 +307,10 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="bg-card rounded-lg shadow-lg p-4 md:p-10 max-w-3xl mx-auto mt-4 md:mt-10">
-          <h1 className="text-3xl font-bold text-center mb-8 text-primary font-sans tracking-tight leading-tight">Let’s Get Your Property Order Started</h1>
+        <div className="bg-card rounded-lg shadow-lg p-4 md:p-10 max-w-3xl mx-auto mt-4 md:mt-10 w-full md:w-auto">
+          <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-primary font-sans tracking-tight leading-snug md:leading-tight">
+            Let’s Get Your Property Order Started
+          </h1>
           {/* Step Content */}
           <form>
             {steps[currentStep].component && currentStep !== steps.length - 1
@@ -327,23 +329,23 @@ export default function App() {
           </form>
           {/* Sticky Navigation Buttons for all steps except last */}
           {currentStep !== steps.length - 1 && (
-            <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] flex justify-between items-center px-4 py-3 mt-4 border-t">
+            <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-center px-4 py-3 mt-4 border-t">
               <button
                 type="button"
-                className={`px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200 ${currentStep === 0 ? "invisible" : ""}`}
+                className={`w-full md:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200 ${currentStep === 0 ? 'invisible' : ''}`}
                 onClick={prevStep}
               >
                 Previous
               </button>
-              {currentStep < steps.length - 1 ? (
+              {currentStep < steps.length - 1 && (
                 <button
                   type="button"
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200"
+                  className="w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200"
                   onClick={nextStep}
                 >
                   Next
                 </button>
-              ) : null}
+              )}
             </div>
           )}
         </div>
