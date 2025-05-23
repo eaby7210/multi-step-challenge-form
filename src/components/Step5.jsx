@@ -211,7 +211,7 @@ const Step5 = ({ formData = {}, handleChange }) => {
             >
               
               <div className="flex items-center w-full justify-between mb-1 overflow-auto">
-                <span className={`font-medium text-sm flex items-center  max-w-[60%] ${selected ? 'text-inverse' : 'text-main'}`} >
+                <span className={`font-medium text-sm flex items-center truncate max-w-[60%] ${selected ? 'text-inverse' : 'text-main'}`} style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>
                 {item.name}
                 <HelpCircle className={`w-3 h-3 ml-1 shrink-0 ${selected ? 'text-inverse' : 'text-primary'}`} />
               </span>
@@ -220,7 +220,10 @@ const Step5 = ({ formData = {}, handleChange }) => {
                 )}
                 {selected && (
                   <span className="ml-2 text-green-600 font-bold shrink-0" title="Selected">
-                    <svg width="16" height="16" fill="none" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="#22c55e"/><path d="M6 10.5l2.5 2.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 20 20">
+                      <circle cx="10" cy="10" r="10" fill="#22c55e" />
+                      <path d="M6 10.5l2.5 2.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
                   </span>
                 )}
               </div>

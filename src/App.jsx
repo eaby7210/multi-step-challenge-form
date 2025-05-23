@@ -9,6 +9,7 @@ import Step7 from './components/Step7';
 import './App.css';
 import { Home, MapPin, Layers, Package, ListChecks, KeyRound, Calendar } from 'lucide-react';
 import logoBlack from './assets/logo_color_black.png';
+import ToS from './components/ToS';
 
 export default function App() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -235,14 +236,21 @@ export default function App() {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
         <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 relative flex flex-col">
-          <h2 className="text-xl font-bold mb-4 text-primary">Terms of Service</h2>
+          <div className="w-full flex flex-wrap py-3 px-1 bg-gradient-to-b from-blue-white to-gray-200">
+              
+                <div className="shadow-lg p-2 mx-auto">
+                  <h1 className="text-3xl text-primary font-bold text-center">
+                    Terms and Conditions
+                  </h1>
+              
+              </div>
+            </div>
           <div
             ref={termsRef}
-            className="overflow-y-auto border rounded p-4 mb-6 h-64 text-sm text-main bg-main"
+            className="overflow-y-auto border rounded p-1 mb-6 h-85 text-sm text-main"
             tabIndex={0}
           >
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, urna eu tincidunt consectetur, nisi nisl aliquam nunc, eget aliquam massa nisl quis neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at dictum sem. Etiam euismod, urna eu tincidunt consectetur, nisi nisl aliquam nunc, eget aliquam massa nisl quis neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at dictum sem. Etiam euismod, urna eu tincidunt consectetur, nisi nisl aliquam nunc, eget aliquam massa nisl quis neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at dictum sem.</p>
-            <p>More lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, urna eu tincidunt consectetur, nisi nisl aliquam nunc, eget aliquam massa nisl quis neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at dictum sem. Etiam euismod, urna eu tincidunt consectetur, nisi nisl aliquam nunc, eget aliquam massa nisl quis neque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at dictum sem.</p>
+            <ToS/>
           </div>
           <div className="flex justify-end gap-3 mt-2">
             <button
