@@ -103,13 +103,15 @@ const Step4 = ({ formData = {}, handleChange }) => {
 
   // Ensure default group and item are set in formData
   useEffect(() => {
-    if (!formData.bundleGroup) {
-      handleChange({ name: 'bundleGroup', value: bundles[0].group });
-    }
-    if (!formData.bundleItem) {
-      handleChange({ name: 'bundleItem', value: bundles[0].items[0].name });
-    }
-  }, [formData.bundleGroup, formData.bundleItem, handleChange]);
+    console.log(formData.bundleGroup, formData.bundleItem)
+    // if (!formData.bundleGroup) {
+    //   handleChange({ name: 'bundleGroup', value: bundles[0].group });
+    // }
+    // if (!formData.bundleItem) {
+    //   setSelectedItemIdx(0);
+    //   handleChange({ name: 'bundleItem', value: bundles[0].items[0].name });
+    // }
+  }, [formData.bundleGroup, formData.bundleItem, handleChange,]);
 
   // When group changes, reset item selection
   const handleGroupSelect = (idx) => {
@@ -123,11 +125,12 @@ const Step4 = ({ formData = {}, handleChange }) => {
 
   const handleItemSelect = (idx) => {
     setSelectedItemIdx(idx);
+    console.log("Item selected, index:", idx); // Debugging log to verify item selection
     if (handleChange) {
       handleChange({ name: 'bundleItem', value: bundles[selectedGroupIdx].items[idx].name });
     }
   };
-
+console.log("selected item selectedItemIdx: ", selectedItemIdx)
   const selectedGroup = bundles[selectedGroupIdx];
 
   return (
@@ -169,13 +172,15 @@ const Step4 = ({ formData = {}, handleChange }) => {
       </div>
       <hr className="my-6 border-t-2 border-gray-300" />
       {/* Items of selected group */}
-      <div className="flex flex-wrap gap-4 justify-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-center">
         {selectedGroup.items.map((item, idx) => (
           <div
             key={item.name}
             className={`relative bg-card border rounded-lg p-4 flex flex-col items-start min-w-[220px] shadow hover:shadow-lg transition-all cursor-pointer group
               ${selectedItemIdx === idx ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 text-main'}`}
             onClick={() => handleItemSelect(idx)}
+            onMouseEnter={() => setHovered({ group: null, item: idx })}
+            onMouseLeave={() => setHovered({ group: null, item: null })}
           >
             <div className="flex items-center gap-2 mb-2">
               <span className={`font-semibold ${selectedItemIdx === idx ? 'text-inverse' : 'text-main'}`}>{item.name}</span>
@@ -186,10 +191,49 @@ const Step4 = ({ formData = {}, handleChange }) => {
               )}
             </div>
             <div className={`text-lg font-bold mb-1 ${selectedItemIdx === idx ? 'text-inverse' : 'text-primary'}`}>${item.price}</div>
+            {hovered.item === idx && (() => {
+              const tooltipContent = (() => {
+                switch (item.name) {
+                  case 'Domination Pro™':
+                    return 'Ext/Int Photos + Walk Through Video + Document Signed/Notarized: $215';
+                  case 'Domination Max™':
+                    return 'Ext/Int Photos + Walk Through Video + 2D Floor Plan: $269';
+                  case 'Domination Ultra™':
+                    return 'Ext/Int Photos + Walk Through Video + 2D Floor Plan + Document Signed/Notarized: $299';
+                  case 'Access Plus™':
+                    return 'Ext/Int Photos + Lock Box: $210';
+                  case 'Access Pro™':
+                    return 'Ext/Int Photos + Lock Box + Room Measurements: $215';
+                  case 'Access Max™':
+                    return 'Ext/Int Photos + Lock Box + Document Signed/Notarized: $239';
+                  case 'Access Ultra™':
+                    return 'Ext/Int Photos + Lock Box + Document Signed/Notarized + Room Measurements: $259';
+                  case 'Quantum Pro™':
+                    return 'Ext/Int Photos + Room Measurements: $175';
+                  case 'Quantum Max™':
+                    return 'Ext/Int Photos + Document Signed/Notarized: $200';
+                  case 'Quantum Ultra™':
+                    return 'Ext/Int Photos + Room Measurements + Document Signed/Notarized: $210';
+                  default:
+                    return null;
+                }
+              })();
+
+              return tooltipContent ? (
+                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-card border border-gray-300 rounded-lg shadow-lg p-3 text-sm text-main z-10">
+                  {tooltipContent}
+                </div>
+              ) : null;
+            })()}
           </div>
         ))}
       </div>
       {/* Optionally, you can show a message or disable next if no item is selected */}
+      {selectedItemIdx === null && (
+        <div className="text-red-500 text-sm font-medium text-center mt-4">
+          Please select an item to proceed.
+        </div>
+      )}
     </div>
   );
 };

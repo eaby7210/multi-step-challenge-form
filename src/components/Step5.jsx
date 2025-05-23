@@ -204,16 +204,17 @@ const Step5 = ({ formData = {}, handleChange }) => {
               key={item.key}
               className={`relative bg-card border rounded-md p-2 flex flex-col w-full min-h-[70px] max-w-xl shadow-sm hover:shadow-md transition-all cursor-pointer group
                 ${selected ? 'border-primary ring-1 ring-primary label-active-gradient text-inverse' : 'border-gray-200 text-main'}`}
-              style={{ minHeight: '70px', height: 'auto', justifyContent: 'space-between', overflow: 'visible' }}
+              style={{ minHeight: '70px', height: 'auto', justifyContent: 'space-between', overflow: 'visible', maxWidth: '100%', flex: '1 1 auto' }}
               onClick={() => openModal(item)}
               tabIndex={0}
               role="button"
             >
-              <div className="flex items-center w-full justify-between gap-2 mb-1 overflow-hidden">
-                <span className={`font-medium text-sm flex items-center truncate max-w-[60%] ${selected ? 'text-inverse' : 'text-main'}`}>
-                  {item.name}
-                  <HelpCircle className={`w-3 h-3 ml-1 shrink-0 ${selected ? 'text-inverse' : 'text-primary'}`} />
-                </span>
+              
+              <div className="flex items-center w-full justify-between mb-1 overflow-auto">
+                <span className={`font-medium text-sm flex items-center  max-w-[60%] ${selected ? 'text-inverse' : 'text-main'}`} >
+                {item.name}
+                <HelpCircle className={`w-3 h-3 ml-1 shrink-0 ${selected ? 'text-inverse' : 'text-primary'}`} />
+              </span>
                 {item.price && (
                   <span className={`text-base font-semibold ml-2 whitespace-nowrap ${selected ? 'text-inverse' : 'text-primary'}`}>${item.price}</span>
                 )}
@@ -223,8 +224,8 @@ const Step5 = ({ formData = {}, handleChange }) => {
                   </span>
                 )}
               </div>
-              <div className={`text-xs mt-1 ${selected ? 'text-inverse opacity-80' : 'text-main opacity-80'}`}>{item.description}</div>
-              {item.prompt && <div className="text-xs text-main opacity-60 italic truncate w-full">{item.prompt}</div>}
+              <div className={`text-xs mt-1 text-wrap ${selected ? 'text-inverse opacity-80' : 'text-main opacity-80'}`}>{item.description}</div>
+              {item.prompt && <div className="text-xs text-main opacity-60 italic  w-full">{item.prompt}</div>}
               {selected && (
                 <button
                   type="button"

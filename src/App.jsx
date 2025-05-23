@@ -76,7 +76,11 @@ export default function App() {
       id: 4,
       title: "Bundled Services",
       component: <Step4 formData={formData} handleChange={handleChange} />,
-      validate: () => true,
+      validate: () => {
+        const selectedGroup = formData.bundleGroup;
+        const selectedItem = formData.bundleItem;
+        return !!selectedGroup && !!selectedItem;
+      },
       getNextStep: (formData) => {
         if (formData.serviceType !== 'a_la_carte') return 5;
         return 4;
