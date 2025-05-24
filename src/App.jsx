@@ -238,16 +238,43 @@ export default function App() {
         <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 relative flex flex-col">
           <div className="w-full flex flex-wrap py-3 px-1 bg-gradient-to-b from-blue-white to-gray-200">
               
-                <div className="shadow-lg p-2 mx-auto">
-                  <h1 className="text-3xl text-primary font-bold text-center">
-                    Terms and Conditions
-                  </h1>
-              
-              </div>
+               <span className="hidden">Terms & Conditions</span>
+
+  <span className="hidden">
+    <span className="font-medium">
+      <a
+        href="https://investorbootz.com/author/vital/"
+        title="Posts by JR Keene"
+        rel="author"
+        className="text-blue-600 hover:underline"
+      >
+        JR Keene
+      </a>
+    </span>
+  </span>
+
+  <span className="hidden">2025-01-09T20:06:59+00:00</span>
+
+{/* Hero Section */}
+<div
+  className="relative bg-cover bg-center bg-no-repeat pt-[8%] pb-8 sm:pb-12 lg:pb-[4%]"
+  style={{
+    backgroundImage:
+      'linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url("https://investorbootz.com/wp-content/uploads/2022/10/pexels-olha-ruskykh-7504782.jpg")',
+  }}
+>
+  <div className="max-w-screen-xl mx-auto px-4">
+    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[65px] lg:leading-[95px] text-center font-bold">
+      Terms and <span className="text-green-600">Conditions</span>
+    </h1>
+  </div>
+</div>
+
+
             </div>
           <div
             ref={termsRef}
-            className="overflow-y-auto border rounded p-1 mb-6 h-85 text-sm text-main"
+            className="overflow-y-auto border rounded p-1 mb-6 h-85 text-sm text-main text-left"
             tabIndex={0}
           >
             <ToS/>
