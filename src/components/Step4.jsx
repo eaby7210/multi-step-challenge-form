@@ -128,6 +128,7 @@ const Step4 = ({ formData = {}, handleChange }) => {
     console.log("Item selected, index:", idx); // Debugging log to verify item selection
     if (handleChange) {
       handleChange({ name: 'bundleItem', value: bundles[selectedGroupIdx].items[idx].name });
+      handleChange({ name: 'bundlePrice', value: bundles[selectedGroupIdx].items[idx].price });
     }
   };
 console.log("selected item selectedItemIdx: ", selectedItemIdx)

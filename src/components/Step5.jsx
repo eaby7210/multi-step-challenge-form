@@ -179,9 +179,55 @@ const Step5 = ({ formData = {}, handleChange }) => {
     if (!modal) return;
     const { item } = modal;
     let value = { ...item };
-    if (Object.keys(submenuState).length) value.submenu = { ...submenuState };
-    if (Object.keys(addOnState).length) value.addOns = { ...addOnState };
+    let totalPrice = item.price || 0;
+
+    if (Object.keys(submenuState).length) {
+      value.submenu = { ...submenuState };
+      if (submenuState.option) {
+        const selectedOption = item.submenu.options.find(opt => opt.value === submenuState.option);
+        if (selectedOption) {
+          totalPrice += selectedOption.price || 0;
+          value.submenu.label = selectedOption.label || '';
+          value.submenu.option =  selectedOption.value || '';
+          // value.submenu[selectedOption.value.toLowerCase()+'option_price'] = selectedOption.price || 0;
+          value.submenu['option_price'] = selectedOption.price || 0;
+        }
+      }
+      if (submenuState.amount) {
+        totalPrice += parseFloat(submenuState.amount) || 0;
+        value.submenu.amount = submenuState.amount;
+      }
+    }
+
+    if (Object.keys(addOnState).length) {
+      value.addOns = Object.keys(addOnState).reduce((acc, key) => {
+        const addOn = ADD_ONS.find(addon => addon.key === key);
+        if (addOn && addOn.price) {
+          acc[key] = addOn.price;
+          totalPrice += addOn.price;
+        }
+        return acc;
+      }, {});
+    }
+
+    // if (Object.keys(addOnState).length) {
+    //   value.addOns = { ...addOnState };
+    //   totalPrice += Object.keys(addOnState).reduce((sum, key) => {
+    //     const addOn = ADD_ONS.find(addon => addon.key === key);
+    //     return addOn && addOn.price ? sum + addOn.price : sum;
+    //   }, 0);
+    // }
+
+    value.price = item.price || 0;
+    value.addons_price = totalPrice - (item.price || 0);
+    value.total_price = totalPrice;
+
     handleChange({ name: `a_la_carte_${item.key}`, value });
+
+    // Update the total price for all selections
+    const currentTotal = formData.a_la_carte_total || 0;
+    handleChange({ name: 'a_la_carte_total', value: currentTotal + totalPrice });
+
     closeModal();
   };
 
