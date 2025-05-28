@@ -104,9 +104,9 @@ const Step4 = ({ formData = {}, handleChange }) => {
   // Ensure default group and item are set in formData
   useEffect(() => {
     console.log(formData.bundleGroup, formData.bundleItem)
-    // if (!formData.bundleGroup) {
-    //   handleChange({ name: 'bundleGroup', value: bundles[0].group });
-    // }
+    if (!formData.bundleGroup) {
+      handleChange({ name: 'bundleGroup', value: bundles[0].group });
+    }
     // if (!formData.bundleItem) {
     //   setSelectedItemIdx(0);
     //   handleChange({ name: 'bundleItem', value: bundles[0].items[0].name });
