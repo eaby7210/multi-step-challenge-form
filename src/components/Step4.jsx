@@ -173,6 +173,17 @@ console.log("selected item selectedItemIdx: ", selectedItemIdx)
       </div>
       <hr className="my-6 border-t-2 border-gray-300" />
       {/* Items of selected group */}
+       {/* Optionally, you can show a message or disable next if no item is selected */}
+      {selectedItemIdx === null? (
+        <div className="text-red-500 text-sm font-medium text-center mb-4">
+          Please select an item to proceed.
+        </div>
+
+      ):(
+        <div className="pt-2 pb-3 mb-4">
+        
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-center">
         {selectedGroup.items.map((item, idx) => (
           <div
@@ -229,12 +240,7 @@ console.log("selected item selectedItemIdx: ", selectedItemIdx)
           </div>
         ))}
       </div>
-      {/* Optionally, you can show a message or disable next if no item is selected */}
-      {selectedItemIdx === null && (
-        <div className="text-red-500 text-sm font-medium text-center mt-4">
-          Please select an item to proceed.
-        </div>
-      )}
+     
     </div>
   );
 };
