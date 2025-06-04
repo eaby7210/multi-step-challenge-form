@@ -357,7 +357,23 @@ const Step5 = ({ formData = {}, handleChange }) => {
             </div>
             <div className="flex justify-end gap-2 mt-4">
               <button className="px-4 py-2 bg-secondary text-inverse rounded-lg hover:bg-primary hover:text-inverse" onClick={closeModal}>Cancel</button>
-              <button className="px-4 py-2 bg-primary text-inverse rounded-lg hover:bg-cyan" onClick={handleSave}>Save</button>
+              {Object.keys(submenuState).length || Object.keys(addOnState).length ? (
+                <button className="px-4 py-2 bg-primary text-inverse rounded-lg hover:bg-cyan" onClick={handleSave}>Save</button>
+              ) : (
+                <button
+                  className="px-4 py-2 bg-secondary text-inverse rounded-lg hover:bg-primary hover:text-inverse"
+                  onClick={() => {
+                    const { item } = modal;
+                    let value = { ...item, price: item.price || 0, addons_price: 0, total_price: item.price || 0 };
+                    handleChange({ name: `a_la_carte_${item.key}`, value });
+                    const currentTotal = formData.a_la_carte_total || 0;
+                    handleChange({ name: 'a_la_carte_total', value: currentTotal + (item.price || 0) });
+                    closeModal();
+                  }}
+                >
+                  No thanks
+                </button>
+              )}
             </div>
           </div>
         </div>

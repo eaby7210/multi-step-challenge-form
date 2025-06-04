@@ -10,9 +10,6 @@ import './App.css';
 import { Home, MapPin, Layers, Package, ListChecks, KeyRound, Calendar } from 'lucide-react';
 import logoBlack from './assets/logo_color_black.png';
 import ToS from './components/ToS';
-import api from './apis/interceptors/axios';
-import Success from './components/Success';
-import Cancel from './components/Cancel';
 
 export default function App() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -20,16 +17,7 @@ export default function App() {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const termsRef = useRef(null);
   
-  const searchParams = new URLSearchParams(window.location.search);
-  const status = searchParams.get('status');
-  console.log("Search params:", searchParams.toString(),"/n window:", window.location.search);
-  console.log(status)
-  if (status === 'success') {
-    return <Success />;
-  } else if (status === 'cancel') {
-    return <Cancel />;
-  }
-  
+  // Handles all input types: text, checkbox, custom (multi-select)
   const handleChange = (e) => {
     if (e && e.target) {
       const { name, value, type, checked } = e.target;
@@ -189,17 +177,8 @@ export default function App() {
           setShowTooltip(false);
           const submittedData = { ...formData, acceptedAt: new Date().toISOString() };
           console.log("Form submitted with data:", JSON.stringify(submittedData, null, 2));
-
-          // Submit logic here
-          api.post('submit-order/', submittedData)
-            .then(response => {
-              console.log("Form submitted successfully!\n" + JSON.stringify(response.data, null, 2));
-              window.location.href = response.data.stripe_checkout_url;
-            })
-            .catch(error => {
-              console.error("Error submitting form:", error);
-              console.log("Failed to submit form. Please try again.");
-            });
+          alert("Form submitted successfully!\n" + JSON.stringify(submittedData, null, 2));
+          // submit logic here if needed
         }
       };
       const acceptEnabled = hasScrolledToBottom && checked;

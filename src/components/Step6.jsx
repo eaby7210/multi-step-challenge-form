@@ -72,30 +72,32 @@ const Step6 = ({ formData, handleChange }) => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
           <label
             className={`flex-1 flex flex-col items-center justify-center cursor-pointer px-6 py-6 rounded-xl border-2 transition-all text-center shadow-sm
-              ${formData.occupancy_vacant ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
+              ${formData.occupancy_status === 'vacant' ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
           >
             <input
-              type="checkbox"
-              name="occupancy_vacant"
-              checked={!!formData.occupancy_vacant}
+              type="radio"
+              name="occupancy_status"
+              value="vacant"
+              checked={formData.occupancy_status === 'vacant'}
               onChange={handleChange}
               className="hidden"
             />
-            <Home className={`w-6 h-6 mb-2 ${formData.occupancy_vacant ? 'text-inverse' : 'text-primary'}`} />
+            <Home className={`w-6 h-6 mb-2 ${formData.occupancy_status === 'vacant' ? 'text-inverse' : 'text-primary'}`} />
             <span className="font-medium text-lg">Vacant</span>
           </label>
           <label
             className={`flex-1 flex flex-col items-center justify-center cursor-pointer px-6 py-6 rounded-xl border-2 transition-all text-center shadow-sm
-              ${formData.occupancy_occupied ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
+              ${formData.occupancy_status === 'occupied' ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
           >
             <input
-              type="checkbox"
-              name="occupancy_occupied"
-              checked={!!formData.occupancy_occupied}
+              type="radio"
+              name="occupancy_status"
+              value="occupied"
+              checked={formData.occupancy_status === 'occupied'}
               onChange={handleChange}
               className="hidden"
             />
-            <Users className={`w-6 h-6 mb-2 ${formData.occupancy_occupied ? 'text-inverse' : 'text-primary'}`} />
+            <Users className={`w-6 h-6 mb-2 ${formData.occupancy_status === 'occupied' ? 'text-inverse' : 'text-primary'}`} />
             <span className="font-medium text-lg">Occupied</span>
           </label>
         </div>

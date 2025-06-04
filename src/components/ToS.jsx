@@ -15,9 +15,9 @@ export default function ToS() {
         <strong>Last updated</strong> Jan 9, 2025
       </p>
 
-      <p className="text-lg font-bold">AGREEMENT TO OUR LEGAL TERMS</p>
+      <p className=" font-bold">AGREEMENT TO OUR LEGAL TERMS</p>
 
-      <p>
+      <p className="">
         We are InvestorBootz, LLC (<strong>“Company,” “we,” “us,” “our”</strong>), a company registered in California, United States at 9452 Telephone Rd, # 167, Ventura, CA 93004.
       </p>
 
@@ -31,8 +31,8 @@ export default function ToS() {
 
       <p>
         You can contact us by phone at (+1)800-940-8314, email at{' '}
-        <a href="/cdn-cgi/l/email-protection" className="text-blue-600 underline">
-          [email&nbsp;protected]
+        <a href="mailto:support@investorbootz.com" className="text-blue-600 underline">
+         support@investorbootz.com
         </a>
         , or by mail to 9452 Telephone Rd, # 167, Ventura, CA 93004, United States.
       </p>
@@ -160,7 +160,7 @@ export default function ToS() {
     <strong>We may remove or edit your Content:</strong> Although we have no obligation to monitor any Contributions, we shall have the right to remove or edit any Contributions at any time without notice if in our reasonable opinion we consider such Contributions harmful or in breach of these Legal Terms. If we remove or edit any such Contributions, we may also suspend or disable your account and report you to the authorities.
   </p>
 
-  <h2 className="text-lg font-bold mt-6">Copyright infringement</h2>
+  <h2 className="text-base font-semibold mt-6">Copyright infringement</h2>
   <p>
     We respect the intellectual property rights of others. If you believe that any material available on or through the Services infringes upon any copyright you own or control, please immediately refer to the{' '}
     <a href="#dmca" className="text-blue-600 underline hover:text-blue-800">
@@ -204,13 +204,12 @@ export default function ToS() {
   </p>
 
 
-<ol start={6} className="list-decimal pl-5 space-y-4 text-base text-gray-800">
-  <li>
-    <h2 className="text-xl font-bold mb-2">POLICY</h2>
+
+
+    <h2 className="text-lg font-bold mb-2">6. POLICY</h2>
     <p className="text-gray-700">All sales are final and no refund will be issued.</p>
-  </li>
-  <li>
-    <h2 className="text-xl font-bold mt-6 mb-2">PROHIBITED ACTIVITIES</h2>
+  
+    <h2 className="text-lg font-bold mt-6 mb-2">7. PROHIBITED ACTIVITIES</h2>
     <p className="text-gray-700">
       You may not access or use the Services for any purpose other than that for which we make the Services available. The Services may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved by us.
     </p>
@@ -264,13 +263,10 @@ export default function ToS() {
       </li>
       <li>Sell or otherwise transfer your profile.</li>
     </ul>
-  </li>
-</ol>
-<ol start={8} className="list-decimal font-bold text-xl mb-4">
-    <li className="text-black">
-      <strong>USER GENERATED CONTRIBUTIONS</strong>
-    </li>
-  </ol>
+
+
+
+  <h2 className="text-lg font-bold mb-2">8. USER GENERATED CONTRIBUTIONS</h2>
 
   <p className="mb-4">
     The Services may invite you to chat, contribute to, or participate in blogs, message boards,
@@ -341,264 +337,269 @@ export default function ToS() {
 
   {/* 9. CONTRIBUTION LICENSE */}
   <div>
-    <h2 className="text-xl font-bold">9. CONTRIBUTION LICENSE</h2>
-    <p className="text-base text-gray-700 mt-2">
+    <h2 className="text-lg font-bold">9. CONTRIBUTION LICENSE</h2>
+    <p className=" text-gray-700 mt-2">
       By posting your Contributions to any part of the Services, you automatically grant, and you represent and warrant that you have the right to grant, to us an unrestricted, unlimited, irrevocable, perpetual, non-exclusive, transferable, royalty-free, fully-paid, worldwide right, and license to host, use, copy, reproduce, disclose, sell, resell, publish, broadcast, retitle, archive, store, cache, publicly perform, publicly display, reformat, translate, transmit, excerpt (in whole or in part), and distribute such Contributions (including, without limitation, your image and voice) for any purpose, commercial, advertising, or otherwise, and to prepare derivative works of, or incorporate into other works, such Contributions, and grant and authorize sublicenses of the foregoing. The use and distribution may occur in any media formats and through any media channels.
     </p>
-    <p className="text-base text-gray-700 mt-2">
+    <p className=" text-gray-700 mt-2">
       This license will apply to any form, media, or technology now known or hereafter developed, and includes our use of your name, company name, and franchise name, as applicable, and any of the trademarks, service marks, trade names, logos, and personal and commercial images you provide. You waive all moral rights in your Contributions, and you warrant that moral rights have not otherwise been asserted in your Contributions.
     </p>
-    <p className="text-base text-gray-700 mt-2">
+    <p className=" text-gray-700 mt-2">
       We do not assert any ownership over your Contributions. You retain full ownership of all of your Contributions and any intellectual property rights or other proprietary rights associated with your Contributions. We are not liable for any statements or representations in your Contributions provided by you in any area on the Services. You are solely responsible for your Contributions to the Services and you expressly agree to exonerate us from any and all responsibility and to refrain from any legal action against us regarding your Contributions.
     </p>
-    <p className="text-base text-gray-700 mt-2">
+    <p className=" text-gray-700 mt-2">
       We have the right, in our sole and absolute discretion, (1) to edit, redact, or otherwise change any Contributions; (2) to re-categorize any Contributions to place them in more appropriate locations on the Services; and (3) to pre-screen or delete any Contributions at any time and for any reason, without notice. We have no obligation to monitor your Contributions.
     </p>
   </div>
 
   {/* 10. GUIDELINES FOR REVIEWS */}
   <div>
-    <h2 className="text-xl font-bold">10. GUIDELINES FOR REVIEWS</h2>
-    <p className="text-base text-gray-700 mt-2">
+    <h2 className="text-lg font-bold">10. GUIDELINES FOR REVIEWS</h2>
+    <p className=" text-gray-700 mt-2">
       We may provide you areas on the Services to leave reviews or ratings. When posting a review, you must comply with the following criteria: (1) you should have firsthand experience with the person/entity being reviewed; (2) your reviews should not contain offensive profanity, or abusive, racist, offensive, or hateful language; (3) your reviews should not contain discriminatory references based on religion, race, gender, national origin, age, marital status, sexual orientation, or disability; (4) your reviews should not contain references to illegal activity; (5) you should not be affiliated with competitors if posting negative reviews; (6) you should not make any conclusions as to the legality of conduct; (7) you may not post any false or misleading statements; and (8) you may not organize a campaign encouraging others to post reviews, whether positive or negative.
     </p>
-    <p className="text-base text-gray-700 mt-2">
+    <p className=" text-gray-700 mt-2">
       We may accept, reject, or remove reviews in our sole discretion. We have absolutely no obligation to screen reviews or to delete reviews, even if anyone considers reviews objectionable or inaccurate. Reviews are not endorsed by us, and do not necessarily represent our opinions or the views of any of our affiliates or partners. We do not assume liability for any review or for any claims, liabilities, or losses resulting from any review. By posting a review, you hereby grant to us a perpetual, non-exclusive, worldwide, royalty-free, fully paid, assignable, and sublicensable right and license to reproduce, modify, translate, transmit by any means, display, perform, and/or distribute all content relating to review.
     </p>
   </div>
 
   {/* 11. ADVERTISERS */}
   <div>
-    <h2 className="text-xl font-bold">11. ADVERTISERS</h2>
-    <p className="text-base text-gray-700 mt-2">
+    <h2 className="text-lg font-bold">11. ADVERTISERS</h2>
+    <p className=" text-gray-700 mt-2">
       We allow advertisers to display their advertisements and other information in certain areas of the Services, such as sidebar advertisements or banner advertisements. We simply provide the space to place such advertisements, and we have no other relationship with advertisers.
     </p>
   </div>
 
   {/* 12. SERVICES MANAGEMENT */}
   <div>
-    <h2 className="text-xl font-bold">12. SERVICES MANAGEMENT</h2>
-    <p className="text-base text-gray-700 mt-2">
+    <h2 className="text-lg font-bold">12. SERVICES MANAGEMENT</h2>
+    <p className=" text-gray-700 mt-2">
       We reserve the right, but not the obligation, to: (1) monitor the Services for violations of these Legal Terms; (2) take appropriate legal action against anyone who, in our sole discretion, violates the law or these Legal Terms, including without limitation, reporting such user to law enforcement authorities; (3) in our sole discretion and without limitation, refuse, restrict access to, limit the availability of, or disable (to the extent technologically feasible) any of your Contributions or any portion thereof; (4) in our sole discretion and without limitation, notice, or liability, to remove from the Services or otherwise disable all files and content that are excessive in size or are in any way burdensome to our systems; and (5) otherwise manage the Services in a manner designed to protect our rights and property and to facilitate the proper functioning of the Services.
     </p>
   </div>
 
   {/* 13. PRIVACY POLICY */}
   <div>
-    <h2 className="text-xl font-bold">13. PRIVACY POLICY</h2>
-    <p className="text-base text-gray-700 mt-2">
+    <h2 className="text-lg font-bold">13. PRIVACY POLICY</h2>
+    <p className=" text-gray-700 mt-2">
       We care about data privacy and security. By using the Services, you agree to be bound by our Privacy Policy posted on the Services, which is incorporated into these Legal Terms. Please be advised the Services are hosted in the United States. If you access the Services from any other region of the world with laws or other requirements governing personal data collection, use, or disclosure that differ from applicable laws in the United States, then through your continued use of the Services, you are transferring your data to the United States, and you expressly consent to have your data transferred to and processed in the United States.
     </p>
   </div>
 
   {/* 14. DIGITAL MILLENNIUM COPYRIGHT ACT (DMCA) NOTICE AND POLICY */}
   <div>
-    <h2 className="text-xl font-bold">14. DIGITAL MILLENNIUM COPYRIGHT ACT (DMCA) NOTICE AND POLICY</h2>
+    <h2 className="text-lg font-bold">14. DIGITAL MILLENNIUM COPYRIGHT ACT (DMCA) NOTICE AND POLICY</h2>
 
     <h3 className="text-lg font-semibold mt-4">Notifications</h3>
-    <p className="text-base text-gray-700 mt-2">
-      We respect the intellectual property rights of others. If you believe that any material available on or through the Services infringes upon any copyright you own or control, please immediately notify our Designated Copyright Agent...
+    <p className=" text-gray-700 mt-2">
+     We respect the intellectual property rights of others. If you believe that any material available on or through the Services infringes upon any copyright you own or control, please immediately notify our Designated Copyright Agent using the contact information provided below (a &#8220;Notification&#8221;). A copy of your Notification will be sent to the person who posted or stored the material addressed in the Notification. Please be advised that pursuant to federal law you may be held liable for damages if you make material misrepresentations in a Notification. Thus, if you are not sure that material located on or linked to by the Services infringes your copyright, you should consider first contacting an attorney.
     </p>
 
-    <p className="text-base text-gray-700 mt-2">
-      All Notifications should meet the requirements of DMCA 17 U.S.C. § 512(c)(3) and include the following information...
+    <p className=" text-gray-700 mt-2">
+      All Notifications should meet the requirements of DMCA 17 U.S.C. § 512(c)(3) and include the following information: (1) A physical or electronic signature of a person authorized to act on behalf of the owner of an exclusive right that is allegedly infringed; (2) identification of the copyrighted work claimed to have been infringed, or, if multiple copyrighted works on the Services are covered by the Notification, a representative list of such works on the Services; (3) identification of the material that is claimed to be infringing or to be the subject of infringing activity and that is to be removed or access to which is to be disabled, and information reasonably sufficient to permit us to locate the material; (4) information reasonably sufficient to permit us to contact the complaining party, such as an address, telephone number, and, if available, an email address at which the complaining party may be contacted; (5) a statement that the complaining party has a good faith belief that use of the material in the manner complained of is not authorized by the copyright owner, its agent, or the law; and (6) a statement that the information in the notification is accurate, and under penalty of perjury, that the complaining party is authorized to act on behalf of the owner of an exclusive right that is allegedly infringed upon.
     </p>
 
-    <h3 className="text-lg font-semibold mt-4">Counter Notification</h3>
-    <p className="text-base text-gray-700 mt-2">
-      If you believe your own copyrighted material has been removed...
-    </p>
+    <h3 className="text-base font-semibold mt-4">Counter Notification</h3>
+    <p className=" text-gray-700 mt-2">
+      If you believe your own copyrighted material has been removed from the Services as a result of a mistake or misidentification, you may submit a written counter notification to [us/our Designated Copyright Agent] using the contact information provided below (a &#8220;Counter Notification&#8221;). To be an effective Counter Notification under the DMCA, your Counter Notification must include substantially the following: (1) identification of the material that has been removed or disabled and the location at which the material appeared before it was removed or disabled; (2) a statement that you consent to the jurisdiction of the Federal District Court in which your address is located, or if your address is outside the United States, for any judicial district in which we are located; (3) a statement that you will accept service of process from the party that filed the Notification or the party&#8217;s agent; (4) your name, address, and telephone number; (5) a statement under penalty of perjury that you have a good faith belief that the material in question was removed or disabled as a result of a mistake or misidentification of the material to be removed or disabled; and (6) your physical or electronic signature.
+      </p>
+<p className=" text-gray-700 mt-2">
+      If you send us a valid, written Counter Notification meeting the requirements described above, we will restore your removed or disabled material, unless we first receive notice from the party filing the Notification informing us that such party has filed a court action to restrain you from engaging in infringing activity related to the material in question. Please note that if you materially misrepresent that the disabled or removed content was removed by mistake or misidentification, you may be liable for damages, including costs and attorney&#8217;s fees. Filing a false Counter Notification constitutes perjury.
+      </p>
 
-    <p className="text-base text-gray-700 mt-2">
+
+    <p className=" text-gray-700 mt-2">
       Designated Copyright Agent<br />
       Jessica Shapiro<br />
       Attn: Copyright Agent<br />
       9452 Telephone Rd<br />
       #167<br />
       Ventura, CA 93004<br />
-      United States
+      United States<br />
+      jessica@investorbootz.com<br/>
     </p>
   </div>
+
+ 
+
+
+
+
+<div>
+    <h2 className="text-lg font-bold">15. TERM AND TERMINATION</h2>
+    <p className=" text-gray-700 mt-2">
+      These Legal Terms shall remain in full force and effect while you use the Services. WITHOUT LIMITING ANY OTHER PROVISION OF THESE LEGAL TERMS, WE RESERVE THE RIGHT TO, IN OUR SOLE DISCRETION AND WITHOUT NOTICE OR LIABILITY, DENY ACCESS TO AND USE OF THE SERVICES (INCLUDING BLOCKING CERTAIN IP ADDRESSES), TO ANY PERSON FOR ANY REASON OR FOR NO REASON, INCLUDING WITHOUT LIMITATION FOR BREACH OF ANY REPRESENTATION, WARRANTY, OR COVENANT CONTAINED IN THESE LEGAL TERMS OR OF ANY APPLICABLE LAW OR REGULATION. WE MAY TERMINATE YOUR USE OR PARTICIPATION IN THE SERVICES OR DELETE YOUR ACCOUNT AND ANY CONTENT OR INFORMATION THAT YOU POSTED AT ANY TIME, WITHOUT WARNING, IN OUR SOLE DISCRETION.
+    </p>
+    <p className=" text-gray-700 mt-2">
+      If we terminate or suspend your account for any reason, you are prohibited from registering and creating a new account under your name, a fake or borrowed name, or the name of any third party, even if you may be acting on behalf of the third party. In addition to terminating or suspending your account, we reserve the right to take appropriate legal action, including without limitation pursuing civil, criminal, and injunctive redress.
+    </p>
+
+  </div>
+
+
+<div>
+    <h2 className="text-lg font-bold">16. MODIFICATIONS AND INTERRUPTIONS</h2>
+    <p className=" text-gray-700 mt-2">
+      We reserve the right to change, modify, or remove the contents of the Services at any time or for any reason at our sole discretion without notice. However, we have no obligation to update any information on our Services. We also reserve the right to modify or discontinue all or part of the Services without notice at any time. We will not be liable to you or any third party for any modification, price change, suspension, or discontinuance of the Services.
+    </p>
+    <p className=" text-gray-700 mt-2">
+      We cannot guarantee the Services will be available at all times. We may experience hardware, software, or other problems or need to perform maintenance related to the Services, resulting in interruptions, delays, or errors. We reserve the right to change, revise, update, suspend, discontinue, or otherwise modify the Services at any time or for any reason without notice to you. You agree that we have no liability whatsoever for any loss, damage, or inconvenience caused by your inability to access or use the Services during any downtime or discontinuance of the Services. Nothing in these Legal Terms will be construed to obligate us to maintain and support the Services or to supply any corrections, updates, or releases in connection therewith.
+    </p>
+
+  </div>
+
+  <div>
+    <h2 className="text-lg font-bold">17. GOVERNING LAW</h2>
+    <p className=" text-gray-700 mt-2">
+      These Legal Terms and your use of the Services are governed by and construed in accordance with the laws of the State of California applicable to agreements made and to be entirely performed within the State of California, without regard to its conflict of law principles.
+    </p>
+
+  </div>
+
+  <div>
+    <h2 className="text-lg font-bold">18. DISPUTE RESOLUTION</h2>
+    <h3 className="text-lg font-semibold mt-4">Binding Arbitration</h3>
+    <p className=" text-gray-700 mt-2">
+      If the Parties are unable to resolve a Dispute through informal negotiations, the Dispute (except those Disputes expressly excluded below) will be finally and exclusively resolved by binding arbitration. YOU UNDERSTAND THAT WITHOUT THIS PROVISION, YOU WOULD HAVE THE RIGHT TO SUE IN COURT AND HAVE A JURY TRIAL. The arbitration shall be commenced and conducted under the Commercial Arbitration Rules of the American Arbitration Association (“AAA”) and, where appropriate, the AAA’s Supplementary Procedures for Consumer Related Disputes (“AAA Consumer Rules”), both of which are available at the <a href="http://www.adr.org/">American Arbitration Association (AAA) website</a>. Your arbitration fees and your share of arbitrator compensation shall be governed by the AAA Consumer Rules and, where appropriate, limited by the AAA Consumer Rules. If such costs are determined by the arbitrator to be excessive, we will pay all arbitration fees and expenses. The arbitration may be conducted in person, through the submission of documents, by phone, or online. The arbitrator will make a decision in writing, but need not provide a statement of reasons unless requested by either Party. The arbitrator must follow applicable law, and any award may be challenged if the arbitrator fails to do so. Except where otherwise required by the applicable AAA rules or applicable law, the arbitration will take place in Ventura, California. Except as otherwise provided herein, the Parties may litigate in court to compel arbitration, stay proceedings pending arbitration, or to confirm, modify, vacate, or enter judgment on the award entered by the arbitrator.
+    </p>
+    <p className=" text-gray-700 mt-2">
+      If for any reason, a Dispute proceeds in court rather than arbitration, the Dispute shall be commenced or prosecuted in the state and federal courts located in Ventura, California, and the Parties hereby consent to, and waive all defenses of lack of personal jurisdiction, and forum non conveniens with respect to venue and jurisdiction in such state and federal courts. Application of the United Nations Convention on Contracts for the International Sale of Goods and the Uniform Computer Information Transaction Act (UCITA) are excluded from these Legal Terms.
+    </p>
+    <p className=" text-gray-700 mt-2">
+      In no event shall any Dispute brought by either Party related in any way to the Services be commenced more than one (1) years after the cause of action arose. If this provision is found to be illegal or unenforceable, then neither Party will elect to arbitrate any Dispute falling within that portion of this provision found to be illegal or unenforceable and such Dispute shall be decided by a court of competent jurisdiction within the courts listed for jurisdiction above, and the Parties agree to submit to the personal jurisdiction of that court.
+    </p>
+        <h3 className="text-lg font-semibold mt-4">Restrictions</h3>
+    <p className=" text-gray-700 mt-2">
+      The Parties agree that any arbitration shall be limited to the Dispute between the Parties individually. To the full extent permitted by law, (a) no arbitration shall be joined with any other proceeding; (b) there is no right or authority for any Dispute to be arbitrated on a class-action basis or to utilize class action procedures; and (c) there is no right or authority for any Dispute to be brought in a purported representative capacity on behalf of the general public or any other persons.
+    </p>
+    <h3 className="text-lg font-semibold mt-4">Exceptions to Arbitration</h3>
+    <p className=" text-gray-700 mt-2">
+      The Parties agree that the following Disputes are not subject to the above provisions concerning binding arbitration: (a) any Disputes seeking to enforce or protect, or concerning the validity of, any of the intellectual property rights of a Party; (b) any Dispute related to, or arising from, allegations of theft, piracy, invasion of privacy, or unauthorized use; and (c) any claim for injunctive relief. If this provision is found to be illegal or unenforceable, then neither Party will elect to arbitrate any Dispute falling within that portion of this provision found to be illegal or unenforceable and such Dispute shall be decided by a court of competent jurisdiction within the courts listed for jurisdiction above, and the Parties agree to submit to the personal jurisdiction of that court.
+    </p>
+  </div>
+{/* <li data-custom-class="heading_1"><b><strong> TERM AND TERMINATION</strong></b></li>
+</ol>
+<p data-custom-class="body_text">These Legal Terms shall remain in full force and effect while you use the Services. WITHOUT LIMITING ANY OTHER PROVISION OF THESE LEGAL TERMS, WE RESERVE THE RIGHT TO, IN OUR SOLE DISCRETION AND WITHOUT NOTICE OR LIABILITY, DENY ACCESS TO AND USE OF THE SERVICES (INCLUDING BLOCKING CERTAIN IP ADDRESSES), TO ANY PERSON FOR ANY REASON OR FOR NO REASON, INCLUDING WITHOUT LIMITATION FOR BREACH OF ANY REPRESENTATION, WARRANTY, OR COVENANT CONTAINED IN THESE LEGAL TERMS OR OF ANY APPLICABLE LAW OR REGULATION. WE MAY TERMINATE YOUR USE OR PARTICIPATION IN THE SERVICES OR DELETE YOUR ACCOUNT AND ANY CONTENT OR INFORMATION THAT YOU POSTED AT ANY TIME, WITHOUT WARNING, IN OUR SOLE DISCRETION.</p>
+<p data-custom-class="body_text">If we terminate or suspend your account for any reason, you are prohibited from registering and creating a new account under your name, a fake or borrowed name, or the name of any third party, even if you may be acting on behalf of the third party. In addition to terminating or suspending your account, we reserve the right to take appropriate legal action, including without limitation pursuing civil, criminal, and injunctive redress.</p>
+<ol start="16">
+<li data-custom-class="heading_1"><b><strong> MODIFICATIONS AND INTERRUPTIONS</strong></b></li>
+</ol>
+<p data-custom-class="body_text">We reserve the right to change, modify, or remove the contents of the Services at any time or for any reason at our sole discretion without notice. However, we have no obligation to update any information on our Services. We also reserve the right to modify or discontinue all or part of the Services without notice at any time. We will not be liable to you or any third party for any modification, price change, suspension, or discontinuance of the Services.</p>
+<p data-custom-class="body_text">We cannot guarantee the Services will be available at all times. We may experience hardware, software, or other problems or need to perform maintenance related to the Services, resulting in interruptions, delays, or errors. We reserve the right to change, revise, update, suspend, discontinue, or otherwise modify the Services at any time or for any reason without notice to you. You agree that we have no liability whatsoever for any loss, damage, or inconvenience caused by your inability to access or use the Services during any downtime or discontinuance of the Services. Nothing in these Legal Terms will be construed to obligate us to maintain and support the Services or to supply any corrections, updates, or releases in connection therewith.</p>
+<ol start="17">
+<li data-custom-class="heading_1"><b><strong> GOVERNING LAW</strong></b></li>
+</ol>
+<p data-custom-class="body_text">These Legal Terms and your use of the Services are governed by and construed in accordance with the laws of the State of California applicable to agreements made and to be entirely performed within the State of California, without regard to its conflict of law principles.</p>
+<ol start="18">
+<li data-custom-class="heading_1"><b><strong> DISPUTE RESOLUTION</strong></b></li>
+</ol>
+<p data-custom-class="heading_2"><b><strong>Binding Arbitration</strong></b></p>
+<p data-custom-class="body_text">If the Parties are unable to resolve a Dispute through informal negotiations, the Dispute (except those Disputes expressly excluded below) will be finally and exclusively resolved by binding arbitration. YOU UNDERSTAND THAT WITHOUT THIS PROVISION, YOU WOULD HAVE THE RIGHT TO SUE IN COURT AND HAVE A JURY TRIAL. The arbitration shall be commenced and conducted under the Commercial Arbitration Rules of the American Arbitration Association (&#8220;AAA&#8221;) and, where appropriate, the AAA’s Supplementary Procedures for Consumer Related Disputes (&#8220;AAA Consumer Rules&#8221;), both of which are available at the <a href="http://www.adr.org" data-custom-class="link">American Arbitration Association (AAA) website</a>. Your arbitration fees and your share of arbitrator compensation shall be governed by the AAA Consumer Rules and, where appropriate, limited by the AAA Consumer Rules. If such costs are determined by the arbitrator to be excessive, we will pay all arbitration fees and expenses. The arbitration may be conducted in person, through the submission of documents, by phone, or online. The arbitrator will make a decision in writing, but need not provide a statement of reasons unless requested by either Party. The arbitrator must follow applicable law, and any award may be challenged if the arbitrator fails to do so. Except where otherwise required by the applicable AAA rules or applicable law, the arbitration will take place in Ventura, California. Except as otherwise provided herein, the Parties may litigate in court to compel arbitration, stay proceedings pending arbitration, or to confirm, modify, vacate, or enter judgment on the award entered by the arbitrator.</p>
+<p data-custom-class="body_text">If for any reason, a Dispute proceeds in court rather than arbitration, the Dispute shall be commenced or prosecuted in the state and federal courts located in Ventura, California, and the Parties hereby consent to, and waive all defenses of lack of personal jurisdiction, and forum non conveniens with respect to venue and jurisdiction in such state and federal courts. Application of the United Nations Convention on Contracts for the International Sale of Goods and the Uniform Computer Information Transaction Act (UCITA) are excluded from these Legal Terms.</p>
+<p data-custom-class="body_text">In no event shall any Dispute brought by either Party related in any way to the Services be commenced more than one (1) years after the cause of action arose. If this provision is found to be illegal or unenforceable, then neither Party will elect to arbitrate any Dispute falling within that portion of this provision found to be illegal or unenforceable and such Dispute shall be decided by a court of competent jurisdiction within the courts listed for jurisdiction above, and the Parties agree to submit to the personal jurisdiction of that court.</p>
+<p data-custom-class="heading_2"><b><strong>Restrictions</strong></b></p>
+<p data-custom-class="body_text">The Parties agree that any arbitration shall be limited to the Dispute between the Parties individually. To the full extent permitted by law, (a) no arbitration shall be joined with any other proceeding; (b) there is no right or authority for any Dispute to be arbitrated on a class-action basis or to utilize class action procedures; and (c) there is no right or authority for any Dispute to be brought in a purported representative capacity on behalf of the general public or any other persons.</p>
+<p data-custom-class="heading_2"><b><strong>Exceptions to Arbitration</strong></b></p>
+<p data-custom-class="body_text">The Parties agree that the following Disputes are not subject to the above provisions concerning binding arbitration: (a) any Disputes seeking to enforce or protect, or concerning the validity of, any of the intellectual property rights of a Party; (b) any Dispute related to, or arising from, allegations of theft, piracy, invasion of privacy, or unauthorized use; and (c) any claim for injunctive relief. If this provision is found to be illegal or unenforceable, then neither Party will elect to arbitrate any Dispute falling within that portion of this provision found to be illegal or unenforceable and such Dispute shall be decided by a court of competent jurisdiction within the courts listed for jurisdiction above, and the Parties agree to submit to the personal jurisdiction of that court.</p>
+<ol start="19"></ol> */}
+
+
+
+
+
+
+
+
  <div>
-    <h2 className="text-lg md:text-xl font-bold">19. CORRECTIONS</h2>
-    <p className="text-sm md:text-base text-gray-700">
+    <h2 className="text-lg font-bold">19. CORRECTIONS</h2>
+    <p className=" text-gray-700 mt-2">
       There may be information on the Services that contains typographical errors, inaccuracies, or omissions, including descriptions, pricing, availability, and various other information. We reserve the right to correct any errors, inaccuracies, or omissions and to change or update the information on the Services at any time, without prior notice.
     </p>
   </div>
 
   <div>
-    <h2 className="text-lg md:text-xl font-bold">20. DISCLAIMER</h2>
-    <p className="text-sm md:text-base text-gray-700">
-      THE SERVICES ARE PROVIDED ON AN AS-IS AND AS-AVAILABLE BASIS. YOU AGREE THAT YOUR USE OF THE SERVICES WILL BE AT YOUR SOLE RISK... <br />
-      [Insert full disclaimer here — for brevity, only the first sentence is shown, but you should paste the entire paragraph.]
+    <h2 className="text-lg font-bold">20. DISCLAIMER</h2>
+    <p className=" text-gray-700 mt-2">
+      THE SERVICES ARE PROVIDED ON AN AS-IS AND AS-AVAILABLE BASIS. YOU AGREE THAT YOUR USE OF THE SERVICES WILL BE AT YOUR SOLE RISK. TO THE FULLEST EXTENT PERMITTED BY LAW, WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, IN CONNECTION WITH THE SERVICES AND YOUR USE THEREOF, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE MAKE NO WARRANTIES OR REPRESENTATIONS ABOUT THE ACCURACY OR COMPLETENESS OF THE SERVICES’ CONTENT OR THE CONTENT OF ANY WEBSITES OR MOBILE APPLICATIONS LINKED TO THE SERVICES AND WE WILL ASSUME NO LIABILITY OR RESPONSIBILITY FOR ANY (1) ERRORS, MISTAKES, OR INACCURACIES OF CONTENT AND MATERIALS, (2) PERSONAL INJURY OR PROPERTY DAMAGE, OF ANY NATURE WHATSOEVER, RESULTING FROM YOUR ACCESS TO AND USE OF THE SERVICES, (3) ANY UNAUTHORIZED ACCESS TO OR USE OF OUR SECURE SERVERS AND/OR ANY AND ALL PERSONAL INFORMATION AND/OR FINANCIAL INFORMATION STORED THEREIN, (4) ANY INTERRUPTION OR CESSATION OF TRANSMISSION TO OR FROM THE SERVICES, (5) ANY BUGS, VIRUSES, TROJAN HORSES, OR THE LIKE WHICH MAY BE TRANSMITTED TO OR THROUGH THE SERVICES BY ANY THIRD PARTY, AND/OR (6) ANY ERRORS OR OMISSIONS IN ANY CONTENT AND MATERIALS OR FOR ANY LOSS OR DAMAGE OF ANY KIND INCURRED AS A RESULT OF THE USE OF ANY CONTENT POSTED, TRANSMITTED, OR OTHERWISE MADE AVAILABLE VIA THE SERVICES. WE DO NOT WARRANT, ENDORSE, GUARANTEE, OR ASSUME RESPONSIBILITY FOR ANY PRODUCT OR SERVICE ADVERTISED OR OFFERED BY A THIRD PARTY THROUGH THE SERVICES, ANY HYPERLINKED WEBSITE, OR ANY WEBSITE OR MOBILE APPLICATION FEATURED IN ANY BANNER OR OTHER ADVERTISING, AND WE WILL NOT BE A PARTY TO OR IN ANY WAY BE RESPONSIBLE FOR MONITORING ANY TRANSACTION BETWEEN YOU AND ANY THIRD-PARTY PROVIDERS OF PRODUCTS OR SERVICES. AS WITH THE PURCHASE OF A PRODUCT OR SERVICE THROUGH ANY MEDIUM OR IN ANY ENVIRONMENT, YOU SHOULD USE YOUR BEST JUDGMENT AND EXERCISE CAUTION WHERE APPROPRIATE.
     </p>
   </div>
 
   <div>
-    <h2 className="text-lg md:text-xl font-bold">21. LIMITATIONS OF LIABILITY</h2>
-    <p className="text-sm md:text-base text-gray-700">
-      IN NO EVENT WILL WE OR OUR DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE TO YOU OR ANY THIRD PARTY... <br />
-      [Insert the full liability section here.]
+    <h2 className="text-lg font-bold">21. LIMITATIONS OF LIABILITY</h2>
+    <p className=" text-gray-700 mt-2">
+      IN NO EVENT WILL WE OR OUR DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE TO YOU OR ANY THIRD PARTY FOR ANY DIRECT, INDIRECT, CONSEQUENTIAL, EXEMPLARY, INCIDENTAL, SPECIAL, OR PUNITIVE DAMAGES, INCLUDING LOST PROFIT, LOST REVENUE, LOSS OF DATA, OR OTHER DAMAGES ARISING FROM YOUR USE OF THE SERVICES, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. NOTWITHSTANDING ANYTHING TO THE CONTRARY CONTAINED HEREIN, OUR LIABILITY TO YOU FOR ANY CAUSE WHATSOEVER AND REGARDLESS OF THE FORM OF THE ACTION, WILL AT ALL TIMES BE LIMITED TO THE AMOUNT PAID, IF ANY, BY YOU TO US DURING THE SIX (6) MONTH PERIOD PRIOR TO ANY CAUSE OF ACTION ARISING. CERTAIN US STATE LAWS AND INTERNATIONAL LAWS DO NOT ALLOW LIMITATIONS ON IMPLIED WARRANTIES OR THE EXCLUSION OR LIMITATION OF CERTAIN DAMAGES. IF THESE LAWS APPLY TO YOU, SOME OR ALL OF THE ABOVE DISCLAIMERS OR LIMITATIONS MAY NOT APPLY TO YOU, AND YOU MAY HAVE ADDITIONAL RIGHTS.
     </p>
   </div>
 
   <div>
-    <h2 className="text-lg md:text-xl font-bold">22. INDEMNIFICATION</h2>
-    <p className="text-sm md:text-base text-gray-700">
-      You agree to defend, indemnify, and hold us harmless, including our subsidiaries, affiliates, and all of our respective officers... <br />
-      [Insert the full indemnification section here.]
+    <h2 className="text-lg font-bold">22. INDEMNIFICATION</h2>
+    <p className=" text-gray-700 mt-2">
+      You agree to defend, indemnify, and hold us harmless, including our subsidiaries, affiliates, and all of our respective officers, agents, partners, and employees, from and against any loss, damage, liability, claim, or demand, including reasonable attorneys’ fees and expenses, made by any third party due to or arising out of: (1) your Contributions; (2) use of the Services; (3) breach of these Legal Terms; (4) any breach of your representations and warranties set forth in these Legal Terms; (5) your violation of the rights of a third party, including but not limited to intellectual property rights; or (6) any overt harmful act toward any other user of the Services with whom you connected via the Services. Notwithstanding the foregoing, we reserve the right, at your expense, to assume the exclusive defense and control of any matter for which you are required to indemnify us, and you agree to cooperate, at your expense, with our defense of such claims. We will use reasonable efforts to notify you of any such claim, action, or proceeding which is subject to this indemnification upon becoming aware of it.
     </p>
   </div>
 
   <div>
-    <h2 className="text-lg md:text-xl font-bold">23. USER DATA</h2>
-    <p className="text-sm md:text-base text-gray-700">
-      We will maintain certain data that you transmit to the Services for the purpose of managing the performance... <br />
-      [Insert full paragraph here.]
+    <h2 className="text-lg font-bold">23. USER DATA</h2>
+    <p className=" text-gray-700 mt-2">
+      We will maintain certain data that you transmit to the Services for the purpose of managing the performance of the Services, as well as data relating to your use of the Services. Although we perform regular routine backups of data, you are solely responsible for all data that you transmit or that relates to any activity you have undertaken using the Services. You agree that we shall have no liability to you for any loss or corruption of any such data, and you hereby waive any right of action against us arising from any such loss or corruption of such data.
     </p>
   </div>
 
   <div>
-    <h2 className="text-lg md:text-xl font-bold">24. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</h2>
-    <p className="text-sm md:text-base text-gray-700">
-      Visiting the Services, sending us emails, and completing online forms constitute electronic communications... <br />
-      [Insert full paragraph here.]
+    <h2 className="text-lg font-bold">24. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</h2>
+    <p className=" text-gray-700 mt-2">
+Visiting the Services, sending us emails, and completing online forms constitute electronic communications. You consent to receive electronic communications, and you agree that all agreements, notices, disclosures, and other communications we provide to you electronically, via email and on the Services, satisfy any legal requirement that such communication be in writing. YOU HEREBY AGREE TO THE USE OF ELECTRONIC SIGNATURES, CONTRACTS, ORDERS, AND OTHER RECORDS, AND TO ELECTRONIC DELIVERY OF NOTICES, POLICIES, AND RECORDS OF TRANSACTIONS INITIATED OR COMPLETED BY US OR VIA THE SERVICES. You hereby waive any rights or requirements under any statutes, regulations, rules, ordinances, or other laws in any jurisdiction which require an original signature or delivery or retention of non-electronic records, or to payments or the granting of credits by any means other than electronic means.
     </p>
   </div>
 
   <div>
-    <h2 className="text-lg md:text-xl font-bold">25. SMS TEXT MESSAGING</h2>
+    <h2 className="text-lg font-bold">25. SMS TEXT MESSAGING</h2>
 
     <div className="mt-2">
       <h3 className="text-md font-semibold">Opting Out</h3>
-      <p className="text-sm md:text-base text-gray-700">
+      <p className=": text-gray-700 mt-2">
         If at any time you wish to stop receiving SMS messages from us, simply reply to the text with “STOP.” You may receive an SMS message confirming your opt out.
       </p>
     </div>
 
     <div className="mt-2">
       <h3 className="text-md font-semibold">Message and Data Rates</h3>
-      <p className="text-sm md:text-base text-gray-700">
+      <p className="text-sm md:text-base text-gray-700 mt-2">
         Please be aware that message and data rates may apply to any SMS messages sent or received. The rates are determined by your carrier and the specifics of your mobile plan.
       </p>
     </div>
 
     <div className="mt-2">
       <h3 className="text-md font-semibold">Support</h3>
-      <p className="text-sm md:text-base text-gray-700">
-        If you have any questions or need assistance regarding our SMS communications, please email us at <a href="mailto:support@example.com" className="text-blue-600 underline">support@example.com</a> or call at (+1)800-940-8314.
+      <p className="text-sm md:text-base text-gray-700 mt-2">
+        If you have any questions or need assistance regarding our SMS communications, please email us at <a href="mailto:info@investorbootz.com" className="text-blue-600 underline">info@investorbootz.com</a> or call at (+1)800-940-8314.
       </p>
     </div>
   </div>
 
   <div>
-    <h2 className="text-lg md:text-xl font-bold">26. CALIFORNIA USERS AND RESIDENTS</h2>
-    <p className="text-sm md:text-base text-gray-700">
-      If any complaint with us is not satisfactorily resolved, you can contact the Complaint Assistance Unit... <br />
-      [Insert full paragraph here.]
+    <h2 className="text-lg font-bold">26. CALIFORNIA USERS AND RESIDENTS</h2>
+    <p className="text-sm md:text-base text-gray-700 mt-2">
+     If any complaint with us is not satisfactorily resolved, you can contact the Complaint Assistance Unit of the Division of Consumer Services of the California Department of Consumer Affairs in writing at 1625 North Market Blvd., Suite N 112, Sacramento, California 95834 or by telephone at (800) 952-5210 or (916) 445-1254.
     </p>
   </div>
 
   <div>
-    <h2 className="text-lg md:text-xl font-bold">27. MISCELLANEOUS</h2>
-    <p className="text-sm md:text-base text-gray-700">
-      These Legal Terms and any policies or operating rules posted by us on the Services or in respect to the Services constitute the entire agreement... <br />
-      [Insert full paragraph here.]
+    <h2 className="text-lg font-bold">27. MISCELLANEOUS</h2>
+    <p className="text-sm md:text-base text-gray-700 mt-2">
+     These Legal Terms and any policies or operating rules posted by us on the Services or in respect to the Services constitute the entire agreement and understanding between you and us. Our failure to exercise or enforce any right or provision of these Legal Terms shall not operate as a waiver of such right or provision. These Legal Terms operate to the fullest extent permissible by law. We may assign any or all of our rights and obligations to others at any time. We shall not be responsible or liable for any loss, damage, delay, or failure to act caused by any cause beyond our reasonable control. If any provision or part of a provision of these Legal Terms is determined to be unlawful, void, or unenforceable, that provision or part of the provision is deemed severable from these Legal Terms and does not affect the validity and enforceability of any remaining provisions. There is no joint venture, partnership, employment or agency relationship created between you and us as a result of these Legal Terms or use of the Services. You agree that these Legal Terms will not be construed against us by virtue of having drafted them. You hereby waive any and all defenses you may have based on the electronic form of these Legal Terms and the lack of signing by the parties hereto to execute these Legal Terms.
     </p>
   </div>
 
   <div>
-    <h2 className="text-lg md:text-xl font-bold">28. CONTACT US</h2>
-    <p className="text-sm md:text-base text-gray-700">
-      In order to resolve a complaint regarding the Services or to receive further information regarding...
+    <h2 className="text-lg font-bold">28. CONTACT US</h2>
+    <p className="text-sm md:text-base text-gray-700 mt-2">
+      In order to resolve a complaint regarding the Services or to receive further information regarding use of the Services, please contact us at:
     </p>
   </div>
-  <ol start={19} className="list-decimal pl-6 space-y-4">
-  <li className="text-xl font-bold">CORRECTIONS</li>
-</ol>
-<p className="text-sm text-gray-700 mt-2">
-  There may be information on the Services that contains typographical errors, inaccuracies, or omissions, including descriptions, pricing, availability, and various other information. We reserve the right to correct any errors, inaccuracies, or omissions and to change or update the information on the Services at any time, without prior notice.
-</p>
+ 
 
-<ol start={20} className="list-decimal pl-6 space-y-4 mt-6">
-  <li className="text-xl font-bold">DISCLAIMER</li>
-</ol>
-<p className="text-sm text-gray-700 mt-2">
-  THE SERVICES ARE PROVIDED ON AN AS-IS AND AS-AVAILABLE BASIS. YOU AGREE THAT YOUR USE OF THE SERVICES WILL BE AT YOUR SOLE RISK. TO THE FULLEST EXTENT PERMITTED BY LAW, WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, IN CONNECTION WITH THE SERVICES AND YOUR USE THEREOF, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE MAKE NO WARRANTIES OR REPRESENTATIONS ABOUT THE ACCURACY OR COMPLETENESS OF THE SERVICES’ CONTENT OR THE CONTENT OF ANY WEBSITES OR MOBILE APPLICATIONS LINKED TO THE SERVICES...
-</p>
-
-<ol start={21} className="list-decimal pl-6 space-y-4 mt-6">
-  <li className="text-xl font-bold">LIMITATIONS OF LIABILITY</li>
-</ol>
-<p className="text-sm text-gray-700 mt-2">
-  IN NO EVENT WILL WE OR OUR DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE TO YOU OR ANY THIRD PARTY FOR ANY DIRECT, INDIRECT, CONSEQUENTIAL, EXEMPLARY, INCIDENTAL, SPECIAL, OR PUNITIVE DAMAGES...
-</p>
-
-<ol start={22} className="list-decimal pl-6 space-y-4 mt-6">
-  <li className="text-xl font-bold">INDEMNIFICATION</li>
-</ol>
-<p className="text-sm text-gray-700 mt-2">
-  You agree to defend, indemnify, and hold us harmless, including our subsidiaries, affiliates, and all of our respective officers...
-</p>
-
-<ol start={23} className="list-decimal pl-6 space-y-4 mt-6">
-  <li className="text-xl font-bold">USER DATA</li>
-</ol>
-<p className="text-sm text-gray-700 mt-2">
-  We will maintain certain data that you transmit to the Services for the purpose of managing the performance...
-</p>
-
-<ol start={24} className="list-decimal pl-6 space-y-4 mt-6">
-  <li className="text-xl font-bold">ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES</li>
-</ol>
-<p className="text-sm text-gray-700 mt-2">
-  Visiting the Services, sending us emails, and completing online forms constitute electronic communications...
-</p>
-
-<ol start={25} className="list-decimal pl-6 space-y-4 mt-6">
-  <li className="text-xl font-bold">SMS TEXT MESSAGING</li>
-</ol>
-
-<h4 className="text-base font-semibold mt-4">Opting Out</h4>
-<p className="text-sm text-gray-700 mt-1">
-  If at any time you wish to stop receiving SMS messages from us, simply reply to the text with “STOP.”...
-</p>
-
-<h4 className="text-base font-semibold mt-4">Message and Data Rates</h4>
-<p className="text-sm text-gray-700 mt-1">
-  Please be aware that message and data rates may apply to any SMS messages sent or received...
-</p>
-
-<h4 className="text-base font-semibold mt-4">Support</h4>
-<p className="text-sm text-gray-700 mt-1">
-  If you have any questions or need assistance regarding our SMS communications, please email us at{" "}
-  <a href="mailto:support@example.com" className="text-blue-600 underline">
-    support@example.com
-  </a>{" "}
-  or call at (+1)800-940-8314.
-</p>
-
-<ol start={26} className="list-decimal pl-6 space-y-4 mt-6">
-  <li className="text-xl font-bold">CALIFORNIA USERS AND RESIDENTS</li>
-</ol>
-<p className="text-sm text-gray-700 mt-2">
-  If any complaint with us is not satisfactorily resolved, you can contact the Complaint Assistance Unit...
-</p>
-
-<ol start={27} className="list-decimal pl-6 space-y-4 mt-6">
-  <li className="text-xl font-bold">MISCELLANEOUS</li>
-</ol>
-<p className="text-sm text-gray-700 mt-2">
-  These Legal Terms and any policies or operating rules posted by us on the Services or in respect to the Services...
-</p>
-
-<ol start={28} className="list-decimal ml-6">
-    <li className="text-xl font-bold mb-4">CONTACT US</li>
-  </ol>
-
-  <p className="text-base text-gray-700 mb-2">
-    In order to resolve a complaint regarding the Services or to receive further information regarding use of the Services, please contact us at:
-  </p>
 
   <div className="space-y-1 text-base text-gray-800 font-semibold">
     <p>InvestorBootz, LLC</p>
@@ -609,10 +610,10 @@ export default function ToS() {
     <p>Phone: (+1)800-940-8314</p>
     <p>
       <a
-        href="/cdn-cgi/l/email-protection"
+        href="mailto:info@investorbootz.com"
         className="text-blue-600 underline break-all"
       >
-        [email&#160;protected]
+       info@investorbootz.com
       </a>
     </p>
   </div>
