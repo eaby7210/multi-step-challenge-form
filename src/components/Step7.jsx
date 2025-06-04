@@ -1,8 +1,9 @@
 import React from 'react';
-import { Calendar, Clock, User, Phone, Mail } from 'lucide-react';
+import { Calendar, Clock, User, Phone, Mail, Users } from 'lucide-react';
 
 const Step7 = ({ formData, handleChange, onNext, onPrev, currentStep, stepsLength }) => {
   const isLastStep = currentStep === stepsLength - 1;
+
   return (
     <div className="mb-8">
       <h2 className="text-2xl font-bold text-main mb-8 text-center flex items-center justify-center gap-2">
@@ -16,14 +17,56 @@ const Step7 = ({ formData, handleChange, onNext, onPrev, currentStep, stepsLengt
             <Clock className="w-5 h-5 text-primary" />
             Preferred Date & Time
           </label>
-          <input
-            type="datetime-local"
-            name="preferred_datetime"
-            value={formData.preferred_datetime || ''}
-            onChange={handleChange}
-            className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
-          />
+          <div className="flex gap-4">
+            {/* Radio Input for TBD */}
+            <label
+              className={`flex-1 flex flex-col items-center justify-center cursor-pointer px-6 py-6 rounded-xl border-2 transition-all text-center shadow-sm
+                ${formData.preferred_option === 'tbd' ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
+            >
+              <input
+                type="radio"
+                name="preferred_option"
+                value="tbd"
+                checked={formData.preferred_option === 'tbd'}
+                onChange={handleChange}
+                className="hidden"
+              />
+              <Clock className={`w-6 h-6 mb-2 ${formData.preferred_option === 'tbd' ? 'text-inverse' : 'text-primary'}`} />
+              <span className="font-medium text-lg">To Be Determined</span>
+            </label>
+
+            {/* Radio Input for Specify Date & Time */}
+            <label
+              className={`flex-1 flex flex-col items-center justify-center cursor-pointer px-6 py-6 rounded-xl border-2 transition-all text-center shadow-sm
+                ${formData.preferred_option === 'specify' ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
+            >
+              <input
+                type="radio"
+                name="preferred_option"
+                value="specify"
+                checked={formData.preferred_option === 'specify'}
+                onChange={handleChange}
+                className="hidden"
+              />
+              <Calendar className={`w-6 h-6 mb-2 ${formData.preferred_option === 'specify' ? 'text-inverse' : 'text-primary'}`} />
+              <span className="font-medium text-lg">Specify Date & Time</span>
+            </label>
+          </div>
+
+          {/* Date & Time Input Field */}
+          {formData.preferred_option === 'specify' && (
+            <div className="mt-4">
+              <input
+                type="datetime-local"
+                name="preferred_datetime"
+                value={formData.preferred_datetime || ''}
+                onChange={handleChange}
+                className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
+              />
+            </div>
+          )}
         </div>
+
         {/* Point of Contact */}
         <div className="w-full max-w-md bg-card rounded-xl p-4 border border-primary flex flex-col gap-4 mt-4">
           <div className="font-semibold text-main mb-2 flex items-center gap-2">
@@ -70,7 +113,7 @@ const Step7 = ({ formData, handleChange, onNext, onPrev, currentStep, stepsLengt
       <div className="flex justify-between mt-8 gap-2">
         <button
           type="button"
-          className={`px-4 py-2 bg-secondary text-inverse rounded-lg hover:bg-primary hover:text-inverse focus:outline-none font-semibold transition-all duration-200 ${currentStep === 0 ? "invisible" : ""}`}
+          className={`px-4 py-2 bg-secondary text-inverse rounded-lg hover:bg-primary hover:text-inverse focus:outline-none font-semibold transition-all duration-200 ${currentStep === 0 ? 'invisible' : ''}`}
           onClick={onPrev}
         >
           Previous
