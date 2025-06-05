@@ -71,6 +71,8 @@ export default function App() {
     setShowTermsModal(true);
   };
 
+  const validateStep6 = () => true;
+
   const steps = [
     {
       id: 1,
@@ -128,8 +130,8 @@ export default function App() {
     {
       id: 6,
       title: "Property Access",
-      component: <Step6 formData={formData} handleChange={handleChange} />,
-      validate: () => true,
+      component: <Step6 formData={formData} handleChange={handleChange} validateStep={validateStep6} />,
+      validate: validateStep6,
       getNextStep: () => 6,
       getPrevStep: (formData) => {
         if (formData.serviceType === "a_la_carte") return 4;
@@ -342,7 +344,7 @@ export default function App() {
               onClick={handleClose}
             >
               Cancel
-            </button>
+</button>
             <AcceptButtonWithTooltip termsRef={termsRef} />
           </div>
         </div>
