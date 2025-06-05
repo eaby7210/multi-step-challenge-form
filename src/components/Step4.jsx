@@ -128,7 +128,7 @@ const bundles = [
 	},
 ];
 
-const Step4 = ({ formData = {}, handleChange }) => {
+const Step4 = ({ formData = {}, handleChange, onNext, onPrev }) => {
 	const [selectedGroupIdx, setSelectedGroupIdx] = useState(() => {
 		// If formData.bundleGroup exists, set initial group index accordingly
 		const idx = bundles.findIndex((b) => b.group === formData.bundleGroup);
@@ -185,6 +185,7 @@ const Step4 = ({ formData = {}, handleChange }) => {
 	const selectedGroup = bundles[selectedGroupIdx];
 
 	return (
+    <>
 		<div className="mb-8">
 			<h2 className="text-xl font-semibold text-main mb-6 text-center">
 				BUNDLE AND SAVE!
@@ -300,7 +301,29 @@ const Step4 = ({ formData = {}, handleChange }) => {
 			</div>
 			
 		</div>
+      <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-center px-4 py-3 mt-4 border-t">
+                <button
+                  type="button"
+                  className={`w-full md:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200`}
+                  onClick={onPrev}
+                >
+                  Previous
+                </button>
+               
+                  <button
+                    type="button"
+                    className={
+                      "w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200 "
+                    }
+                    onClick={onNext}
+                  >
+                    Next
+                  </button>
+                
+              </div>
+    </>
 	);
+  
 };
 
 export default Step4;

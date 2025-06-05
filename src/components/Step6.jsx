@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Home, Users, KeyRound, Smartphone, UserCheck, Key, Landmark, Hash } from 'lucide-react';
 
 const ACCESS_OPTIONS = [
@@ -53,11 +53,51 @@ const ACCESS_OPTIONS = [
   }
 ];
 
-const Step6 = ({ formData, handleChange }) => {
+const Step6 = ({ formData, handleChange, onPrev, onNext }) => {
+  const [validationErrors, setValidationErrors] = useState({});
+  const [hasAttemptedNext, setHasAttemptedNext] = useState(false);
+
   // Helper to check if an access option is selected
   const isAccessSelected = (key) => !!formData[`access_${key}`];
 
+  const validateForm = () => {
+    const errors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex for email validation
+
+    ACCESS_OPTIONS.forEach(option => {
+      if (isAccessSelected(option.key)) {
+        option.prompt.forEach(field => {
+          if (option.key === 'meet_contact' && field.name === 'contact_email') {
+            if ((formData[field.name] && field.type === 'email' )&& !emailRegex.test(formData[field.name])) {
+            errors[field.name] = `${field.label} must be a valid email address`;
+          }
+            return; // Skip validation for email in "Meet Contact On-site"
+          }
+          if (!formData[field.name]?.trim()) {
+            errors[field.name] = `${field.label} is required`;
+          }
+          else if (field.type === 'email' && !emailRegex.test(formData[field.name])) {
+            errors[field.name] = `${field.label} must be a valid email address`;
+          }
+        });
+      }
+    });
+
+    return errors;
+  };
+
+  const handleNextAction = () => {
+    setHasAttemptedNext(true);
+    const errors = validateForm();
+    if (Object.keys(errors).length === 0) {
+      onNext();
+    } else {
+      setValidationErrors(errors);
+    }
+  };
+
   return (
+    <>
     <div className="mb-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center flex items-center justify-center gap-2">
         <KeyRound className="w-6 h-6 text-primary" />
@@ -139,8 +179,13 @@ const Step6 = ({ formData, handleChange }) => {
                         value={formData[field.name] || ''}
                         onChange={handleChange}
                         placeholder={field.placeholder}
-                        className="border rounded p-2 focus:ring-2 focus:ring-primary focus:border-primary"
+                        className={`border rounded p-2 focus:ring-2 focus:ring-primary focus:border-primary ${
+                          hasAttemptedNext && validationErrors[field.name] ? 'border-red-500' : ''
+                        }`}
                       />
+                      {hasAttemptedNext && validationErrors[field.name] && (
+                        <span className="text-red-500 text-sm mt-1">{validationErrors[field.name]}</span>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -150,6 +195,27 @@ const Step6 = ({ formData, handleChange }) => {
         </div>
       </div>
     </div>
+      <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-center px-4 py-3 mt-4 border-t">
+                <button
+                  type="button"
+                  className={`w-full md:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200`}
+                  onClick={onPrev}
+                >
+                  Previous
+                </button>
+               
+                  <button
+                    type="button"
+                    className={
+                      "w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200 "
+                    }
+                    onClick={handleNextAction}
+                  >
+                    Next
+                  </button>
+                
+              </div>
+    </>
   );
 };
 

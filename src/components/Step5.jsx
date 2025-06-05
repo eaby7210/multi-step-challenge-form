@@ -146,7 +146,7 @@ const ADD_ONS = [
   { key: 'addon_walkthrough', label: 'Walk Through Video', price: 25 }
 ];
 
-const Step5 = ({ formData = {}, handleChange }) => {
+const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
   const [modal, setModal] = useState(null); // { item, addOns, submenu, ... }
   const [submenuState, setSubmenuState] = useState({});
   const [addOnState, setAddOnState] = useState({});
@@ -240,6 +240,7 @@ const Step5 = ({ formData = {}, handleChange }) => {
   };
 
   return (
+    <>
     <div className="mb-8">
       <h2 className="text-xl font-semibold text-main mb-4 text-center">A La Carte Menu</h2>
       <div className="flex flex-col gap-2 items-center w-full max-w-2xl mx-auto">
@@ -379,6 +380,27 @@ const Step5 = ({ formData = {}, handleChange }) => {
         </div>
       )}
     </div>
+      <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-center px-4 py-3 mt-4 border-t">
+                <button
+                  type="button"
+                  className={`w-full md:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200`}
+                  onClick={onPrev}
+                >
+                  Previous
+                </button>
+               
+                  <button
+                    type="button"
+                    className={
+                      "w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200 "
+                    }
+                    onClick={onNext}
+                  >
+                    Next
+                  </button>
+                
+              </div>
+    </>
   );
 };
 

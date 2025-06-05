@@ -1,6 +1,6 @@
 import { MapPin, Building } from 'lucide-react';
 
-const Step2 = ({ formData, handleChange }) => {
+const Step2 = ({ formData, handleChange, onNext, onPrev }) => {
   return (
     <>
       <div className="mb-6">
@@ -177,7 +177,26 @@ const Step2 = ({ formData, handleChange }) => {
         </div>
       </div>
      
-
+ <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-center px-4 py-3 mt-4 border-t">
+                <button
+                  type="button"
+                  className={`w-full md:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200`}
+                  onClick={onPrev}
+                >
+                  Previous
+                </button>
+               
+                  <button
+                    type="button"
+                    className={
+                      "w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200 "
+                    }
+                    onClick={onNext}
+                  >
+                    Next
+                  </button>
+                
+              </div>
       
     </>
   );

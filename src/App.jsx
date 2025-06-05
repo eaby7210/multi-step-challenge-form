@@ -44,6 +44,26 @@ export default function App() {
     return <Cancel />;
   }
 
+    const nextStep = () => {
+    // e.preventDefault();
+    if (steps[currentStep].validate()) {
+      const getNext = steps[currentStep].getNextStep;
+      console.log("formData", formData);
+      const next = getNext ? getNext(formData) : currentStep + 1;
+      if (next !== null && next < steps.length) {
+        setCurrentStep(next);
+      }
+    }
+  };
+
+  const prevStep = () => {
+    const getPrev = steps[currentStep].getPrevStep;
+    const prev = getPrev ? getPrev(formData) : currentStep - 1;
+    if (prev !== null && prev >= 0) {
+      setCurrentStep(prev);
+    }
+  };
+
   const handleChange = (e) => {
     if (e && e.target) {
       const { name, value, type, checked } = e.target;
@@ -75,7 +95,7 @@ export default function App() {
     {
       id: 1,
       title: "Unit Selection",
-      component: <Step1 formData={formData} handleChange={handleChange} />,
+      component: <Step1 formData={formData} handleChange={handleChange}  onNext={nextStep} onPrev={prevStep} />,
       validate: () => true, // Replace with actual function
       getNextStep: () => 1,
       getPrevStep: () => null, // No previous step for the first step
@@ -83,7 +103,7 @@ export default function App() {
     {
       id: 2,
       title: "Property Information",
-      component: <Step2 formData={formData} handleChange={handleChange} />,
+      component: <Step2 formData={formData} handleChange={handleChange} onNext={nextStep} onPrev={prevStep}/>,
       validate: () => true,
       getNextStep: () => 2,
       getPrevStep: () => 0,
@@ -91,7 +111,7 @@ export default function App() {
     {
       id: 3,
       title: "Service Type",
-      component: <Step3 formData={formData} handleChange={handleChange} />,
+      component: <Step3 formData={formData} handleChange={handleChange} onNext={nextStep} onPrev={prevStep}/>,
       validate: () => true,
       getNextStep: (formData) => {
         if (formData.serviceType === "a_la_carte") return 4;
@@ -102,7 +122,7 @@ export default function App() {
     {
       id: 4,
       title: "Bundled Services",
-      component: <Step4 formData={formData} handleChange={handleChange} />,
+      component: <Step4 formData={formData} handleChange={handleChange} onNext={nextStep} onPrev={prevStep}/>,
       validate: () => {
         const selectedGroup = formData.bundleGroup;
         const selectedItem = formData.bundleItem;
@@ -117,7 +137,7 @@ export default function App() {
     {
       id: 5,
       title: "A La Carte Menu",
-      component: <Step5 formData={formData} handleChange={handleChange} />,
+      component: <Step5 formData={formData} handleChange={handleChange} onNext={nextStep} onPrev={prevStep}/>,
       validate: () => true,
       getNextStep: () => 5,
       getPrevStep: (formData) => {
@@ -128,7 +148,7 @@ export default function App() {
     {
       id: 6,
       title: "Property Access",
-      component: <Step6 formData={formData} handleChange={handleChange} />,
+      component: <Step6 formData={formData} handleChange={handleChange} onNext={nextStep} onPrev={prevStep}/>,
       validate: () => true,
       getNextStep: () => 6,
       getPrevStep: (formData) => {
@@ -144,6 +164,7 @@ export default function App() {
           formData={formData}
           handleChange={handleChange}
           onNext={handleSubmit}
+          onPrev={prevStep}
         />
       ),
       validate: () => true,
@@ -152,25 +173,7 @@ export default function App() {
     },
   ];
 
-  const nextStep = () => {
-    // e.preventDefault();
-    if (steps[currentStep].validate()) {
-      const getNext = steps[currentStep].getNextStep;
-      console.log("formData", formData);
-      const next = getNext ? getNext(formData) : currentStep + 1;
-      if (next !== null && next < steps.length) {
-        setCurrentStep(next);
-      }
-    }
-  };
 
-  const prevStep = () => {
-    const getPrev = steps[currentStep].getPrevStep;
-    const prev = getPrev ? getPrev(formData) : currentStep - 1;
-    if (prev !== null && prev >= 0) {
-      setCurrentStep(prev);
-    }
-  };
 
   // Map step index to Lucide icon
   const stepIcons = [
@@ -466,7 +469,7 @@ export default function App() {
             )}
 
             {/* Sticky Navigation Buttons for all steps except last */}
-            {currentStep !== steps.length - 1 && (
+            {/* {currentStep !== steps.length - 1 && (
               <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-center px-4 py-3 mt-4 border-t">
                 <button
                   type="button"
@@ -489,7 +492,7 @@ export default function App() {
                   </button>
                 )}
               </div>
-            )}
+            )} */}
           </form>
         </div>
       </div>

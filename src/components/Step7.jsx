@@ -17,7 +17,7 @@ const Step7 = ({ formData, handleChange, onNext, onPrev, currentStep, stepsLengt
             <Clock className="w-5 h-5 text-primary" />
             Preferred Date & Time
           </label>
-          <div className="flex gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
             {/* Radio Input for TBD */}
             <label
               className={`flex-1 flex flex-col items-center justify-center cursor-pointer px-6 py-6 rounded-xl border-2 transition-all text-center shadow-sm
