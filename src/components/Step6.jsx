@@ -22,7 +22,8 @@ const ACCESS_OPTIONS = [
     label: 'Meet Contact On-site',
     icon: <UserCheck className="w-6 h-6 text-primary mr-2" />, 
     prompt: [
-      { name: 'contact_name', label: 'Contact Name', type: 'text', placeholder: 'Full name' },
+      { name: 'contact_first_name', label: 'Contact First Name', type: 'text', placeholder: 'First name' },
+      { name: 'contact_last_name', label: 'Contact Last Name', type: 'text', placeholder: 'Last name' },
       { name: 'contact_phone', label: 'Contact Phone', type: 'tel', placeholder: 'Phone number' },
       { name: 'contact_email', label: 'Contact Email', type: 'email', placeholder: 'Email address' }
     ]
@@ -61,30 +62,35 @@ const Step6 = ({ formData, handleChange, onPrev, onNext }) => {
   const isAccessSelected = (key) => !!formData[`access_${key}`];
 
   const validateForm = () => {
-    const errors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex for email validation
+  const errors = {};
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex for email validation
 
-    ACCESS_OPTIONS.forEach(option => {
-      if (isAccessSelected(option.key)) {
-        option.prompt.forEach(field => {
-          if (option.key === 'meet_contact' && field.name === 'contact_email') {
-            if ((formData[field.name] && field.type === 'email' )&& !emailRegex.test(formData[field.name])) {
+  // Validate occupancy status
+  if (!formData.occupancy_status || !['vacant', 'occupied'].includes(formData.occupancy_status)) {
+    errors.occupancy_status = "Occupancy status is required";
+  }
+
+  ACCESS_OPTIONS.forEach(option => {
+    if (isAccessSelected(option.key)) {
+      option.prompt.forEach(field => {
+        if (option.key === 'meet_contact' && field.name === 'contact_email') {
+          if ((formData[field.name] && field.type === 'email' )&& !emailRegex.test(formData[field.name])) {
             errors[field.name] = `${field.label} must be a valid email address`;
           }
-            return; // Skip validation for email in "Meet Contact On-site"
-          }
-          if (!formData[field.name]?.trim()) {
-            errors[field.name] = `${field.label} is required`;
-          }
-          else if (field.type === 'email' && !emailRegex.test(formData[field.name])) {
-            errors[field.name] = `${field.label} must be a valid email address`;
-          }
-        });
-      }
-    });
+          return; // Skip validation for email in "Meet Contact On-site"
+        }
+        if (!formData[field.name]?.trim()) {
+          errors[field.name] = `${field.label} is required`;
+        }
+        else if (field.type === 'email' && !emailRegex.test(formData[field.name])) {
+          errors[field.name] = `${field.label} must be a valid email address`;
+        }
+      });
+    }
+  });
 
-    return errors;
-  };
+  return errors;
+};
 
   const handleNextAction = () => {
     setHasAttemptedNext(true);
@@ -141,6 +147,9 @@ const Step6 = ({ formData, handleChange, onPrev, onNext }) => {
             <span className="font-medium text-lg">Occupied</span>
           </label>
         </div>
+           {hasAttemptedNext && validationErrors.occupancy_status && (
+  <div className="text-red-500 text-sm mt-2 text-center">{validationErrors.occupancy_status}</div>
+)}
       </div>
       {/* Access Options */}
       <div className="mb-4">
@@ -195,7 +204,9 @@ const Step6 = ({ formData, handleChange, onPrev, onNext }) => {
         </div>
       </div>
     </div>
-      <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-center px-4 py-3 mt-4 border-t">
+      <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] px-4 py-3 mt-4 border-t">
+   
+<div className='flex flex-col md:flex-row justify-between items-center'>
                 <button
                   type="button"
                   className={`w-full md:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200`}
@@ -213,7 +224,7 @@ const Step6 = ({ formData, handleChange, onPrev, onNext }) => {
                   >
                     Next
                   </button>
-                
+                </div>
               </div>
     </>
   );

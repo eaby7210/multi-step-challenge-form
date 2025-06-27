@@ -1,8 +1,114 @@
-import React from 'react';
-import { Calendar, Clock, User, Phone, Mail, Users } from 'lucide-react';
+import React,{useState} from 'react';
+import {
+      Calendar,
+      Clock,
+      User,
+      Phone,
+      Mail,
+      Users,
+      StickyNote
+       } from 'lucide-react';
+
+
+// import TextEditor from './TextEditor';
+
+
 
 const Step7 = ({ formData, handleChange, onNext, onPrev, currentStep, stepsLength }) => {
   const isLastStep = currentStep === stepsLength - 1;
+    const [errors, setErrors] = useState({});
+console.log('Step7 formData:', formData);
+function populateContact() {
+  
+  if (handleChange) {
+    handleChange({
+      target: {
+        name: 'contact_first_name_sched',
+        value: formData.contact_first_name || '',
+      },
+    });
+    handleChange({
+      target: {
+        name: 'contact_last_name_sched',
+        value: formData.contact_last_name || '',
+      },
+    });
+    handleChange({
+      target: {
+        name: 'contact_phone_sched',
+        value: formData.contact_phone || '',
+      },
+    });
+    handleChange({
+      target: {
+        name: 'contact_email_sched',
+        value: formData.contact_email || '',
+      },
+    });
+  }
+}
+const handleValidation = () => {
+  const newErrors = {};
+
+  // Preferred option is required
+  if (!formData.preferred_option) {
+    newErrors.preferred_option = "Please select a preferred date & time option.";
+  }
+
+  // If "specify" is selected, preferred_datetime is required
+  if (formData.preferred_option === "specify" && !formData.preferred_datetime) {
+    newErrors.preferred_datetime = "Please specify the date and time.";
+  }
+
+  // Point of Contact for Scheduling
+  if (!formData.contact_first_name_sched || !formData.contact_first_name_sched.trim()) {
+    newErrors.contact_first_name_sched = "First name is required.";
+  }
+  if (!formData.contact_last_name_sched || !formData.contact_last_name_sched.trim()) {
+    newErrors.contact_last_name_sched = "Last name is required.";
+  }
+  if (!formData.contact_phone_sched || !formData.contact_phone_sched.trim()) {
+    newErrors.contact_phone_sched = "Phone number is required.";
+  }
+  if (!formData.contact_email_sched || !formData.contact_email_sched.trim()) {
+    newErrors.contact_email_sched = "Email address is required.";
+  } else if (
+    formData.contact_email_sched &&
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contact_email_sched)
+  ) {
+    newErrors.contact_email_sched = "Email address is invalid.";
+  }
+
+  // Co-signer fields (only if cosigner is true)
+  if (formData?.cosigner) {
+    if (!formData.cosigner_first_name_sched || !formData.cosigner_first_name_sched.trim()) {
+      newErrors.cosigner_first_name_sched = "Co-signer first name is required.";
+    }
+    if (!formData.cosigner_last_name_sched || !formData.cosigner_last_name_sched.trim()) {
+      newErrors.cosigner_last_name_sched = "Co-signer last name is required.";
+    }
+    if (!formData.cosigner_phone_sched || !formData.cosigner_phone_sched.trim()) {
+      newErrors.cosigner_phone_sched = "Co-signer phone number is required.";
+    }
+    if (!formData.cosigner_email_sched || !formData.cosigner_email_sched.trim()) {
+      newErrors.cosigner_email_sched = "Co-signer email address is required.";
+    } else if (
+      formData.cosigner_email_sched &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.cosigner_email_sched)
+    ) {
+      newErrors.cosigner_email_sched = "Co-signer email address is invalid.";
+    }
+  }
+
+  // Special instructions are optional, so no validation
+
+  if (Object.keys(newErrors).length === 0) {
+    setErrors({});
+    onNext();
+  } else {
+    setErrors(newErrors);
+  }
+};
 
   return (
     <div className="mb-8">
@@ -52,9 +158,15 @@ const Step7 = ({ formData, handleChange, onNext, onPrev, currentStep, stepsLengt
               <span className="font-medium text-lg">Specify Date & Time</span>
             </label>
           </div>
+          {errors.preferred_option && (
+            <div className="text-red-500 text-sm mt-2 text-center">
+              {errors.preferred_option}
+            </div>
+          )}
 
           {/* Date & Time Input Field */}
           {formData.preferred_option === 'specify' && (
+            <>
             <div className="mt-4">
               <input
                 type="datetime-local"
@@ -64,27 +176,63 @@ const Step7 = ({ formData, handleChange, onNext, onPrev, currentStep, stepsLengt
                 className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
               />
             </div>
+            {errors.preferred_datetime && (
+              <div className="text-red-500 text-sm mt-2 text-center">
+                {errors.preferred_datetime} 
+              </div>
+            )}
+            
+            </>
           )}
         </div>
 
         {/* Point of Contact */}
         <div className="w-full max-w-md bg-card rounded-xl p-4 border border-primary flex flex-col gap-4 mt-4">
-          <div className="font-semibold text-main mb-2 flex items-center gap-2">
+          <div className="font-semibold text-main mb-2 w-full flex items-center gap-2">
             <User className="w-5 h-5 text-primary" />
             Point of Contact for Scheduling
+           
           </div>
+          {(formData?.contact_email || formData?.contact_name || formData?.contact_phone) &&
+           (<a
+              href="#"
+              onClick={e => { e.preventDefault(); populateContact(); }}
+              className="text-primary underline text-end self-end text-xs font-medium hover:text-cyan transition-colors duration-150 cursor-pointer"
+            >
+              Same as Access Option
+            </a>)}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <User className="w-4 h-4 text-primary" />
-              <input
-                type="text"
-                name="contact_name_sched"
-                value={formData.contact_name_sched || ''}
-                onChange={handleChange}
-                placeholder="Full Name"
-                className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
-              />
+              <div className="flex flex-col md:flex-row w-full items-center gap-2">
+
+                  <input
+                    type="text"
+                    name="contact_first_name_sched"
+                    value={formData.contact_first_name_sched || ''}
+                    onChange={handleChange}
+                    placeholder="First Name"
+                    className="border border-primary rounded p-2 w-full md:w-1/2 focus:ring-2 focus:ring-primary focus:border-primary text-main"
+                  />
+                  <input
+                    type="text"
+                    name="contact_last_name_sched"
+                    value={formData.contact_last_name_sched || ''}
+                    onChange={handleChange}
+                    placeholder="Last Name"
+                    className="border border-primary rounded p-2 w-full md:w-1/2 focus:ring-2 focus:ring-primary focus:border-primary text-main"
+                  />
+                </div>
+                
             </div>
+           
+            {(errors.contact_first_name_sched || errors.contact_last_name_sched) && (
+                  <div className="text-red-500 text-sm">
+                    Please provide both first and last names.
+                    </div>
+                )}
+               
+             
             <div className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-primary" />
               <input
@@ -96,6 +244,12 @@ const Step7 = ({ formData, handleChange, onNext, onPrev, currentStep, stepsLengt
                 className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
               />
             </div>
+            {errors.contact_phone_sched && (
+              <div className="text-red-500 text-sm text-center">
+                {errors.contact_phone_sched
+                }
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-primary" />
               <input
@@ -107,7 +261,100 @@ const Step7 = ({ formData, handleChange, onNext, onPrev, currentStep, stepsLengt
                 className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
               />
             </div>
+            {errors.contact_email_sched && (
+              <div className="text-red-500 text-sm text-center">
+                {errors.contact_email_sched}
+                </div>
+            )}
+            
           </div>
+
+        {formData?.cosigner &&
+          (<>
+          <div className="font-semibold text-main my-2 flex items-center gap-2">
+            <User className="w-5 h-5 text-primary" />
+            Co-signer
+          </div>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4 text-primary" />
+              <div className="flex flex-col md:flex-row w-full items-center gap-2">
+
+                  <input
+                    type="text"
+                    name="cosigner_first_name_sched"
+                    value={formData.cosigner_first_name_sched || ''}
+                    onChange={handleChange}
+                    placeholder="First Name"
+                    className="border border-primary rounded p-2 w-full md:w-1/2 focus:ring-2 focus:ring-primary focus:border-primary text-main"
+                  />
+                  <input
+                    type="text"
+                    name="cosigner_last_name_sched"
+                    value={formData.cosigner_last_name_sched || ''}
+                    onChange={handleChange}
+                    placeholder="Last Name"
+                    className="border border-primary rounded p-2 w-full md:w-1/2 focus:ring-2 focus:ring-primary focus:border-primary text-main"
+                  />
+                </div>
+            </div>
+            {(errors.cosigner_first_name_sched || errors.cosigner_last_name_sched) && (
+              <div className="text-red-500 text-sm">
+                Please provide both co-signer first and last names.
+                </div>)}
+            <div className="flex items-center gap-2">
+              <Phone className="w-4 h-4 text-primary" />
+              <input
+                type="tel"
+                name="cosigner_phone_sched"
+                value={formData.cosigner_phone_sched || ''}
+                onChange={handleChange}
+                placeholder="Phone Number"
+                className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
+              />
+            </div>
+            {errors.cosigner_phone_sched && (
+              <div className="text-red-500 text-sm text-center">
+                {errors.cosigner_phone_sched}
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-primary" />
+              <input
+                type="email"
+                name="cosigner_email_sched"
+                value={formData.cosigner_email_sched || ''}
+                onChange={handleChange}
+                placeholder="Email Address"
+                className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
+              />
+            </div>
+            {errors.cosigner_email_sched && (
+              <div className="text-red-500 text-sm text-center">
+                {errors.cosigner_email_sched}
+                </div>
+            )}
+          </div>
+          </>)
+        }
+
+          <div className="flex mt-2 items-start gap-2">
+            <StickyNote className="w-4 h-4 text-primary mt-2" />
+            <textarea
+              name="special_instructions"
+              value={formData.special_instructions || ''}
+              onChange={handleChange}
+              onInput={e => {
+                e.target.style.height = 'auto';
+                e.target.style.height = `${e.target.scrollHeight}px`;
+              }}
+              placeholder="Special Instructions (optional)"
+              className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main resize-none overflow-hidden"
+              style={{ minHeight: '80px' }}
+            />
+          </div>
+
+
         </div>
       </div>
       <div className="flex justify-between mt-8 gap-2">
@@ -121,7 +368,7 @@ const Step7 = ({ formData, handleChange, onNext, onPrev, currentStep, stepsLengt
         <button
           type="button"
           className="px-6 py-2 bg-primary text-inverse rounded-lg hover:bg-cyan focus:outline-none font-semibold text-lg shadow"
-          onClick={onNext}
+          onClick={handleValidation}
         >
           {isLastStep ? 'Submit' : 'Next'}
         </button>

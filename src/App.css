@@ -10,7 +10,7 @@
   --color-text-inverse: #fff;
 }
 
-.bg-main { background-color: var(--color-bg-main); }
+.bg-main { background-color: var(--color-bg-card); }
 .bg-card { background-color: var(--color-bg-card); }
 .bg-primary { background-color: var(--color-primary); }
 .bg-secondary { background-color: var(--color-secondary); }
@@ -39,6 +39,40 @@
 .label-active-gradient {
   background: linear-gradient(135deg, var(--color-secondary) 70%, var(--color-cyan) 100%);
   color: var(--color-text-inverse) !important;
+}
+
+.editor {
+  border: 1px solid var(--color-secondary);
+  border-radius: 4px;
+  padding: 10px;
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: var(--color-bg-card);
+}
+
+.editor .rdw-editor-toolbar {
+  border-bottom: 1px solid var(--color-secondary);
+  background-color: var(--color-bg-card);
+}
+
+.editor .rdw-editor-toolbar button {
+  margin: 0 5px;
+}
+
+.editor .rdw-editor-toolbar button:hover {
+  background-color: var(--color-bg-card);
+}
+
+.editor .rdw-editor-main {
+  padding: 10px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.editor .rdw-editor-main:focus {
+  outline: none;
+  border: 1px solid var(--color-primary);
 }
 
 /* Example card and docs classes */

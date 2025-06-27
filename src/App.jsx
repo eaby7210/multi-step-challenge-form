@@ -26,18 +26,19 @@ export default function App() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({});
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showFraudModal, setShowFraudModal] = useState(false);
   const termsRef = useRef(null);
 
   const searchParams = new URLSearchParams(window.location.search);
   const status = searchParams.get("status");
   const session_id = searchParams.get("session_id");
-  console.log(
-    "Search params:",
-    searchParams.toString(),
-    "/n window:",
-    window.location.search
-  );
-  console.log(status);
+  // console.log(
+  //   "Search params:",
+  //   searchParams.toString(),
+  //   "/n window:",
+  //   window.location.search
+  // );
+  // console.log(status);
   if (status === "success") {
     return <Success session_id={session_id}/>;
   } else if (status === "cancel") {
@@ -48,7 +49,7 @@ export default function App() {
     // e.preventDefault();
     if (steps[currentStep].validate()) {
       const getNext = steps[currentStep].getNextStep;
-      console.log("formData", formData);
+      console.log("formData", JSON.stringify(formData, null, 2));
       const next = getNext ? getNext(formData) : currentStep + 1;
       if (next !== null && next < steps.length) {
         setCurrentStep(next);
@@ -91,7 +92,8 @@ export default function App() {
     setShowTermsModal(true);
   };
 
-  const steps = [
+  const steps = 
+  [
     {
       id: 1,
       title: "Unit Selection",
@@ -353,11 +355,43 @@ export default function App() {
     );
   };
 
+  // Fraud Info Modal
+  const FraudModal = () => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 relative flex flex-col">
+        <h2 className="text-2xl font-bold text-primary mb-4">The Moment Money or Property Changes Hands—You Need a Notary!</h2>
+        <p className="mb-2 text-main text-sm">
+          Whenever a document transfers ownership, access, or financial interest, notarization isn’t just a good idea—it’s often a legal requirement.
+        </p>
+        <p className="mb-2 text-main text-sm">We’re talking about documents like:</p>
+        <ul className="list-disc pl-6 mb-2 text-main text-sm">
+          <li>Deeds (Grant, Quitclaim, Warranty)</li>
+          <li>Powers of Attorney (POA)</li>
+          <li>Authorization to Sign Listing Docs (AIF)</li>
+          <li>Promissory Notes</li>
+          <li>Easements or Land Use Agreements</li>
+          <li>Mortgages and Deeds of Trust</li>
+        </ul>
+        <p className="mb-4 text-main text-sm">
+          These aren’t low-stakes forms. These are high-liability, high-value transactions—and courts, title companies, and financial institutions expect them to be notarized.<br/>
+          Skipping this step could invalidate your deal, delay funding, or worse—open the door for fraud that you can’t unwind.
+        </p>
+        <button
+          className="px-4 py-2 rounded bg-primary text-white font-semibold hover:bg-blue-700 w-full mt-2"
+          onClick={() => setShowFraudModal(false)}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="bg-main flex min-h-screen">
+    <div className="bg-main flex flex-col md:flex-row min-h-screen">
       {showTermsModal && <TermsModal />}
+      {showFraudModal && <FraudModal />}
       {/* Sidebar Progress Tracker (desktop) */}
-      <aside className="hidden md:flex flex-col items-center py-10 px-4 bg-white shadow-lg min-w-[180px] h-screen z-30">
+      <aside className="hidden md:flex flex-col items-center py-10 px-4 bg-white shadow-lg  lg:min-w-[150px] xl:min-w-[200px] max-w-[250px] flex-grow">
         <img
           src={logoBlack}
           alt="InvestorBootz Logo"
@@ -384,7 +418,7 @@ export default function App() {
                 {stepIcons[idx]}
               </div>
               <span
-                className={`font-semibold text-sm truncate ${
+                className={`font-semibold text-sm truncate y-2 ${
                   idx === currentStep ? "text-primary" : "text-gray-500"
                 }`}
               >
@@ -393,12 +427,33 @@ export default function App() {
             </li>
           ))}
         </ol>
-        <div className="mt-auto text-xs text-gray-400 font-medium pt-8">
+        {/* Fraud Warning CTA */}
+     
+        <div className="sticky bottom-0 left-0 w-full mt-auto text-xs text-gray-400 font-medium pt-8 pb-3">
+             <div className="w-full p-4 sm:p-6 mb-6 rounded shadow-sm bg-yellow-50 text-xs">
+  <div className="flex flex-col gap-2 sm:gap-1">
+    <span className="font-bold text-yellow-800 flex items-center gap-2 text-xs ">
+      <span role="img" aria-label="warning">🚨</span>
+      Real Estate Fraud Is Surging.
+    </span>
+    <span className="text-yellow-900">
+      Here’s How to Stay Protected.&nbsp;
+      <span
+        className="block sm:inline text-blue-700 underline font-semibold hover:text-blue-900 cursor-pointer mt-1 sm:mt-0"
+        onClick={() => setShowFraudModal(true)}
+        role="button"
+      >
+        Learn More
+      </span>
+    </span>
+  </div>
+</div>
+
           Step {currentStep + 1} of {steps.length}
         </div>
       </aside>
       {/* Main Content + Mobile Progress Bar */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-h-screen">
         {/* Mobile Progress Bar */}
         <div
           className="md:hidden bg-main pb-2 pt-2"
@@ -446,9 +501,26 @@ export default function App() {
                 Step {currentStep + 1} of {steps.length}
               </span>
             </div>
+            {/* Mobile Fraud Warning CTA */}
+            <div className="w-full px-3 py-3 mb-4 rounded shadow-sm text-center bg-yellow-50 text-xs flex flex-col gap-1">
+              <span className="font-bold text-yellow-800 mx-auto flex items-center gap-2 text-xs">
+                <span role="img" aria-label="warning" className="">🚨</span>
+                Real Estate Fraud Is Surging.
+              </span>
+              <span className="text-yellow-900">
+                Here’s How to Stay Protected.&nbsp;
+                <span
+                  className="inline text-blue-700 underline font-semibold hover:text-blue-900 cursor-pointer mt-1"
+                  onClick={() => setShowFraudModal(true)}
+                  role="button"
+                >
+                  Learn More
+                </span>
+              </span>
+            </div>
           </div>
         </div>
-        <div className="bg-card rounded-lg shadow-lg p-4 md:p-10 max-w-3xl mx-auto mt-4 md:mt-10 w-full md:w-auto">
+        <div className="bg-card rounded-lg shadow-lg p-4 md:p-10 max-w-3xl mx-auto mt-4 md:mt-10 w-full md:w-auto flex-grow">
           <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-primary font-sans tracking-tight leading-snug md:leading-tight">
             Let’s Get Your Property Order Started
           </h1>
@@ -495,6 +567,7 @@ export default function App() {
             )} */}
           </form>
         </div>
+        
       </div>
     </div>
   );

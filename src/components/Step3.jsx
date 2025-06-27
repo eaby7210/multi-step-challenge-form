@@ -7,7 +7,34 @@ const Step3 = ({ formData, handleChange, onNext, onPrev }) => {
       handleChange({ name: 'serviceType', value: 'bundled' });
     }
   }, [formData.serviceType, handleChange]);
+  function cleanFormData(formData) {
 
+
+  if (formData.serviceType === "bundled") {
+    // Remove all keys starting with a_la_carte
+    Object.keys(formData).forEach(key => {
+      if (key.startsWith("a_la_carte")) {
+        delete formData[key];
+      }
+    });
+  } else if (formData.serviceType === "a_la_carte") {
+    // Remove bundleGroup and bundleItem
+    delete formData.bundleGroup;
+    delete formData.bundleItem;
+    delete formData.bundlePrice;
+  }
+
+  console.log("Cleaned formData:", formData);
+}
+
+function handleValidation() {
+  
+ cleanFormData(formData);
+
+  onNext()
+  // Perform any additional validation logic here
+}
+  
   return (
     <>
       <div className="mb-8">
@@ -66,7 +93,7 @@ const Step3 = ({ formData, handleChange, onNext, onPrev }) => {
                     className={
                       "w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200 "
                     }
-                    onClick={onNext}
+                    onClick={handleValidation}
                   >
                     Next
                   </button>
