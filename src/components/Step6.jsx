@@ -24,8 +24,18 @@ const ACCESS_OPTIONS = [
     prompt: [
       { name: 'contact_first_name', label: 'Contact First Name', type: 'text', placeholder: 'First name' },
       { name: 'contact_last_name', label: 'Contact Last Name', type: 'text', placeholder: 'Last name' },
+      { 
+        name: 'contact_phone_type', 
+        label: 'Phone Type', 
+        type: 'select', 
+        options: [
+          { value: '', label: 'Select type', disable:true },
+          { value: 'mobile', label: 'Mobile' },
+          { value: 'landline', label: 'Landline' }
+        ]
+      },
       { name: 'contact_phone', label: 'Contact Phone', type: 'tel', placeholder: 'Phone number' },
-      { name: 'contact_email', label: 'Contact Email', type: 'email', placeholder: 'Email address' }
+      // { name: 'contact_email', label: 'Contact Email', type: 'email', placeholder: 'Email address' }
     ]
   },
   {
@@ -180,8 +190,23 @@ const Step6 = ({ formData, handleChange, onPrev, onNext }) => {
               {isAccessSelected(option.key) && option.prompt.length > 0 && (
                 <div className="mt-2 ml-8 flex flex-col gap-2">
                   {option.prompt.map(field => (
-                    <div key={field.name} className="flex flex-col">
-                      <label className="text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+                  <div key={field.name} className="flex flex-col">
+                    <label className="text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+                    {field.type === 'select' ? (
+                      <select
+                        name={field.name}
+                        value={formData[field.name] || ''}
+                        onChange={handleChange}
+                        className={`border rounded p-2 focus:ring-2 focus:ring-primary focus:border-primary ${
+                          hasAttemptedNext && validationErrors[field.name] ? 'border-red-500' : ''
+                        }`}
+                        // Disable if any option is marked as disable
+                      >
+                        {field.options.map(opt => (
+                          <option key={opt.value} value={opt.value} disabled={opt.disable}>{opt.label}</option>
+                        ))}
+                      </select>
+                    ) : (
                       <input
                         type={field.type}
                         name={field.name}
@@ -192,15 +217,17 @@ const Step6 = ({ formData, handleChange, onPrev, onNext }) => {
                           hasAttemptedNext && validationErrors[field.name] ? 'border-red-500' : ''
                         }`}
                       />
-                      {hasAttemptedNext && validationErrors[field.name] && (
-                        <span className="text-red-500 text-sm mt-1">{validationErrors[field.name]}</span>
-                      )}
-                    </div>
-                  ))}
+                    )}
+                    {hasAttemptedNext && validationErrors[field.name] && (
+                      <span className="text-red-500 text-sm mt-1">{validationErrors[field.name]}</span>
+                    )}
+                  </div>
+                ))}
                 </div>
               )}
             </div>
           ))}
+  
         </div>
       </div>
     </div>

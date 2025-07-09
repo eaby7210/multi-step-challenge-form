@@ -1,49 +1,71 @@
 import React, { useState } from 'react';
 import { HelpCircle, Plus, X, ChevronDown, AlertTriangle } from 'lucide-react';
 
+const NOTES = {
+  cancellation: {
+    symbol: '$',
+    description: 'May include cancellation fee'
+  },
+  travel: {
+    symbol: '🚗',
+    description: 'May include travel fee'
+  },
+  TBD: {
+    symbol: 'TBD',
+    description: 'Pricing based on scope of work'
+  }
+};
+
 const A_LA_CARTE_ITEMS = [
   {
     key: 'photos',
     name: 'Exterior & Interior Photos',
     price: 165,
-    description: 'Professional exterior and interior photos to showcase your property.'
+    description: 'Professional exterior and interior photos to showcase your property.',
+    notes: ['cancellation', 'travel']
   },
   {
     key: 'lockbox_same_day',
     name: 'Lock Box Setup (Same Day)',
     price: 120,
-    description: 'Lock box setup with same-day service.'
+    description: 'Lock box setup with same-day service.',
+    notes: ['cancellation', 'travel']
   },
   {
     key: 'lockbox_48hr',
     name: 'Lock Box Setup (48-Hour Notice)',
     price: 100,
-    description: 'Lock box setup with 48-hour advance notice.'
+    description: 'Lock box setup with 48-hour advance notice.',
+    notes: ['travel']
   },
   {
     key: 'doc_signed',
     name: 'Document Signed/Notarized with Same-Day Scans',
     price: 90,
-    description: 'Get your documents signed or notarized and scanned the same day.'
+    description: 'Get your documents signed or notarized and scanned the same day.',
+    notes: ['cancellation']
   },
   {
     key: 'floor_plans',
     name: '2D Floor Plans',
-    price: null,
-    description: 'Professional 2D floor plans for your property.'
+    price: 110,
+    description: 'Professional 2D floor plans for your property.',
+    notes: []
   },
   {
     key: 'showing',
     name: 'Property Showing (1 HR)',
     price: 70,
     description: 'One hour property showing. Add $35 per half hour after first hour.',
-    prompt: 'Add $35 per half hour after first hour'
+    prompt: 'Add $35 per half hour after first hour',
+    notes: ['cancellation', 'travel']
   },
   {
     key: 'walkthrough',
     name: 'Walk Through Video',
     price: 75,
-    description: 'A walk-through video tour of your property.'
+    description: 'A walk-through video tour of your property.',
+    notes: ['cancellation', 'travel']
   },
   {
     key: 'maintenance',
@@ -51,42 +73,44 @@ const A_LA_CARTE_ITEMS = [
     price: null,
     description: 'Request home maintenance, repair, or preservation services.',
     submenu: {
-     prompt: 'Describe the request',
-    inputType: 'textarea'
-  },
-
+      prompt: 'Describe the request',
+      inputType: 'textarea'
+    },
+    notes: ['travel','TBD']
   },
   {
     key: 'letter_posting',
     name: 'Letter Posting',
     price: 70,
-    description: 'Post letters at the property as needed.'
+    description: 'Post letters at the property as needed.',
+    notes: ['travel']
   },
   {
     key: 'wellness',
     name: 'Wellness Check',
     price: 70,
-    description: 'A wellness check on the property.'
+    description: 'A wellness check on the property.',
+    notes: ['travel']
   },
   {
     key: 'mls_photography',
     name: 'Premium MLS Photography',
-    price: null,
+    price: 239,
     description: 'Premium MLS-ready photography packages.',
     submenu: {
       options: [
         { label: '30 Photo Package', value: '30', price: 0 },
         { label: '50 Photo Package', value: '50', price: 50 }
-      ],
-      
+      ]
     },
     addOns: [
-        { label: 'Aerial Photos', key: 'aerial', price: 40 },
-        { label: 'Drone Videos', key: 'drone', price: 60 },
-        { label: '3D Tours', key: '3d', price: 100 },
-        { label: 'Twilight', key: 'twilight', price: 30 },
-        { label: 'Staging', key: 'staging', price: 80 }
-      ]
+      { label: 'Aerial Photos', key: 'aerial', price: 40 },
+      { label: 'Drone Videos', key: 'drone', price: 60 },
+      { label: '3D Tours', key: '3d', price: 100 },
+      { label: 'Twilight', key: 'twilight', price: 30 },
+      { label: 'Staging', key: 'staging', price: 80 }
+    ],
+    notes: ['cancellation', 'travel']
   },
   {
     key: 'bandit_signs',
@@ -99,19 +123,22 @@ const A_LA_CARTE_ITEMS = [
         { label: '15 Signs', value: '15', price: 25 },
         { label: '20 Signs', value: '20', price: 50 }
       ]
-    }
+    },
+    notes: ['travel','TBD']
   },
   {
     key: 'landview',
     name: 'LandView Photos',
     price: 130,
-    description: 'Specialized LandView photography.'
+    description: 'Specialized LandView photography.',
+    notes: ['cancellation', 'travel']
   },
   {
     key: 'move_in_out',
     name: 'Move-In/Move-Out Photo Inspection',
     price: 165,
-    description: 'Photo inspection for move-in or move-out.'
+    description: 'Photo inspection for move-in or move-out.',
+    notes: ['cancellation', 'travel']
   },
   {
     key: 'doc_recording',
@@ -123,11 +150,11 @@ const A_LA_CARTE_ITEMS = [
         { label: 'Recording Fee Required?', value: 'yes' },
         { label: 'No Recording Fee', value: 'no' }
       ],
-    prompt: 'Enter Amount',
-      inputType: 'number',
-  },
-    
+      prompt: 'Enter Amount',
+      inputType: 'number'
     },
+    notes: []
+  },
   {
     key: 'licensed_inspection',
     name: 'Licensed Home Inspection',
@@ -139,9 +166,11 @@ const A_LA_CARTE_ITEMS = [
         { label: 'Comprehensive', value: 'comprehensive', price: 350 },
         { label: 'Specialty', value: 'specialty', price: 450 }
       ]
-    }
+    },
+    notes: ['cancellation', 'travel','TBD']
   }
 ];
+
 
 const REDUCED_NAMES = {
   photos: 'Photos',
@@ -171,9 +200,10 @@ A_LA_CARTE_ITEMS.forEach(item => {
 // console.log('A La Carte Items:', A_LA_CARTE_ITEMS);
 const ADD_ONS = [
   {
-     key: 'notarized_doc',
-      label: 'One Document Signed/Notarized',
-       price: 40,
+    key: 'notarized_doc',
+    label: 'One Document Signed/Notarized',
+    price: 40,
+    notes: ['cancellation'], 
         cation: (
                   <div className="flex flex-col items-start sm:items-center justify-center gap-2 text-sm sm:text-base text-center sm:text-left px-4">
               <span className="flex items-center gap-1 font-bold text-red-600">
@@ -187,11 +217,32 @@ const ADD_ONS = [
            ),  
     cosigner:true,
       },
-  { key: 'additional_doc', label: 'Each Additional Doc', price: 15 },
-  { key: 'measurements', label: 'Measurements', price: 30 },
-  { key: 'addon_floor_plan', label: '2D Floor Plan', price: 95 },
-  { key: 'addon_walkthrough', label: 'Walk Through Video', price: 25 }
+  {
+    key: 'additional_doc',
+    label: 'Each Additional Doc',
+    price: 15,
+    notes: ['cancellation']  
+  },
+  {
+    key: 'measurements',
+    label: 'Measurements',
+    price: 30,
+    notes: ['travel']  
+  },
+  {
+    key: 'addon_floor_plan',
+    label: '2D Floor Plan',
+    price: 95,
+    notes: []
+  },
+  {
+    key: 'addon_walkthrough',
+    label: 'Walk Through Video',
+    price: 25,
+    notes: ['cancellation', 'travel']
+  }
 ];
+
 
 const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
   const [modal, setModal] = useState(null); // { item, addOns, submenu, ... }
@@ -359,13 +410,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
             >
               
               <div className="flex items-center w-full justify-between mb-1 overflow-auto">
-                <span className={`font-medium text-sm flex items-center truncate max-w-[60%] ${selected ? 'text-inverse' : 'text-main'}`} style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>
-                {item.name}
-                <HelpCircle className={`w-3 h-3 ml-1 shrink-0 ${selected ? 'text-inverse' : 'text-primary'}`} />
-              </span>
-                {item.price && (
-                  <span className={`text-base font-semibold ml-2 whitespace-nowrap ${selected ? 'text-inverse' : 'text-primary'}`}>${item.price}</span>
-                )}
+                <span className={` text-sm flex items-center truncate max-w-[60%] ${selected ? 'text-inverse font-bold' : 'text-main font-medium'}`} style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>
                 {selected && (
                   <span className="ml-2 text-green-600 font-bold shrink-0" title="Selected">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 20 20">
@@ -373,11 +418,60 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
                       <path d="M6 10.5l2.5 2.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
-                )}
+                )}{item.name}
+                <HelpCircle className={`w-3 h-3 ml-1 shrink-0 ${selected ? 'text-inverse' : 'text-primary'}`} />
+              </span>
+              {selected ? (
+  <span className={`text-base font-semibold ml-2 whitespace-nowrap ${selected ? 'text-inverse' : 'text-primary'}`}>
+    {item.price === null
+      ? `$${formData[`a_la_carte_${item.key}`]?.total_price || 0} + TBD`
+      : `$${formData[`a_la_carte_${item.key}`]?.total_price || item.price}`}
+  </span>
+) : (
+  <span className={`text-base font-semibold ml-2 whitespace-nowrap text-primary`}>
+    {item.price === null ? 'TBD' : `$${item.price}`}
+  </span>
+)}
+                
               </div>
               <div className={`text-xs mt-1 text-wrap ${selected ? 'text-inverse opacity-80' : 'text-main opacity-80'}`}>{item.description}</div>
               {item.prompt && <div className="text-xs text-main opacity-60 italic  w-full">{item.prompt}</div>}
-              {selected && (
+              {selected && (<>
+               {(() => {
+  const data = formData[`a_la_carte_${item.key}`];
+  const hasAddOns = data?.addOns && Object.keys(data.addOns).length > 0;
+  const hasSubmenu = data?.submenu && Object.keys(data.submenu).length > 0;
+  
+  return (
+    <>
+      {hasSubmenu && (
+        <div className="text-xs font-semibold text-inverse mt-1">
+          {data.submenu.option && (
+            <div>
+              <span className="font-semibold">Option:</span> {data.submenu.label || data.submenu.option}
+            </div>
+          )}
+          {data.submenu.prompt && data.submenu.prompt_value && (
+            <div>
+              <span className="font-semibold">{data.submenu.prompt}:</span> {data.submenu.prompt_value}
+            </div>
+          )}
+        </div>
+      )}
+
+      {hasAddOns && (
+        <div className="text-xs font-semibold text-inverse mt-1">
+          <span className="font-semibold">Add-ons:</span>&nbsp;
+          {Object.entries(data.addOns)
+            .map(([key, addon]) => addon.label || key)
+            .join(", ")
+          }
+        </div>
+      )}
+    </>
+  );
+})()}
+
                 <button
                   type="button"
                   className="mt-1 px-2 py-1 rounded bg-danger text-inverse text-xs font-semibold shadow hover:bg-danger-dark border-none z-20"
@@ -386,7 +480,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
                 >
                   Remove
                 </button>
-              )}
+              </>)}
             </div>
           );
         })}
@@ -398,7 +492,14 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
             <button className="absolute top-3 right-3 text-main hover:text-primary" onClick={closeModal}><X className="w-6 h-6" /></button>
             <h3 className="text-lg font-bold mb-2 text-main">Want to Maximize This Visit?</h3>
             <div className="mb-2 text-main">
-              You're already getting <br/><span className='font-bold'>{modal.item.name}</span> — why not make this visit work even harder for you?
+              You're already getting <br/><span className='font-bold'>
+                {modal.item.name}
+{modal.item.notes?.map((key, idx) => (
+  <sup key={idx} title={NOTES[key]?.description} className="ml-1 text-xs align-super text-gray-600">
+    {NOTES[key]?.symbol}{" "}
+  </sup>
+))}
+                </span> — why not make this visit work even harder for you?
             </div>
             {/* Submenu logic */}
             {modal.item.submenu && (
@@ -456,12 +557,22 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
                         checked={!!addOnState[addonKey]}
                         onChange={e => handleAddOnChange(addonKey, e.target.checked)}
                       />
-                      <span className="text-main">
-                        {addon.label}
-                        {addon.price !== undefined && (
-                          <span className="text-primary font-semibold"> ${addon.price}</span>
-                        )}
-                      </span>
+                      <span className="text-main flex items-center gap-1">
+  {addon.label}
+  {addon.notes?.map((noteKey, i) => (
+    <sup
+      key={i}
+      title={NOTES[noteKey]?.description}
+      className="text-xs align-super text-gray-600"
+    >
+      {NOTES[noteKey]?.symbol}
+    </sup>
+  ))}
+  {addon.price !== undefined && (
+    <span className="text-primary font-semibold"> ${addon.price}</span>
+  )}
+</span>
+
                     </label>
                   );
                 })}
@@ -482,6 +593,35 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
               <p className="text-gray-700 font-medium">
     Add-ons are handled by the same trusted <span className="font-semibold">BootzForce Rep™</span> — no rescheduling needed.
   </p>
+   {(() => {
+  const itemNotes = modal.item.notes || [];
+
+  const currentAddOns = modal.item.addOns?.length ? modal.item.addOns : ADD_ONS;
+  const selectedAddOnNotes = Object.keys(addOnState)
+    .flatMap(key => {
+      const addon = currentAddOns.find(
+        a => (a.key || a.value || a.label) === key && addOnState[key]
+      );
+      return addon?.notes || [];
+    });
+  console.log("current addons")
+  console.log(currentAddOns)
+  
+
+  // Merge and deduplicate
+  const allNoteKeys = [...new Set([...itemNotes, ...selectedAddOnNotes])];
+
+  return allNoteKeys.length > 0 && (
+    <div className="mt-4">
+      {allNoteKeys.map((key, idx) => (
+        <p key={idx} className="ml-1 text-sm" title={NOTES[key]?.description}>
+          <span className="align-super text-xs">{NOTES[key]?.symbol}</span> {NOTES[key]?.description}
+        </p>
+      ))}
+    </div>
+  );
+})()}
+
             <div className="flex justify-end gap-2 mt-4">
               <button className="px-4 py-2 bg-secondary text-inverse rounded-lg hover:bg-primary hover:text-inverse" onClick={closeModal}>Cancel</button>
               {Object.keys(submenuState).length || Object.keys(addOnState).length ? (

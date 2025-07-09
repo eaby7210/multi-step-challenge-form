@@ -6,7 +6,8 @@ import {
       Phone,
       Mail,
       Users,
-      StickyNote
+      StickyNote,
+      Tag
        } from 'lucide-react';
 
 
@@ -67,17 +68,20 @@ const handleValidation = () => {
   if (!formData.contact_last_name_sched || !formData.contact_last_name_sched.trim()) {
     newErrors.contact_last_name_sched = "Last name is required.";
   }
+  if (!formData.contact_phone_type_sched){
+    newErrors.contact_phone_type_sched = "Phone type is required"
+  }
   if (!formData.contact_phone_sched || !formData.contact_phone_sched.trim()) {
     newErrors.contact_phone_sched = "Phone number is required.";
   }
-  if (!formData.contact_email_sched || !formData.contact_email_sched.trim()) {
-    newErrors.contact_email_sched = "Email address is required.";
-  } else if (
-    formData.contact_email_sched &&
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contact_email_sched)
-  ) {
-    newErrors.contact_email_sched = "Email address is invalid.";
-  }
+  // if (!formData.contact_email_sched || !formData.contact_email_sched.trim()) {
+  //   newErrors.contact_email_sched = "Email address is required.";
+  // } else if (
+  //   formData.contact_email_sched &&
+  //   !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contact_email_sched)
+  // ) {
+  //   newErrors.contact_email_sched = "Email address is invalid.";
+  // }
 
   // Co-signer fields (only if cosigner is true)
   if (formData?.cosigner) {
@@ -87,17 +91,20 @@ const handleValidation = () => {
     if (!formData.cosigner_last_name_sched || !formData.cosigner_last_name_sched.trim()) {
       newErrors.cosigner_last_name_sched = "Co-signer last name is required.";
     }
+    if (!formData.cosigner_phone_type_sched){
+    newErrors.cosigner_phone_type_sched = "Phone type is required"
+  }
     if (!formData.cosigner_phone_sched || !formData.cosigner_phone_sched.trim()) {
       newErrors.cosigner_phone_sched = "Co-signer phone number is required.";
     }
-    if (!formData.cosigner_email_sched || !formData.cosigner_email_sched.trim()) {
-      newErrors.cosigner_email_sched = "Co-signer email address is required.";
-    } else if (
-      formData.cosigner_email_sched &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.cosigner_email_sched)
-    ) {
-      newErrors.cosigner_email_sched = "Co-signer email address is invalid.";
-    }
+    // if (!formData.cosigner_email_sched || !formData.cosigner_email_sched.trim()) {
+    //   newErrors.cosigner_email_sched = "Co-signer email address is required.";
+    // } else if (
+    //   formData.cosigner_email_sched &&
+    //   !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.cosigner_email_sched)
+    // ) {
+    //   newErrors.cosigner_email_sched = "Co-signer email address is invalid.";
+    // }
   }
 
   // Special instructions are optional, so no validation
@@ -188,9 +195,11 @@ const handleValidation = () => {
 
         {/* Point of Contact */}
         <div className="w-full max-w-md bg-card rounded-xl p-4 border border-primary flex flex-col gap-4 mt-4">
+          
           <div className="font-semibold text-main mb-2 w-full flex items-center gap-2">
-            <User className="w-5 h-5 text-primary" />
-            Point of Contact for Scheduling
+           <span><User className="w-5 h-5 text-primary" /></span>
+            <span>Point of Contact for Scheduling Appointment</span>
+            
            
           </div>
           {(formData?.contact_email || formData?.contact_name || formData?.contact_phone) &&
@@ -199,7 +208,7 @@ const handleValidation = () => {
               onClick={e => { e.preventDefault(); populateContact(); }}
               className="text-primary underline text-end self-end text-xs font-medium hover:text-cyan transition-colors duration-150 cursor-pointer"
             >
-              Same as Access Option
+              Same as Contact on Site
             </a>)}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
@@ -232,7 +241,28 @@ const handleValidation = () => {
                     </div>
                 )}
                
-             
+          
+            {/* Phone Type Select */}
+            <div className="flex items-center gap-2">
+              <Phone className="w-4 h-4 text-primary" />
+              <select
+                name="contact_phone_type_sched"
+                value={formData.contact_phone_type_sched || ''}
+                onChange={handleChange}
+                className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
+              >
+                <option value="">Select Phone Type</option>
+                <option value="mobile">Mobile</option>
+                <option value="landline">Landline</option>
+              </select>
+            </div>
+            {errors.contact_phone_type_sched && (
+              <div className="text-red-500 text-sm text-center">
+                {errors.contact_phone_type_sched}
+              </div>
+            )}
+
+
             <div className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-primary" />
               <input
@@ -250,7 +280,7 @@ const handleValidation = () => {
                 }
               </div>
             )}
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-primary" />
               <input
                 type="email"
@@ -265,7 +295,7 @@ const handleValidation = () => {
               <div className="text-red-500 text-sm text-center">
                 {errors.contact_email_sched}
                 </div>
-            )}
+            )} */}
             
           </div>
 
@@ -273,7 +303,7 @@ const handleValidation = () => {
           (<>
           <div className="font-semibold text-main my-2 flex items-center gap-2">
             <User className="w-5 h-5 text-primary" />
-            Co-signer
+            <span>Co-signer</span>
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
@@ -302,6 +332,28 @@ const handleValidation = () => {
               <div className="text-red-500 text-sm">
                 Please provide both co-signer first and last names.
                 </div>)}
+            
+            {/* Phone Type Select */}
+            <div className="flex items-center gap-2">
+              <Phone className="w-4 h-4 text-primary" />
+              <select
+                name="cosigner_phone_type_sched"
+                value={formData.cosigner_phone_type_sched || ''}
+                onChange={handleChange}
+                className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
+              >
+                <option value="">Select Phone Type</option>
+                <option value="mobile">Mobile</option>
+                <option value="landline">Landline</option>
+              </select>
+            </div>
+            {errors.cosigner_phone_type_sched && (
+              <div className="text-red-500 text-sm text-center">
+                {errors.cosigner_phone_type_sched}
+              </div>
+            )}
+
+
             <div className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-primary" />
               <input
@@ -318,7 +370,7 @@ const handleValidation = () => {
                 {errors.cosigner_phone_sched}
               </div>
             )}
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <Mail className="w-4 h-4 text-primary" />
               <input
                 type="email"
@@ -333,7 +385,7 @@ const handleValidation = () => {
               <div className="text-red-500 text-sm text-center">
                 {errors.cosigner_email_sched}
                 </div>
-            )}
+            )} */}
           </div>
           </>)
         }
@@ -356,6 +408,28 @@ const handleValidation = () => {
 
 
         </div>
+           {/* Coupon Code Field */}
+          <div className="mt-4 w-full">
+            <label className="font-semibold mb-2 flex items-center gap-2 text-main">
+              <Tag className="w-5 h-5 text-primary" />
+              Coupon Code
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                name="coupon_code"
+                value={formData.coupon_code || ''}
+                onChange={handleChange}
+                placeholder="Enter coupon code (if any)"
+                className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
+              />
+            </div>
+            {errors.coupon_code && (
+              <div className="text-red-500 text-sm text-center mt-1">
+                {errors.coupon_code}
+              </div>
+            )}
+          </div>
       </div>
       <div className="flex justify-between mt-8 gap-2">
         <button

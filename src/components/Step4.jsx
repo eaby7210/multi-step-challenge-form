@@ -130,19 +130,21 @@ const bundles = [
 
 const Step4 = ({ formData = {}, handleChange, onNext, onPrev }) => {
 	const [selectedGroupIdx, setSelectedGroupIdx] = useState(() => {
-		// If formData.bundleGroup exists, set initial group index accordingly
-		const idx = bundles.findIndex((b) => b.group === formData.bundleGroup);
-		return idx !== -1 ? idx : 0;
-	});
+  const idx = bundles.findIndex((b) => b.group === formData.bundleGroup);
+  return idx !== -1 ? idx : null;
+});
+
 	const [selectedItemIdx, setSelectedItemIdx] = useState(() => {
-		// If formData.bundleItem exists, set initial item index accordingly
-		const group = bundles[selectedGroupIdx];
-		if (formData.bundleItem && group) {
-			const idx = group.items.findIndex((i) => i.name === formData.bundleItem);
-			return idx !== -1 ? idx : null;
-		}
-		return null;
-	});
+  const group = bundles[selectedGroupIdx];
+  if (formData.bundleItem && group) {
+    const idx = group.items.findIndex((i) => i.name === formData.bundleItem);
+    return idx !== -1 ? idx : null;
+  }
+  return null;
+});
+const [error, setError] = useState('');
+
+
 	const [hovered, setHovered] = useState({ group: null, item: null });
 
 	// Ensure default group and item are set in formData
@@ -156,6 +158,22 @@ const Step4 = ({ formData = {}, handleChange, onNext, onPrev }) => {
 		//   handleChange({ name: 'bundleItem', value: bundles[0].items[0].name });
 		// }
 	}, [formData.bundleGroup, formData.bundleItem, handleChange]);
+	
+const handleValidation = () => {
+  if (selectedGroupIdx === null) {
+    setError('Please select one bundle group');
+    return;
+  }
+
+  if (selectedItemIdx === null) {
+    setError('Please select a bundle to proceed');
+    return;
+  }
+
+  setError(''); // Clear any previous error
+  onNext();
+};
+
 
 	// When group changes, reset item selection
 	const handleGroupSelect = (idx) => {
@@ -242,85 +260,88 @@ const Step4 = ({ formData = {}, handleChange, onNext, onPrev }) => {
 			<hr className="my-6 border-t-2 border-gray-300" />
 			{/* Items of selected group */}
 			{/* Optionally, you can show a message or disable next if no item is selected */}
-			{selectedItemIdx === null ? (
-				<div className="text-red-500 text-sm font-medium text-center mb-4">
-					Please select a bundle to proceed
-				</div>
-			) : (
-				<div className="pt-2 pb-3 mb-4"></div>
-			)}
-      {selectedGroup.caution && (
-				<div className="text-yellow-600 text-sm font-medium text-center mb-4">
-					{selectedGroup.caution}
-				</div>
-			)}
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-center">
-				{selectedGroup.items.map((item, idx) => (
-					<div
-						key={item.name}
-						className={`relative bg-card border rounded-lg p-4 flex flex-col items-start min-w-[220px] shadow hover:shadow-lg transition-all cursor-pointer group
-              ${selectedItemIdx === idx
-								? 'border-primary ring-2 ring-primary label-active-gradient text-inverse'
-								: 'border-gray-200 text-main'}`}
-						onClick={() => handleItemSelect(idx)}
-						onMouseEnter={() => setHovered({ group: null, item: idx })}
-						onMouseLeave={() => setHovered({ group: null, item: null })}
-					>
-						<div className="flex items-center gap-2 mb-2">
-							<span
-								className={`font-semibold ${
-									selectedItemIdx === idx ? 'text-inverse' : 'text-main'
-								}`}
-							>
-								{`${item.name} Bundle`}
-							</span>
-							{item.badge && (
-								<span className="flex items-center gap-1 bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-semibold ml-2">
-									<Star className="w-3 h-3 text-green-500" /> {item.badge}
-								</span>
-							)}
-						</div>
-            <p className={`text-sm text-left ${
-								selectedItemIdx === idx ? 'text-inverse' : ' text-gray-500'
-							} mt-1`}>{item.tooltip}</p>
-						<div
-							className={`text-lg font-bold mb-1 ${
-								selectedItemIdx === idx ? 'text-inverse' : 'text-primary'
-							}`}
-						>
-							${item.price}
-						</div>
-						{/* {hovered.item === idx && item.tooltip && (
-							<div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-card border border-gray-300 rounded-lg shadow-lg p-3 text-sm text-main z-10">
-								{item.tooltip}
-							</div>
-						)} */}
-            
-					</div>
-				))}
-			</div>
-			
+			{selectedGroupIdx !== null && (
+  <>
+    {selectedGroup.caution && (
+      <div className="text-yellow-600 text-sm font-medium text-center mb-4">
+        {selectedGroup.caution}
+      </div>
+    )}
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-center">
+      {selectedGroup.items.map((item, idx) => (
+        <div
+          key={item.name}
+          className={`relative bg-card border rounded-lg p-4 flex flex-col items-start min-w-[220px] shadow hover:shadow-lg transition-all cursor-pointer group
+            ${selectedItemIdx === idx
+              ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse'
+              : 'border-gray-200 text-main'}`}
+          onClick={() => handleItemSelect(idx)}
+          onMouseEnter={() => setHovered({ group: null, item: idx })}
+          onMouseLeave={() => setHovered({ group: null, item: null })}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <span
+              className={`font-semibold ${
+                selectedItemIdx === idx ? 'text-inverse' : 'text-main'
+              }`}
+            >
+              {`${item.name} Bundle`}
+            </span>
+            {item.badge && (
+              <span className="flex items-center gap-1 bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-semibold ml-2">
+                <Star className="w-3 h-3 text-green-500" /> {item.badge}
+              </span>
+            )}
+          </div>
+          <p className={`text-sm text-left ${
+            selectedItemIdx === idx ? 'text-inverse' : ' text-gray-500'
+          } mt-1`}>{item.tooltip}</p>
+          <div
+            className={`text-lg font-bold mb-1 ${
+              selectedItemIdx === idx ? 'text-inverse' : 'text-primary'
+            }`}
+          >
+            ${item.price}
+          </div>
+        </div>
+      ))}
+    </div>
+  </>
+)}
+
 		</div>
-      <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-center px-4 py-3 mt-4 border-t">
-                <button
-                  type="button"
-                  className={`w-full md:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200`}
-                  onClick={onPrev}
-                >
-                  Previous
-                </button>
-               
-                  <button
-                    type="button"
-                    className={
-                      "w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200 "
-                    }
-                    onClick={onNext}
-                  >
-                    Next
-                  </button>
-                
-              </div>
+		<div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)]  px-4 py-3 mt-4 border-t">
+			
+  {error && (
+    <div className="w-full max-w-2xl mx-auto mb-4">
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded text-center text-sm">
+        {error}
+      </div>
+    </div>
+  )}
+
+
+				<div className='flex flex-col md:flex-row justify-between items-center'>
+							<button
+							type="button"
+							className={`w-full md:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200`}
+							onClick={onPrev}
+							>
+							Previous
+							</button>
+						
+							<button
+								type="button"
+								className={
+								"w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200 "
+								}
+								onClick={handleValidation}
+							>
+								Next
+							</button>
+				</div>
+		</div>
     </>
 	);
   

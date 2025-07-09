@@ -14,9 +14,9 @@ const Step2 = ({ formData, handleChange, onNext, onPrev }) => {
  const handleValidation = () => {
   setNextClicked(true);
   const errors = [];
-  if (!formData.company_name || formData.company_name.trim() === '') {
-    errors.push('Company name is required.');
-  }
+  // if (!formData.company_name || formData.company_name.trim() === '') {
+  //   errors.push('Company name is required.');
+  // }
   if (!formData.city || formData.city.trim() === '') {
     errors.push('City is required.');
   }
@@ -44,7 +44,7 @@ const Step2 = ({ formData, handleChange, onNext, onPrev }) => {
       </div>
      
         
-
+{/* 
        <div className="mb-6">
         <label htmlFor="streetAddress" className="mb-2 text-sm font-medium text-main flex items-center gap-2">
           Company Name
@@ -68,7 +68,7 @@ const Step2 = ({ formData, handleChange, onNext, onPrev }) => {
    
   </div>
 )}
-      </div>
+      </div> */}
        <div className="mb-6">
         <label htmlFor="city" className="mb-2 text-sm font-medium text-main flex items-center gap-2">
           City
