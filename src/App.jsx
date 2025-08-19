@@ -21,17 +21,33 @@ import ToS from "./components/ToS";
 import api from "./apis/interceptors/axios";
 import Success from "./components/Success";
 import Cancel from "./components/Cancel";
+import useGetApi from "./apis/hooks/useGetApi";
+import ErrorPage from "./components/Error";
+import LoadingOverlay from "./components/Spinner";
 
 export default function App() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState({});
-  const [showTermsModal, setShowTermsModal] = useState(false);
-  const [showFraudModal, setShowFraudModal] = useState(false);
-  const termsRef = useRef(null);
-
   const searchParams = new URLSearchParams(window.location.search);
   const status = searchParams.get("status");
   const session_id = searchParams.get("session_id");
+  const company_id = searchParams.get("company_id")
+  const user_id = searchParams.get("user_id") ?searchParams.get("user_id") : searchParams.get("client_id");
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState({company_id, user_id});
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showFraudModal, setShowFraudModal] = useState(false);
+  const [pgloading, setLoading] = useState(false);
+  const termsRef = useRef(null);
+  const getapiBool = !(status && session_id) 
+  const {data, loading, error} =useGetApi(
+    "notary-view/?company_id=" + company_id + "&user_id=" + user_id,
+    {
+      company_id,
+      user_id
+    }, false, getapiBool)
+
+  console.log("data" + data)
+  // console.log("loading" + loading)
+  // console.log("error" + error)
   // console.log(
   //   "Search params:",
   //   searchParams.toString(),
@@ -39,6 +55,14 @@ export default function App() {
   //   window.location.search
   // );
   // console.log(status);
+  if (
+    error
+    //  && (company_id && user_id)
+    ){
+    const errMsg =error?.response?.data?.message
+    return <ErrorPage message={
+      errMsg ? errMsg:error} code={error?.status}/>
+  }
   if (status === "success") {
     return <Success session_id={session_id}/>;
   } else if (status === "cancel") {
@@ -189,7 +213,7 @@ export default function App() {
   ];
 
   // Terms of Service Modal
-  const TermsModal = () => {
+  const TermsModal = ({setLoading}) => {
     // Accept button and tooltip are separated to avoid re-rendering the whole modal
     const AcceptButtonWithTooltip = React.memo(({ termsRef }) => {
       const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
@@ -220,7 +244,7 @@ export default function App() {
       const handleAccept = () => {
         if (hasScrolledToBottom && checked) {
           setShowTermsModal(false);
-          
+          setLoading(true)
           const submittedData = {
             ...formData,
             acceptedAt: new Date().toISOString(),
@@ -387,11 +411,12 @@ export default function App() {
   );
 
   return (
-    <div className="bg-main flex flex-col md:flex-row min-h-screen">
-      {showTermsModal && <TermsModal />}
+    <div className="bg-main flex flex-col md:flex-row min-h-screen p-0">
+      {(loading || pgloading)&& <LoadingOverlay/>}
+      {showTermsModal && <TermsModal setLoading={setLoading} />}
       {showFraudModal && <FraudModal />}
       {/* Sidebar Progress Tracker (desktop) */}
-      <aside className="hidden md:flex flex-col items-center py-10 px-4 bg-white shadow-lg  lg:min-w-[150px] xl:min-w-[200px] max-w-[250px] flex-grow">
+      <aside className="hidden md:flex flex-col items-start py-10 px-4 border-r border-r-[#dbe7f5] bg-white shadow-lg  lg:min-w-[150px] xl:min-w-[200px] max-w-[250px] flex-grow">
         <img
           src={logoBlack}
           alt="InvestorBootz Logo"
@@ -430,7 +455,7 @@ export default function App() {
         {/* Fraud Warning CTA */}
      
         <div className="sticky bottom-0 left-0 w-full mt-auto text-xs text-gray-400 font-medium pt-8 pb-3">
-             <div className="w-full p-4 sm:p-6 mb-6 rounded shadow-sm bg-yellow-50 text-xs">
+             <div className="w-full p-4 sm:p-6 mb-6 rounded shadow-sm bg-[#99a1af] text-xs">
   <div className="flex flex-col gap-2 sm:gap-1">
     <span className="font-bold text-yellow-800 flex items-center gap-2 text-xs ">
       <span role="img" aria-label="warning">🚨</span>

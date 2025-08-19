@@ -2,12 +2,13 @@
 :root {
   --color-bg-main: #e3eff2;
   --color-bg-card: #ffffff;
-  --color-primary: #003BFF;
+  --color-primary: #214fe7;
   --color-secondary: #0199FF;
-  --color-cyan: #03FDFE;
+  --color-cyan: #1141dd;
   --color-black: #1A1C1E;
   --color-text-main: #222;
   --color-text-inverse: #fff;
+
 }
 
 .bg-main { background-color: var(--color-bg-card); }
@@ -37,7 +38,7 @@
 .focus\:ring-cyan:focus { --tw-ring-color: var(--color-cyan); }
 
 .label-active-gradient {
-  background: linear-gradient(135deg, var(--color-secondary) 70%, var(--color-cyan) 100%);
+  background: linear-gradient(135deg, var(--color-secondary) 33%, var(--color-cyan) 100%);
   color: var(--color-text-inverse) !important;
 }
 

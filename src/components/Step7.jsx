@@ -7,8 +7,11 @@ import {
       Mail,
       Users,
       StickyNote,
-      Tag
+      Tag,
+      TicketPercent
        } from 'lucide-react';
+import useGetApi from '../apis/hooks/useGetApi';
+import LoadingOverlay from './Spinner';
 
 
 // import TextEditor from './TextEditor';
@@ -18,7 +21,15 @@ import {
 const Step7 = ({ formData, handleChange, onNext, onPrev, currentStep, stepsLength }) => {
   const isLastStep = currentStep === stepsLength - 1;
     const [errors, setErrors] = useState({});
+    const [couponCode, setCouponCode] = useState('');
+    
 console.log('Step7 formData:', formData);
+
+    const {data, loading, error,refetch } =useGetApi(
+    "stripe-coupon/"+couponCode,
+    {
+
+    },false,false)
 function populateContact() {
   
   if (handleChange) {
@@ -49,6 +60,7 @@ function populateContact() {
   }
 }
 const handleValidation = () => {
+  
   const newErrors = {};
 
   // Preferred option is required
@@ -117,8 +129,40 @@ const handleValidation = () => {
   }
 };
 
+const handleCouponValidation = async () => {
+  const updatedErrors = { ...errors };
+  handleChange({ name: "coupon_code", value: null });
+
+  try {
+    const res = await refetch(); // Await actual coupon validation
+
+    // Clear coupon_code error if previously set
+    delete updatedErrors.coupon_code;
+
+    // Apply coupon value via handleChange
+    if (handleChange && couponCode) {
+      handleChange({ name: "coupon_code", value: couponCode });
+    }
+
+    // Optionally show success message or feedback here
+    console.log("Coupon data:", res?.data);
+  } catch (err) {
+    console.error("Coupon validation failed:", err);
+    if (formData.coupon_code){
+    handleChange({ name: "coupon_code", value: null });
+    }
+    // Add coupon error message without clearing other errors
+    updatedErrors.coupon_code =
+      err?.response?.data?.error || error ||err?.response?.data?.detail || err?.message || "Invalid coupon code";
+  }
+
+  setErrors(updatedErrors); // Set final error state
+};
+
+
   return (
     <div className="mb-8">
+  
       <h2 className="text-2xl font-bold text-main mb-8 text-center flex items-center justify-center gap-2">
         <Calendar className="w-7 h-7 text-primary" />
         Schedule Your Appointment
@@ -410,26 +454,64 @@ const handleValidation = () => {
         </div>
            {/* Coupon Code Field */}
           <div className="mt-4 w-full">
-            <label className="font-semibold mb-2 flex items-center gap-2 text-main">
-              <Tag className="w-5 h-5 text-primary" />
-              Coupon Code
-            </label>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                name="coupon_code"
-                value={formData.coupon_code || ''}
-                onChange={handleChange}
-                placeholder="Enter coupon code (if any)"
-                className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
-              />
-            </div>
-            {errors.coupon_code && (
-              <div className="text-red-500 text-sm text-center mt-1">
-                {errors.coupon_code}
-              </div>
-            )}
-          </div>
+  <label className="font-semibold mb-2 flex items-center gap-2 text-main">
+    <TicketPercent className="w-5 h-5 text-primary" />
+    Coupon Code
+  </label>
+
+  {/* Show input + apply button if coupon is not applied */}
+  {!formData.coupon_code ? (
+    <div className="flex flex-col md:flex-row items-stretch gap-2">
+      <input
+        type="text"
+        name="coupon_code"
+        value={couponCode}
+        onChange={(e) => setCouponCode(e.target.value)}
+        placeholder="Enter coupon code (if any)"
+        className="border border-primary rounded p-2 w-full focus:ring-2 focus:ring-primary focus:border-primary text-main"
+      />
+      <button
+        type="button"
+        className="px-4 py-2 bg-secondary text-inverse rounded-lg hover:bg-primary hover:text-inverse font-semibold transition-all duration-200"
+        onClick={handleCouponValidation}
+      >
+        {loading ? (
+          <span className="text-gray-700 font-medium">Loading...</span>
+        ) : (
+          'Apply'
+        )}
+      </button>
+    </div>
+  ) : (
+    // Show applied message + remove option
+    <div className="flex flex-col items-start gap-2">
+      <div className="text-green-600 text-sm font-semibold">
+        Applied Coupon: {formData.coupon_code}
+        {data?.percent_off && ` — Discount: ${data.percent_off}%`}
+      </div>
+      <button
+        type="button"
+        onClick={() => {
+          // Clear both local and form state
+          setCouponCode('');
+          handleChange({ name: 'coupon_code', value: null });
+        }}
+        className="text-red-600 text-sm underline hover:text-red-800"
+      >
+        Remove Coupon
+      </button>
+    </div>
+  )}
+
+  {/* Error message */}
+  {errors.coupon_code && (
+    <div className="text-red-500 text-sm text-center mt-1">
+      {errors.coupon_code}
+    </div>
+  )}
+</div>
+
+
       </div>
       <div className="flex justify-between mt-8 gap-2">
         <button
