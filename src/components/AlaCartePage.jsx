@@ -866,19 +866,35 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
   };
 
 const handleSubmenuChange = (serviceId, optionId, value, type, name) => {
-  let nextFormData = { ...formData };
-  let updatedServices = [...services];
+  console.log("▶️ handleSubmenuChange called with:", {
+    serviceId,
+    optionId,
+    value,
+    type,
+    name,
+  });
 
-  const service = services.find((s) => s.id === serviceId);
-  if (!service) return;
+  let nextFormData = { ...formData };
+
+  // --- Get service fresh from SERVICES (not from mutated services state)
+  const originalService = SERVICES.find((s) => s.id === serviceId);
+  if (!originalService) {
+    console.warn("❌ No service found for serviceId:", serviceId);
+    return;
+  }
+
+ 
 
   // --- Submenu current state
   let prevOptions = nextFormData.selectedOptions?.[serviceId] || {};
   let newOptions = { ...prevOptions };
 
+  console.log("🔄 Previous submenu options:", prevOptions);
+
   // --- Handle radio groups (reset siblings)
   if (type === "radio" && name) {
-    service.form.submenu.items
+
+    originalService.form.submenu.items
       ?.filter((opt) => opt.type === "radio" && opt.name === name)
       .forEach((opt) => {
         newOptions[opt.id] = false;
@@ -887,66 +903,75 @@ const handleSubmenuChange = (serviceId, optionId, value, type, name) => {
 
   // --- Apply new selection
   newOptions[optionId] = value;
+  console.log("✅ Updated newOptions:", newOptions);
 
   // --- Remove submenu group if all values are falsy/zero
   const activeKeys = Object.keys(newOptions).filter(
     (key) => newOptions[key] && newOptions[key] !== 0
   );
+  console.log("🔑 Active submenu keys:", activeKeys);
 
   if (activeKeys.length === 0) {
-    // Nothing selected → remove submenu group
+    console.log("🗑️ No active submenu options, removing service from formData");
     const updatedSelectedOptions = { ...nextFormData.selectedOptions };
     delete updatedSelectedOptions[serviceId];
     nextFormData.selectedOptions = updatedSelectedOptions;
   } else {
-    // Keep submenu state
+    console.log("💾 Saving submenu state into formData");
     nextFormData.selectedOptions = {
       ...nextFormData.selectedOptions,
       [serviceId]: newOptions,
     };
   }
 
-  // --- Price adjustments from submenuPriceChange
-  let baseItems = service.form.items.map((i) => {
-    let price = i.basePrice ?? i.price;
-    let priceChange = service.form.items.find(
-      (it) => it.id === i.id
-    )?.submenuPriceChange;
+ 
 
-    // Apply submenu modifiers
-    if (priceChange) {
+  // --- Recalculate prices based on original SERVICE definition
+  const recalculatedItems = originalService.form.items.map((item) => {
+    const basePrice = item.basePrice ?? item.price;
+    let finalPrice = basePrice;
+    console.log(`baseprice: ${basePrice}, price: ${item.price} item ${JSON.stringify(item, null, 3)}`)
+    if (item.submenuPriceChange) {
       Object.keys(newOptions).forEach((optId) => {
         const isActive = newOptions[optId];
-        if (isActive && priceChange[optId]) {
-          const change = priceChange[optId];
+        const change = item.submenuPriceChange[optId];
+
+        if (isActive && change) {
+          console.log(
+            `📈 Applying priceChange for ${item.id}, option ${optId}:`,
+            change,
+            "isActive:",
+            isActive
+          );
+
           if (change.type === "add") {
-            price += change.value;
+            finalPrice = basePrice + change.value; // reset to OG + value
           } else if (change.type === "multiple" && typeof isActive === "number") {
-            price += change.value * isActive;
+            finalPrice = basePrice + change.value * isActive;
           }
         }
       });
     }
 
-    return { ...i, price };
+    console.log(`✅ Final price for ${item.id}:`, finalPrice);
+    return { ...item, price: finalPrice };
   });
 
-  updatedServices = services.map((s) =>
-    s.id !== serviceId
-      ? s
-      : {
-          ...s,
-          form: {
-            ...s.form,
-            items: baseItems,
-          },
-        }
+  // --- Update services state with recalculated prices
+  const updatedServices = services.map((s) =>
+    s.id === serviceId
+      ? { ...s, form: { ...s.form, items: recalculatedItems } }
+      : s
   );
 
-  // --- Commit state
-  setServices(updatedServices);
+  // setFormData(nextFormData);
   handleChange({ replaceFormData: true, value: nextFormData });
+  setServices(updatedServices);
+
+  console.log("💾 Updated services state:", updatedServices);
 };
+
+
 
 
 const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
@@ -1299,7 +1324,7 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
                                 name={`${service.id}-${submenuItem.name}`} // group by name
                                 checked={currentValue}
                                 onChange={(e) =>{
-                                  console.log("clicked")
+                             
                                   handleSubmenuChange(
                                     service.id,
                                     submenuItem.id,
