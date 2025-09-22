@@ -43,30 +43,30 @@ export default function App() {
   const [pgloading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ company_id, user_id });
 const handleChange = (e) => {
-  // Initialize nextFormData as a copy of current formData
-  let nextFormData = { ...formData };
+  let nextFormData = null;
 
-  if (e && e.target) {
-    // Case 1: Standard input event
-    const { name, value, type, checked } = e.target;
-    nextFormData[name] = type === "checkbox" ? checked : value;
-  } else if (e) {
-    // Case 2: Manual update
-    if (e.remove) {
-      const copy = { ...nextFormData };
-      delete copy[e.name];
-      nextFormData = copy;
-    } else if (e.replaceFormData) {
-      nextFormData = e.value;
-    } else if (e.name && e.value !== undefined) {
-      nextFormData[e.name] = e.value;
+  setFormData((prev) => {
+    // Start with a fresh copy of prev (not outer formData!)
+    nextFormData = { ...prev };
+
+    if (e && e.target) {
+      // Case 1: Standard input
+      const { name, value, type, checked } = e.target;
+      nextFormData[name] = type === "checkbox" ? checked : value;
+    } else if (e) {
+      // Case 2: Manual update
+      if (e.remove) {
+        delete nextFormData[e.name];
+      } else if (e.replaceFormData) {
+        nextFormData = e.value;
+      } else if (e.name && e.value !== undefined) {
+        nextFormData[e.name] = e.value;
+      }
     }
-    // else keep nextFormData as is
-  }
 
-  setFormData(nextFormData);
+    return nextFormData;
+  });
 
-  // Return updated data for immediate use
   return nextFormData;
 };
 
