@@ -177,7 +177,7 @@ const handleCouponValidation = async () => {
           <div className="flex flex-col md:flex-row gap-4">
             {/* Radio Input for TBD */}
             <label
-              className={`flex-1 flex flex-col items-center justify-center cursor-pointer px-6 py-6 rounded-xl border-2 transition-all text-center shadow-sm
+              className={`flex-1 flex flex-col items-center justify-center cursor-pointer px-6 py-6 border-2 transition-all text-center shadow-sm
                 ${formData.preferred_option === 'tbd' ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
             >
               <input
@@ -194,7 +194,7 @@ const handleCouponValidation = async () => {
 
             {/* Radio Input for Specify Date & Time */}
             <label
-              className={`flex-1 flex flex-col items-center justify-center cursor-pointer px-6 py-6 rounded-xl border-2 transition-all text-center shadow-sm
+              className={`flex-1 flex flex-col items-center justify-center cursor-pointer px-6 py-6 border-2 transition-all text-center shadow-sm
                 ${formData.preferred_option === 'specify' ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
             >
               <input
@@ -238,7 +238,7 @@ const handleCouponValidation = async () => {
         </div>
 
         {/* Point of Contact */}
-        <div className="w-full max-w-md bg-card rounded-xl p-4 border border-primary flex flex-col gap-4 mt-4">
+        <div className="w-full max-w-md bg-card p-4 border border-primary flex flex-col gap-4 mt-4">
           
           <div className="font-semibold text-main mb-2 w-full flex items-center gap-2">
            <span><User className="w-5 h-5 text-primary" /></span>
@@ -516,14 +516,14 @@ const handleCouponValidation = async () => {
       <div className="flex justify-between mt-8 gap-2">
         <button
           type="button"
-          className={`px-4 py-2 bg-secondary text-inverse rounded-lg hover:bg-primary hover:text-inverse focus:outline-none font-semibold transition-all duration-200 ${currentStep === 0 ? 'invisible' : ''}`}
+          className={`px-4 py-2 bg-secondary text-inverse hover:bg-primary hover:text-inverse focus:outline-none font-semibold transition-all duration-200 ${currentStep === 0 ? 'invisible' : ''}`}
           onClick={onPrev}
         >
           Previous
         </button>
         <button
           type="button"
-          className="px-6 py-2 bg-primary text-inverse rounded-lg hover:bg-cyan focus:outline-none font-semibold text-lg shadow"
+          className="px-6 py-2 bg-primary text-inverse hover:bg-cyan focus:outline-none font-semibold text-lg shadow"
           onClick={handleValidation}
         >
           {isLastStep ? 'Submit' : 'Next'}

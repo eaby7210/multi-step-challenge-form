@@ -401,7 +401,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
           return (
             <div
               key={item.key}
-              className={`relative bg-card border rounded-md p-2 flex flex-col w-full min-h-[70px] max-w-xl shadow-sm hover:shadow-md transition-all cursor-pointer group
+              className={`relative bg-card border p-2 flex flex-col w-full min-h-[70px] max-w-xl shadow-sm hover:shadow-md transition-all cursor-pointer group
                 ${selected ? 'border-primary ring-1 ring-primary label-active-gradient text-inverse' : 'border-gray-200 text-main'}`}
               style={{ minHeight: '70px', height: 'auto', justifyContent: 'space-between', overflow: 'visible', maxWidth: '100%', flex: '1 1 auto' }}
               onClick={() => openModal(item)}
@@ -474,7 +474,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
 
                 <button
                   type="button"
-                  className="mt-1 px-2 py-1 rounded bg-danger text-inverse text-xs font-semibold shadow hover:bg-danger-dark border-none z-20"
+                  className="mt-1 px-2 py-1 bg-danger text-inverse text-xs font-semibold shadow hover:bg-danger-dark border-none z-20"
                   onClick={e => { e.stopPropagation(); e.preventDefault(); handleRemove(item); }}
                   tabIndex={0}
                 >
@@ -488,7 +488,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
       {/* Modal for add-ons and submenus */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(100,116,139,0.18)] backdrop-blur-md">
-          <div className="bg-card rounded-lg shadow-2xl p-6 w-full max-w-lg relative">
+          <div className="bg-card shadow-2xl p-6 w-full max-w-lg relative">
             <button className="absolute top-3 right-3 text-main hover:text-primary" onClick={closeModal}><X className="w-6 h-6" /></button>
             <h3 className="text-lg font-bold mb-2 text-main">Want to Maximize This Visit?</h3>
             <div className="mb-2 text-main">
@@ -508,7 +508,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
                   <div className="mb-2">
                     <label className="block font-semibold mb-1 text-main">Choose an option:</label>
                     <select
-                      className="w-full border border-primary rounded p-2 text-main"
+                      className="w-full border border-primary p-2 text-main"
                       value={submenuState.option || ''}
                       onChange={e => handleSubmenuChange('option', e.target.value)}
                     >
@@ -524,7 +524,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
                     <label className="block font-semibold mb-1 text-main">{modal.item.submenu.prompt}</label>
                     {modal.item.submenu.inputType === 'textarea' ? (
                             <textarea
-                        className="w-full border border-primary rounded p-2 text-main"
+                        className="w-full border border-primary  p-2 text-main"
                         rows={3}
                         placeholder={modal.item.submenu.placeholder || 'Enter value...'}
                         value={submenuState.prompt_value || ''}
@@ -532,7 +532,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
                       ) :(
                           <input
                             type={modal.item.submenu.inputType || 'text'}
-                            className="w-full border border-primary rounded p-2 text-main"
+                            className="w-full border border-primary p-2 text-main"
                             placeholder={modal.item.submenu.placeholder || 'Enter value...'}
                             value={submenuState.prompt_value || ''}
                             onChange={e => handleSubmenuChange('prompt_value', e.target.value)}
@@ -551,7 +551,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
                 {(modal.item.addOns && modal.item.addOns.length > 0 ? modal.item.addOns : ADD_ONS).map(addon => {
                   const addonKey = addon.key || addon.value || addon.label;
                   return (
-                    <label key={addonKey} className="flex items-center gap-2 cursor-pointer border border-primary rounded px-3 py-1 bg-card hover:label-active-gradient hover:text-inverse">
+                    <label key={addonKey} className="flex items-center gap-2 cursor-pointer border border-primary  px-3 py-1 bg-card hover:label-active-gradient hover:text-inverse">
                       <input
                         type="checkbox"
                         checked={!!addOnState[addonKey]}
@@ -585,7 +585,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
                 .map(key => currentAddOns.find(addon => (addon.key || addon.value || addon.label) === key && addOnState[key] && addon.cation))
                 .filter(Boolean)[0];
               return selectedCaution ? (
-                <div className="my-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded flex items-center gap-2">
+                <div className="my-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 flex items-center gap-2">
                   {selectedCaution.cation}
                 </div>
               ) : null;
@@ -623,12 +623,12 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
 })()}
 
             <div className="flex justify-end gap-2 mt-4">
-              <button className="px-4 py-2 bg-secondary text-inverse rounded-lg hover:bg-primary hover:text-inverse" onClick={closeModal}>Cancel</button>
+              <button className="px-4 py-2 bg-secondary text-inverse hover:bg-primary hover:text-inverse" onClick={closeModal}>Cancel</button>
               {Object.keys(submenuState).length || Object.keys(addOnState).length ? (
-                <button className="px-4 py-2 bg-primary text-inverse rounded-lg hover:bg-cyan" onClick={handleSave}>Save</button>
+                <button className="px-4 py-2 bg-primary text-inverse  hover:bg-cyan" onClick={handleSave}>Save</button>
               ) : (
                 <button
-                  className="px-4 py-2 bg-secondary text-inverse rounded-lg hover:bg-primary hover:text-inverse"
+                  className="px-4 py-2 bg-secondary text-inverse hover:bg-primary hover:text-inverse"
                   onClick={handleSave}
                 >
                   No thanks
@@ -642,7 +642,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
       <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)]  px-4 py-3 mt-4 border-t">
       {errors.a_la_carte && (
   <div className="w-full max-w-2xl mx-auto mb-4">
-    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded text-center text-sm">
+    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2  text-center text-sm">
       {errors.a_la_carte}
     </div>
   </div>
@@ -650,7 +650,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
       <div className='flex flex-col md:flex-row justify-between items-center'>
                 <button
                   type="button"
-                  className={`w-full md:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200`}
+                  className={`w-full md:w-auto px-4 py-2 bg-gray-300 text-gray-800 hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200`}
                   onClick={onPrev}
                 >
                   Previous
@@ -659,7 +659,7 @@ const Step5 = ({ formData = {}, handleChange, onPrev, onNext }) => {
                   <button
                     type="button"
                     className={
-                      "w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200 "
+                      "w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200 "
                     }
                     onClick={handleValidation}
                   >

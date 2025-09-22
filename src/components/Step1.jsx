@@ -13,13 +13,13 @@ const Step1 = ({ formData, handleChange, onNext, onPrev }) => {
 
   return (
     <>
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-main mb-6 text-center">How many units need inspections?</h2>
+      <div className="mb-8 flex-1">
+        {/* <h2 className="text-xl font-semibold text-main mb-6 text-center">How many units need inspections?</h2> */}
         <div className="flex flex-col md:flex-row gap-4 md:gap-6 justify-center items-stretch w-full max-w-2xl mx-auto">
           {/* Single Unit Option */}
           <label
             htmlFor="unit-single"
-            className={`flex-1 flex flex-col items-center justify-center cursor-pointer px-6 py-6 rounded-xl border-2 transition-all text-center shadow-sm
+            className={`flex-1 flex flex-col items-center justify-center cursor-pointer px-6 py-6 border-2 transition-all text-center shadow-sm
               ${formData.unitType !== 'multiple' ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
           >
             <input
@@ -39,7 +39,7 @@ const Step1 = ({ formData, handleChange, onNext, onPrev }) => {
           <div className="relative flex-1">
             <label
               htmlFor="unit-multiple"
-              className={`flex flex-col items-center justify-center cursor-pointer px-6 py-6 rounded-xl border-2 transition-all text-center shadow-sm
+              className={`flex flex-col items-center justify-center cursor-pointer px-6 py-6  border-2 transition-all text-center shadow-sm
                 ${formData.unitType === 'multiple' ? 'border-primary ring-2 ring-primary label-active-gradient text-inverse' : 'border-gray-200 hover:border-primary hover:label-active-gradient hover:text-inverse'}`}
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
@@ -73,7 +73,7 @@ const Step1 = ({ formData, handleChange, onNext, onPrev }) => {
        <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-center px-4 py-3 mt-4 border-t">
                 <button
                   type="button"
-                  className={`w-full md:w-auto invisible px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200`}
+                  className={`w-full md:w-auto invisible px-4 py-2 bg-gray-300 text-gray-800  hover:bg-gray-400 focus:outline-none font-semibold transition-all duration-200`}
                   onClick={onPrev}
                 >
                   Previous
@@ -82,7 +82,7 @@ const Step1 = ({ formData, handleChange, onNext, onPrev }) => {
                   <button
                     type="button"
                     className={
-                      "w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200 "
+                      "w-full md:w-auto mt-2 md:mt-0 px-4 py-2 bg-primary text-white hover:bg-blue-700 focus:outline-none font-semibold transition-all duration-200 "
                     }
                     onClick={onNext}
                   >
