@@ -861,11 +861,96 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
     handleChange({ replaceFormData: true, value: newFormData });
 
     //  Return updated formData in case caller needs it
-    // console.log(JSON.stringify(newFormData, null, 3));
+    console.log(JSON.stringify(newFormData, null, 3));
     return newFormData;
   };
 
+const handleSubmenuChange = (serviceId, optionId, value, type, name) => {
+  let nextFormData = { ...formData };
+  let updatedServices = [...services];
+
+  const service = services.find((s) => s.id === serviceId);
+  if (!service) return;
+
+  // --- Submenu current state
+  let prevOptions = nextFormData.selectedOptions?.[serviceId] || {};
+  let newOptions = { ...prevOptions };
+
+  // --- Handle radio groups (reset siblings)
+  if (type === "radio" && name) {
+    service.form.submenu.items
+      ?.filter((opt) => opt.type === "radio" && opt.name === name)
+      .forEach((opt) => {
+        newOptions[opt.id] = false;
+      });
+  }
+
+  // --- Apply new selection
+  newOptions[optionId] = value;
+
+  // --- Remove submenu group if all values are falsy/zero
+  const activeKeys = Object.keys(newOptions).filter(
+    (key) => newOptions[key] && newOptions[key] !== 0
+  );
+
+  if (activeKeys.length === 0) {
+    // Nothing selected → remove submenu group
+    const updatedSelectedOptions = { ...nextFormData.selectedOptions };
+    delete updatedSelectedOptions[serviceId];
+    nextFormData.selectedOptions = updatedSelectedOptions;
+  } else {
+    // Keep submenu state
+    nextFormData.selectedOptions = {
+      ...nextFormData.selectedOptions,
+      [serviceId]: newOptions,
+    };
+  }
+
+  // --- Price adjustments from submenuPriceChange
+  let baseItems = service.form.items.map((i) => {
+    let price = i.basePrice ?? i.price;
+    let priceChange = service.form.items.find(
+      (it) => it.id === i.id
+    )?.submenuPriceChange;
+
+    // Apply submenu modifiers
+    if (priceChange) {
+      Object.keys(newOptions).forEach((optId) => {
+        const isActive = newOptions[optId];
+        if (isActive && priceChange[optId]) {
+          const change = priceChange[optId];
+          if (change.type === "add") {
+            price += change.value;
+          } else if (change.type === "multiple" && typeof isActive === "number") {
+            price += change.value * isActive;
+          }
+        }
+      });
+    }
+
+    return { ...i, price };
+  });
+
+  updatedServices = services.map((s) =>
+    s.id !== serviceId
+      ? s
+      : {
+          ...s,
+          form: {
+            ...s.form,
+            items: baseItems,
+          },
+        }
+  );
+
+  // --- Commit state
+  setServices(updatedServices);
+  handleChange({ replaceFormData: true, value: nextFormData });
+};
+
+
 const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
+  console.log("parameter",JSON.stringify({ serviceId, optionId, value, type, name, itemId }, null, 3))
   const newFormData = { ...formData };
   const service = services.find((s) => s.id === serviceId);
   const item = itemId ? service?.form?.items?.find((i) => i.id === itemId) : null;
@@ -1142,7 +1227,8 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
                           key={submenuItem.id}
                           className="flex items-center gap-2 cursor-pointer"
                         >
-                          {submenuItem.type === "counter" ? (
+                          {submenuItem.type === "counter" 
+                          ? (
                             // 🔹 Counter with Number Input
                             <div className="flex items-center gap-2">
                               <span className="text-sm">
@@ -1151,7 +1237,7 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleOptionChange(
+                                  handleSubmenuChange(
                                     service.id,
                                     submenuItem.id,
                                     Math.max(0, currentValue - 1),
@@ -1175,7 +1261,7 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
                                   if (submenuItem.max !== undefined) {
                                     newVal = Math.min(newVal, submenuItem.max);
                                   }
-                                  handleOptionChange(
+                                  handleSubmenuChange(
                                     service.id,
                                     submenuItem.id,
                                     newVal,
@@ -1188,7 +1274,7 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleOptionChange(
+                                  handleSubmenuChange(
                                     service.id,
                                     submenuItem.id,
                                     submenuItem.max
@@ -1211,15 +1297,16 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
                               <input
                                 type="radio"
                                 name={`${service.id}-${submenuItem.name}`} // group by name
-                                checked={!!currentValue}
-                                onChange={(e) =>
-                                  handleOptionChange(
+                                checked={currentValue}
+                                onChange={(e) =>{
+                                  console.log("clicked")
+                                  handleSubmenuChange(
                                     service.id,
                                     submenuItem.id,
                                     e.target.checked,
                                     "radio",
                                     submenuItem.name
-                                  )
+                                  )}
                                 }
                                 className="w-4 h-4 text-blue-600 border-2 border-gray-300 rounded-full"
                               />
@@ -1234,7 +1321,7 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
                                 type="checkbox"
                                 checked={!!currentValue}
                                 onChange={(e) =>
-                                  handleOptionChange(
+                                  handleSubmenuChange(
                                     service.id,
                                     submenuItem.id,
                                     e.target.checked,
