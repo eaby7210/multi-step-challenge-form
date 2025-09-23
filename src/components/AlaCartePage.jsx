@@ -19,7 +19,7 @@ const SERVICES = [
     subtitle: "Send a photographer to a property to take pictures",
     order_protection:true,
     order_protection_type: "percent",
-    order_protection_value: 15,
+    order_protection_value: 4,
     form: {
       title: "Photography Order Options",
       description: "Send a photographer to a property to take pictures",
@@ -142,7 +142,7 @@ const SERVICES = [
     subtitle: "Have a lockbox installed at the property",
     order_protection: true,
     order_protection_type: "percent",
-    order_protection_value: 15,
+    order_protection_value: 4,
     form: {
       title: "LockBox Order Options",
       description: "Secure property access with fast lockbox setup",
@@ -174,7 +174,7 @@ const SERVICES = [
     subtitle: "Have documents signed or notarized",
     order_protection: true,
     order_protection_type: "percent",
-    order_protection_value: 15,
+    order_protection_value: 4,
     form: {
       title: "Document Order Options",
       description: "Have documents signed or notarized",
@@ -289,7 +289,7 @@ const SERVICES = [
     subtitle: "Send a videographer to a property to record video",
     order_protection:true,
     order_protection_type: "percent",
-    order_protection_value: 15,
+    order_protection_value: 4,
     form: {
       title: "Property Video Options",
       description:
@@ -312,7 +312,7 @@ const SERVICES = [
     subtitle: "Receive and approve bids for repair work on a property",
     order_protection:true,
     order_protection_type: "percent",
-    order_protection_value: 15,
+    order_protection_value: 4,
     form: {
       title: "Quotes and Bids Options",
       description: "Receive and approve bids for repair work on a property",
@@ -416,7 +416,7 @@ const SERVICES = [
     subtitle: "Send a representative to the property for onsite purposes",
     order_protection:true,
     order_protection_type: "percent",
-    order_protection_value: 15,
+    order_protection_value: 4,
     form: {
       title: "On Demand Order Options",
       description: "Get boots on the ground™ for access, checks and tasks",
@@ -477,7 +477,7 @@ const SERVICES = [
   },
 ];
 
-const ORDER_PROTECTION_PRICE = 15;
+
 
 const discountRules = {
   photos: [
@@ -1123,46 +1123,48 @@ const handleProtectionToggle = (checked=null, service) => {
 
 const calculateCartTotals = (formData, services) => {
   let rawCartTotal = 0; // before discounts
-  let cartTotal = 0;    // after discount
+  let cartTotal = 0;    // after discounts + protections
   let cartSavings = 0;
   const serviceTotals = {};
-
-
 
   // 🔹 Step 1: Collect all selected items across all services
   let allSelectedItems = [];
 
   services.forEach((service) => {
-   
-
     const serviceSelections = formData.selectedItems?.[service.id] || {};
-
-
     const selectedItems =
       service.form?.items?.filter((item) => serviceSelections[item.id]) || [];
-   
 
     let subtotal = 0;
 
     selectedItems.forEach((item) => {
       let itemPrice = item.price || 0;
-   
-
       subtotal += itemPrice;
       rawCartTotal += itemPrice;
       allSelectedItems.push(item);
-
-     
     });
 
-    // Store per-service subtotal only
-    serviceTotals[service.id] = { subtotal };
-   
+    // 🔹 Step 1.5: Apply order protection if enabled
+    let protectionAmount = 0;
+    if (service.order_protection && subtotal > 0) {
+      if (service.order_protection_type === "percent") {
+        protectionAmount = (subtotal * service.order_protection_value) / 100;
+      } else if (service.order_protection_type === "flat") {
+        protectionAmount = service.order_protection_value;
+      }
+
+      subtotal += protectionAmount; // add to subtotal
+    }
+
+    // Store per-service totals
+    serviceTotals[service.id] = { 
+      subtotal: Number(subtotal.toFixed(2)),
+      protectionAmount: Number(protectionAmount.toFixed(2)),
+    };
   });
 
   // 🔹 Step 2: Apply discount at cart level
   const qualifiedCount = countQualifiedDiscounts(formData);
-
   const discountLevel =
     [...discountLevels].reverse().find((lvl) => qualifiedCount >= lvl.items) ||
     null;
@@ -1171,20 +1173,13 @@ const calculateCartTotals = (formData, services) => {
     const discountAmount = (rawCartTotal * discountLevel.percent) / 100;
     cartSavings = discountAmount;
     cartTotal = rawCartTotal - discountAmount;
-      cartTotal = Number(cartTotal.toFixed(2));
-  cartSavings = Number(cartSavings.toFixed(2));
-
-
   } else {
     cartTotal = rawCartTotal;
-    
   }
 
-  // console.log("\n=== FINAL CART TOTALS ===");
-  // console.log("Raw Cart Total (before discount):", rawCartTotal);
-  // console.log("Final Cart Total (after discount):", cartTotal);
-  // console.log("Cart Savings:", cartSavings);
-  // console.log("Service Totals:", serviceTotals);
+  // Round final totals
+  cartTotal = Number(cartTotal.toFixed(2));
+  cartSavings = Number(cartSavings.toFixed(2));
 
   // 🔹 Step 3: Store in formData
   handleChange({ name: "serviceTotals", value: serviceTotals });
@@ -1193,6 +1188,7 @@ const calculateCartTotals = (formData, services) => {
 
   return { cartTotal, cartSavings, serviceTotals };
 };
+
 
  
 const countQualifiedDiscounts = (formData, serviceId = null) => {
@@ -1486,7 +1482,13 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
                       <span className="font-medium">Order Protection</span>
                       <span className="text-[#0bc88c] font-semibold ml-1">
                         {/* ${ORDER_PROTECTION_PRICE} */}
-                        +4%
+                        {formData?.serviceTotals?.[service.id]?.protectionAmount
+                        ?`+$${formData?.serviceTotals?.[service.id]?.protectionAmount}`
+                        : service?.order_protection_type == 'percent'
+                        ? `+${service?.order_protection_value}%`
+                        : `$${service?.order_protection_value}`}
+                
+                              
                       </span>
                     </div>
 
@@ -1610,7 +1612,7 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
                       <div className="flex justify-between text-green-600 font-semibold">
                         Savings{" "}
                         <span className="text-end">
-                          ${formData?.serviceTotals?.[service.id]?.subsavings ||
+                          ${formData?.cartSavings ||
                             0}
                         </span>
                       </div>
@@ -1792,7 +1794,7 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
 
               <div className="flex justify-between text-sm md:text-base font-semibold text-emerald-600">
                 <span>You Saved:</span>
-                <span>${formData?.cartSavings}</span>
+                <span>${formData?.cartSavings || 0}</span>
               </div>
             </div>
 
