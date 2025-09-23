@@ -17,8 +17,9 @@ const SERVICES = [
     id: "photos",
     title: "Property Photos",
     subtitle: "Send a photographer to a property to take pictures",
-    action: "In Cart",
-
+    order_protection:true,
+    order_protection_type: "percent",
+    order_protection_value: 15,
     form: {
       title: "Photography Order Options",
       description: "Send a photographer to a property to take pictures",
@@ -139,8 +140,9 @@ const SERVICES = [
     id: "lockboxes",
     title: "LockBoxes",
     subtitle: "Have a lockbox installed at the property",
-    action: "Configure",
-    price: "$25",
+    order_protection: true,
+    order_protection_type: "percent",
+    order_protection_value: 15,
     form: {
       title: "LockBox Order Options",
       description: "Secure property access with fast lockbox setup",
@@ -170,8 +172,9 @@ const SERVICES = [
     id: "notary",
     title: "Notarizations & Signings",
     subtitle: "Have documents signed or notarized",
-    action: "Configure",
-    price: "$25",
+    order_protection: true,
+    order_protection_type: "percent",
+    order_protection_value: 15,
     form: {
       title: "Document Order Options",
       description: "Have documents signed or notarized",
@@ -284,6 +287,9 @@ const SERVICES = [
     id: "videos",
     title: "Property Videos",
     subtitle: "Send a videographer to a property to record video",
+    order_protection:true,
+    order_protection_type: "percent",
+    order_protection_value: 15,
     form: {
       title: "Property Video Options",
       description:
@@ -298,13 +304,15 @@ const SERVICES = [
         },
       ],
     },
-    action: "Configure",
-    price: "$25",
+
   },
   {
     id: "repairs",
     title: "Home Maintenance & Repairs",
     subtitle: "Receive and approve bids for repair work on a property",
+    order_protection:true,
+    order_protection_type: "percent",
+    order_protection_value: 15,
     form: {
       title: "Quotes and Bids Options",
       description: "Receive and approve bids for repair work on a property",
@@ -313,7 +321,7 @@ const SERVICES = [
           id: "land q",
           title: "Landscaping Quotes",
           subtitle: "Have our team source and coordinate quote(s) for work",
-          basePrice: 65,
+          basePrice: null,
           price: 50,
           options: {
             type: "checkbox",
@@ -323,6 +331,7 @@ const SERVICES = [
                 label: "Bids Only",
                 value: true,
                 disabled: true,
+                priceChange: 15,
                 valid_item_index: [],
               },
               {
@@ -330,6 +339,7 @@ const SERVICES = [
                 label: "Complete It",
                 value: true,
                 disabled: false,
+                priceChange: 15,
                 valid_item_index: [],
               },
             ],
@@ -339,7 +349,7 @@ const SERVICES = [
           id: "trash q",
           title: "Trashout Quotes",
           subtitle: "Have our team source and coordinate quote(s) for work",
-          basePrice: 65,
+          basePrice: null,
           price: 50,
           options: {
             type: "checkbox",
@@ -376,13 +386,14 @@ const SERVICES = [
         ],
       },
     },
-    action: "Configure",
-    price: "$25",
   },
   {
     id: "inspections",
     title: "Home Inspections",
     subtitle: "Send a licensed home inspector to a property",
+    order_protection:true,
+    order_protection_type: "percent",
+    order_protection_value: 15,
     form: {
       title: "Home Inspection Options",
       description: "Book a licensed home inspection with 2D floor plan",
@@ -397,16 +408,15 @@ const SERVICES = [
         },
       ],
     },
-    action: "Configure",
-    price: "$25",
+
   },
   {
     id: "onDemand",
     title: "On Demand Services",
     subtitle: "Send a representative to the property for onsite purposes",
-    action: "Configure",
-    price: "$25",
-    inCart: false,
+    order_protection:true,
+    order_protection_type: "percent",
+    order_protection_value: 15,
     form: {
       title: "On Demand Order Options",
       description: "Get boots on the ground™ for access, checks and tasks",
@@ -591,13 +601,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
   const [modalOptionState, setModalOptionState] = useState(null);
   const totalLevels = levels.length;
   // const [modalValues, setModalValues] = useState({});
-  const adjustedTotal = formData.progress?.currentPercent
-    ? formData.cartTotal * (formData.progress.currentPercent / 100)
-    : formData.cartTotal;
-
-  const adjustedSaving = formData.progress?.currentPercent
-    ? formData.cartTotal - adjustedTotal
-    : formData.cartSaving;
+ 
 
   const handlelearnModal = () => {
     return setLearnModal((state) => !state);
@@ -777,6 +781,9 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
     //     delete newFormData.order_protection;
     //   }
     // }
+    if (service?.order_protection){
+      handleProtectionToggle(service?.order_protection, service)
+    }
 
     if (selected && item?.options?.items?.length) {
       const prevItemOptions =
@@ -830,10 +837,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
     newFormData.order_protection = true;
     //  Recalculate totals
     const { total, savings } = calculateCartTotals(
-      {
-        ...newFormData.selectedItems,
-        [serviceId]: newSelections,
-      },
+      newFormData,
       services,
       newFormData.order_protection
     );
@@ -859,9 +863,9 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
 
     //  Commit once at the end
     handleChange({ replaceFormData: true, value: newFormData });
-
+    calculateCartTotals(newFormData, services, )
     //  Return updated formData in case caller needs it
-    console.log(JSON.stringify(newFormData, null, 3));
+    // console.log(JSON.stringify(newFormData, null, 3));
     return newFormData;
   };
 
@@ -885,7 +889,6 @@ const handleSubmenuChange = (serviceId, optionId, value, type, name) => {
 
  
 
-  // --- Submenu current state
   let prevOptions = nextFormData.selectedOptions?.[serviceId] || {};
   let newOptions = { ...prevOptions };
 
@@ -967,12 +970,9 @@ const handleSubmenuChange = (serviceId, optionId, value, type, name) => {
   // setFormData(nextFormData);
   handleChange({ replaceFormData: true, value: nextFormData });
   setServices(updatedServices);
-
+  calculateCartTotals(nextFormData, updatedServices);
   console.log("💾 Updated services state:", updatedServices);
 };
-
-
-
 
 const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
   console.log("parameter",JSON.stringify({ serviceId, optionId, value, type, name, itemId }, null, 3))
@@ -1077,71 +1077,153 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
 };
 
 
-  const handleProtectionToggle = (checked) => {
-    handleChange({ name: "order_protection", value: checked });
-
-    const { total, savings } = calculateCartTotals(
-      formData.selectedItems,
-      services,
-      checked
-    );
+const handleProtectionToggle = (checked=null, service) => {
 
 
-  };
+  // --- Update formData
+  const newFormData = { ...formData };
 
-  const calculateCartTotals = (allSelections, allServices, orderProtection) => {
-    let total = 0;
-    let savings = 0;
+  // Ensure structure
+  if (!newFormData.orderProtection) {
+    newFormData.orderProtection = {};
+  }
 
-    allServices.forEach((service) => {
-      const serviceSelections = allSelections?.[service.id] || {};
-      const selectedItems =
-        service?.form?.items?.filter((item) => serviceSelections[item.id]) ||
-        [];
+  if (checked) {
+    newFormData.orderProtection[service.id] = {
+      enabled: true,
+      type: service.order_protection_type,
+      value: service.order_protection_value,
+    };
+  } else {
+    // If unchecked → remove entry
+    const copy = { ...newFormData.orderProtection };
+    delete copy[service.id];
+    newFormData.orderProtection = copy;
+  }
 
-      selectedItems.forEach((item) => {
-        total += item.price || 0;
-        if (item.basePrice && item.basePrice > item.price) {
-          savings += item.basePrice - item.price;
-        }
-      });
-    });
-
-    // if (orderProtection) {
-    //   total += ORDER_PROTECTION_PRICE;
-    // }
-    if (orderProtection) {
-      const protectionFee = total * 0.04; // 4% of current total
-      total += protectionFee;
-    }
-    handleChange({ name: "cartTotal", value: total });
-    handleChange({ name: "cartSaving", value: savings });
-    return { total, savings };
-  };
  
-  const countQualifiedDiscounts = (formData) => {
-    let qualifiedCount = 0;
 
-    Object.keys(discountRules).forEach((serviceId) => {
-      const rules = discountRules[serviceId];
-      rules.forEach((rule) => {
-        try {
-          if (rule.condition(formData)) {
-            qualifiedCount += 1;
-          }
-        } catch (err) {
-          console.warn(
-            `Error evaluating discount rule for ${serviceId}:${rule.itemId}`,
-            err
-          );
-        }
-      });
+  // --- Update services state so checkbox reflects
+  const updatedServices = services.map((s) =>
+    s.id === service.id ? { ...s, order_protection: checked } : s
+  );
+
+
+// console.log("updated formdata",JSON.stringify(newFormData, null, 3))
+  handleChange({ replaceFormData: true, value: newFormData });
+  setServices(updatedServices);
+  calculateCartTotals(newFormData, updatedServices);
+};
+
+
+const calculateCartTotals = (formData, services) => {
+  let rawCartTotal = 0; // before discounts
+  let cartTotal = 0;    // after discount
+  let cartSavings = 0;
+  const serviceTotals = {};
+
+
+
+  // 🔹 Step 1: Collect all selected items across all services
+  let allSelectedItems = [];
+
+  services.forEach((service) => {
+   
+
+    const serviceSelections = formData.selectedItems?.[service.id] || {};
+
+
+    const selectedItems =
+      service.form?.items?.filter((item) => serviceSelections[item.id]) || [];
+   
+
+    let subtotal = 0;
+
+    selectedItems.forEach((item) => {
+      let itemPrice = item.price || 0;
+   
+
+      subtotal += itemPrice;
+      rawCartTotal += itemPrice;
+      allSelectedItems.push(item);
+
+     
     });
 
-    return qualifiedCount;
-  };
+    // Store per-service subtotal only
+    serviceTotals[service.id] = { subtotal };
+   
+  });
+
+  // 🔹 Step 2: Apply discount at cart level
+  const qualifiedCount = countQualifiedDiscounts(formData);
+
+  const discountLevel =
+    [...discountLevels].reverse().find((lvl) => qualifiedCount >= lvl.items) ||
+    null;
+
+  if (discountLevel) {
+    const discountAmount = (rawCartTotal * discountLevel.percent) / 100;
+    cartSavings = discountAmount;
+    cartTotal = rawCartTotal - discountAmount;
+      cartTotal = Number(cartTotal.toFixed(2));
+  cartSavings = Number(cartSavings.toFixed(2));
+
+
+  } else {
+    cartTotal = rawCartTotal;
+    
+  }
+
+  // console.log("\n=== FINAL CART TOTALS ===");
+  // console.log("Raw Cart Total (before discount):", rawCartTotal);
+  // console.log("Final Cart Total (after discount):", cartTotal);
+  // console.log("Cart Savings:", cartSavings);
+  // console.log("Service Totals:", serviceTotals);
+
+  // 🔹 Step 3: Store in formData
+  handleChange({ name: "serviceTotals", value: serviceTotals });
+  handleChange({ name: "cartTotal", value: cartTotal });
+  handleChange({ name: "cartSavings", value: cartSavings });
+
+  return { cartTotal, cartSavings, serviceTotals };
+};
+
+
+
+
+
+
+ 
+const countQualifiedDiscounts = (formData, serviceId = null) => {
+  let qualifiedCount = 0;
+
+  // If serviceId is passed → only use that slice of rules
+  const servicesToCheck = serviceId
+    ? { [serviceId]: discountRules[serviceId] || [] }
+    : discountRules;
+
+  Object.entries(servicesToCheck).forEach(([svcId, rules]) => {
+    rules.forEach((rule) => {
+      try {
+        if (rule.condition(formData)) {
+          qualifiedCount += 1;
+        }
+      } catch (err) {
+        console.warn(
+          `Error evaluating discount rule for ${svcId}:${rule.itemId}`,
+          err
+        );
+      }
+    });
+  });
+
+  return qualifiedCount;
+};
+
 
   const RenderServiceForm = ({ service, open }) => {
+    // console.log("render service", JSON.stringify(service, null, 3))
 
     return (
       <>
@@ -1384,11 +1466,9 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
                 return (
                   <label
                     className={`w-full mt-auto flex items-center justify-between gap-2 border px-3 py-3 bg-card 
-        ${
-          isDisabled || false
-            ? "opacity-50 cursor-not-allowed"
-            : "cursor-pointer"
-        }
+        
+        cursor-pointer
+        
         border-gray-300 rounded-md`}
                   >
                     {/*Changed here*/}
@@ -1397,11 +1477,12 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
                         type="checkbox"
                         className="accent-primary"
                         // checked={!!formData.order_protection}
-                        checked={true}
-                        // onChange={(e) =>
-                        //   handleProtectionToggle(e.target.checked)
-                        // }
-                        disabled={isDisabled || true}
+                        checked={service?.order_protection}
+                        onChange={(e) =>{
+                          
+                          handleProtectionToggle(e.target.checked, service)}
+                        }
+                        disabled={!service?.order_protection_value}
                       />
                       <span className="font-medium">Order Protection</span>
                       <span className="text-[#0bc88c] font-semibold ml-1">
@@ -1530,13 +1611,15 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
                       <div className="flex justify-between text-green-600 font-semibold">
                         Savings{" "}
                         <span className="text-end">
-                          ${Math.round(adjustedSaving * 100) / 100}
+                          ${formData?.serviceTotals?.[service.id]?.subsavings ||
+                            0}
                         </span>
                       </div>
                       <div className="flex justify-between text-main font-bold">
                         Total{" "}
                         <span className="text-end">
-                          ${Math.round(adjustedTotal * 100) / 100}
+                          ${formData?.serviceTotals?.[service.id]?.subtotal ||
+                            0}
                         </span>
                       </div>
                     </div>
@@ -1703,12 +1786,12 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
             <div className="md:col-span-2 flex flex-col gap-2">
               <div className="flex justify-between text-sm md:text-base font-medium text-gray-800">
                 <span>Order Subtotal:</span>
-                <span>${Math.round(adjustedTotal * 100) / 100}</span>
+                <span>${formData?.cartTotal}</span>
               </div>
 
               <div className="flex justify-between text-sm md:text-base font-semibold text-emerald-600">
                 <span>You Saved:</span>
-                <span>${Math.round(adjustedSaving * 100) / 100}</span>
+                <span>${formData?.cartSavings}</span>
               </div>
             </div>
 
