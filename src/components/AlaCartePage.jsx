@@ -1125,6 +1125,7 @@ const calculateCartTotals = (formData, services) => {
   let rawCartTotal = 0; // before discounts
   let cartTotal = 0;    // after discounts + protections
   let cartSavings = 0;
+  let totalProtection = 0; // 🔹 new accumulator
   const serviceTotals = {};
 
   // 🔹 Step 1: Collect all selected items across all services
@@ -1154,6 +1155,7 @@ const calculateCartTotals = (formData, services) => {
       }
 
       subtotal += protectionAmount; // add to subtotal
+      totalProtection += protectionAmount; // 🔹 accumulate
     }
 
     // Store per-service totals
@@ -1180,14 +1182,17 @@ const calculateCartTotals = (formData, services) => {
   // Round final totals
   cartTotal = Number(cartTotal.toFixed(2));
   cartSavings = Number(cartSavings.toFixed(2));
+  totalProtection = Number(totalProtection.toFixed(2));
 
   // 🔹 Step 3: Store in formData
   handleChange({ name: "serviceTotals", value: serviceTotals });
   handleChange({ name: "cartTotal", value: cartTotal });
   handleChange({ name: "cartSavings", value: cartSavings });
+  handleChange({ name: "order_protection_price", value: totalProtection }); // ✅ store total protection
 
-  return { cartTotal, cartSavings, serviceTotals };
+  return { cartTotal, cartSavings, totalProtection, serviceTotals };
 };
+
 
 
  

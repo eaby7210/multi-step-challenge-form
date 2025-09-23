@@ -85,24 +85,24 @@ const savings =
 const updateCartValues = (bundles, protectionChecked) => {
   if (!handleChange) return;
 
-  // const protection = protectionChecked ? ORDER_PROTECTION_PRICE : 0;
   const alaCarte = formData.a_la_carte_total || 0;
-  
   const bundlePrice = bundles.reduce((sum, b) => sum + (b.price || 0), 0);
   const bundleBase = bundles.reduce((sum, b) => sum + (b.basePrice || 0), 0);
-  
-  // let cartTotal = bundlePrice + protection + alaCarte;
-  let cartTotal = bundlePrice +  alaCarte;
+
+  let cartTotal = bundlePrice + alaCarte;
+
+  // ✅ Always calculate protection dynamically
   const protection = protectionChecked ? calcOrderProtection(cartTotal) : 0;
   cartTotal += protection;
 
   const cartSaving = bundleBase - bundlePrice;
-  // console.log("cartTotal", cartTotal)
-  handleChange({ name: "cartTotal", value: cartTotal });
-  handleChange({ name: "cartSaving", value: cartSaving });
-  handleChange({name:"order_protection",value: Boolean(protection)})
-  handleChange({ name: "order_protection_price", value: protection });
+
+  handleChange({ name: "cartTotal", value: Number(cartTotal.toFixed(2)) });
+  handleChange({ name: "cartSaving", value: Number(cartSaving.toFixed(2)) });
+  handleChange({ name: "order_protection", value: protectionChecked });
+  handleChange({ name: "order_protection_price", value: Number(protection.toFixed(2)) });
 };
+
 
 
 
@@ -448,29 +448,30 @@ const handleProtectionToggle = (checked) => {
                   );
                 })}
               </div>
-              {/* Order Protection row */}
-              <label className="w-full mt-auto flex items-center justify-start gap-2 cursor-pointer border px-3 py-3 bg-card border-gray-300">
-                <input
-                  type="checkbox"
-                  className="accent-primary"
-                  // checked={orderProtection}
-                  checked= {true}
-                  disabled = {true}
-                  onChange={(e) => handleProtectionToggle(e.target.checked)}
-                />
-                <span className="text-main font-medium">Order Protection</span>
-                <span className="text-primary font-semibold ml-1">
-                  +4%
-                  {/* ${ORDER_PROTECTION_PRICE} */}
-                </span>
-                 <button
-                  type="button"
-                  className="flex items-center justify-end justify-self-end gap-2 text-gray-700 hover:text-primary hover:cursor-pointer transition-colors"
-                  onClick={() => handlelearnModal()}
-                >
-                  <span className="text-sm font-medium">Learn More</span>
-                </button>
-              </label>
+             {/* Order Protection row */}
+<label className="w-full mt-auto flex items-center justify-start gap-2 cursor-pointer border px-3 py-3 bg-card border-gray-300">
+  <input
+    type="checkbox"
+    className="accent-primary"
+    checked={orderProtection}
+    onChange={(e) => handleProtectionToggle(e.target.checked)}
+  />
+  <span className="text-main font-medium">Order Protection</span>
+  <span className="font-semibold ml-1 text-[#0bc88c]">
+    {formData?.order_protection_price && formData.order_protection_price > 0
+      ? `+$${formData.order_protection_price.toFixed(2)}`
+      : "+4%"}
+  </span>
+  <button
+    type="button"
+    className="flex items-center justify-end gap-2 text-gray-700 hover:text-primary transition-colors"
+    onClick={handlelearnModal}
+  >
+    <span className="text-sm font-medium">Learn More</span>
+  </button>
+</label>
+
+
             </div>
 
             {/* Totals cart section */}
