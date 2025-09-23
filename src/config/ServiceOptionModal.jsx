@@ -9,6 +9,7 @@ const ServiceOptionModal = ({
   onSubmit,
   onClose,
   formData,
+  existingValues,   // ✅ receive here
 }) => {
   const [values, setValues] = useState({});
   const [error, setError] = useState(null);
@@ -16,12 +17,11 @@ const ServiceOptionModal = ({
   useEffect(() => {
     if (service.form.modalOption.eachItem) {
       // per-item values
-      setValues(service?.existingValues?.[itemId] || {});
+      setValues(existingValues || {});
     } else {
-      // single shared value for whole service
-      setValues(formData?.modalValues?.[service?.id] || {});
+      setValues(existingValues || {});
     }
-  }, [service, itemId, formData?.modalValues]);
+  }, [service, itemId, existingValues]);
 
   const handleChangeField = (label, val) => {
     setValues((prev) => ({ ...prev, [label]: val }));

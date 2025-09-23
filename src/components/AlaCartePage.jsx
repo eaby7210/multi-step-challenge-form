@@ -699,55 +699,59 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
     onNext();
   };
 
-  const handleModalOption = (serviceId, itemId, modalOption, isSelected) => {
-    const service = services.find((s) => s.id === serviceId);
-    if (!isSelected) {
-      // existing deselect logic…
-      handleItemSelection(serviceId, itemId, false);
-      return;
+const handleModalOption = (serviceId, itemId, modalOption, isSelected) => {
+  const service = services.find((s) => s.id === serviceId);
+
+  if (!isSelected) {
+    handleItemSelection(serviceId, itemId, false);
+    return;
+  }
+
+  const existingValues =
+    modalOption.eachItem
+      ? formData.modalValues?.[serviceId]?.[itemId] || {}
+      : formData.modalValues?.[serviceId] || {};
+
+  setModalOptionState({
+    service,
+    itemId,
+    existingValues,   // ✅ move here
+  });
+
+  const handleModalSubmit = (success, errorMsg, modalValues) => {
+    if (!success) return;
+
+    if (modalOption.eachItem) {
+      handleChange({
+        name: "modalValues",
+        value: {
+          ...formData.modalValues,
+          [serviceId]: {
+            ...formData.modalValues?.[serviceId],
+            [itemId]: modalValues,
+          },
+        },
+      });
+    } else {
+      handleChange({
+        name: "modalValues",
+        value: {
+          ...formData.modalValues,
+          [serviceId]: modalValues,
+        },
+      });
     }
 
-    const existingValues = formData.modalValues?.[serviceId] || {};
-
-    setModalOptionState({
-      service,
-      itemId,
-      existingValues, // ✅ pass down
-    });
-
-    const handleModalSubmit = (success, errorMsg, modalValues) => {
-      if (!success) {
-        // setError(errorMsg);
-        return;
-      }
-      // console.log("modal value", JSON.stringify(modalValues, null, 3));
-      if (modalOption.eachItem) {
-        handleChange({
-          name: "modalValues",
-          value: {
-            ...formData.modalValues,
-            [serviceId]: {
-              ...formData.modalValues?.[serviceId],
-              [itemId]: modalValues,
-            },
-          },
-        });
-      } else {
-        handleChange({
-          name: "modalValues",
-          value: {
-            ...formData.modalValues,
-            [serviceId]: modalValues,
-          },
-        });
-      }
-
-      handleItemSelection(serviceId, itemId, true);
-      setModalOptionState(null);
-    };
-
-    setModalOptionState((prev) => ({ ...prev, onSubmit: handleModalSubmit }));
+    handleItemSelection(serviceId, itemId, true);
+    setModalOptionState(null);
   };
+
+  setModalOptionState((prev) => ({
+    ...prev,
+    onSubmit: handleModalSubmit,
+  }));
+};
+
 
   const handleIncludeModal = (id = null) => {
     return setIncludeModal((state) => {
@@ -1074,6 +1078,7 @@ const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
 
   // Replace formData completely
   handleChange({ replaceFormData: true, value: newFormData });
+  calculateCartTotals(newFormData, updatedServices);
 };
 
 
@@ -1189,11 +1194,6 @@ const calculateCartTotals = (formData, services) => {
   return { cartTotal, cartSavings, serviceTotals };
 };
 
-
-
-
-
-
  
 const countQualifiedDiscounts = (formData, serviceId = null) => {
   let qualifiedCount = 0;
@@ -1220,7 +1220,6 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
 
   return qualifiedCount;
 };
-
 
   const RenderServiceForm = ({ service, open }) => {
     // console.log("render service", JSON.stringify(service, null, 3))
@@ -1663,14 +1662,16 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
     <>
       {learnModal && <OrderProtectionModal handleClose={handlelearnModal} />}
       {modalOptionState && (
-        <ServiceOptionModal
-          service={modalOptionState.service}
-          itemId={modalOptionState.itemId}
-          onSubmit={modalOptionState.onSubmit}
-          onClose={() => setModalOptionState(null)}
-          formData={formData}
-        />
-      )}
+  <ServiceOptionModal
+    service={modalOptionState.service}
+    itemId={modalOptionState.itemId}
+    existingValues={modalOptionState.existingValues}  // ✅ here
+    onSubmit={modalOptionState.onSubmit}
+    onClose={() => setModalOptionState(null)}
+    formData={formData}
+  />
+)}
+
       {includeModal && <ServiceModal />}
       <div className="w-full max-w-2xl mx-auto">
         <div className="w-full relative">
