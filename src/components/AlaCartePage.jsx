@@ -1205,15 +1205,7 @@ const calculateCartTotals = (formData, services) => {
       let itemPrice = item.price || 0;
       let originalPrice = itemPrice;
 
-      // Add options priceChange
-      if (item.options?.items?.length) {
-        item.options.items.forEach((opt) => {
-          if (opt.value && opt.priceChange) {
-            itemPrice += opt.priceChange;
-            originalPrice += opt.priceChange;
-          }
-        });
-      }
+   
 
       rawCartTotal += itemPrice;
 
