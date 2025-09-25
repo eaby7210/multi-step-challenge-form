@@ -9,7 +9,7 @@ const ServiceOptionModal = ({
   onSubmit,
   onClose,
   formData,
-  existingValues,   // ✅ receive here
+  existingValues,  
 }) => {
   const [values, setValues] = useState({});
   const [error, setError] = useState(null);
@@ -71,6 +71,7 @@ const ServiceOptionModal = ({
                 <label className="text-sm font-medium">{field.label}</label>
                 <input
                   type={field.type}
+                  name={field.name}
                   value={values[field.label] || ""}
                   onChange={(e) =>
                     handleChangeField(field.label, e.target.value)

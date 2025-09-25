@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -268,6 +268,7 @@ const SERVICES = [
         form: [
           {
             label: "Signers Name",
+            name: "signersName",
             type: "text",
             value: "",
             required: true,
@@ -275,6 +276,7 @@ const SERVICES = [
           {
             label: "Email",
             type: "email",
+            name: "email",
             value: "",
             required: true,
             valid_item_index: ["online"],
@@ -477,8 +479,6 @@ const SERVICES = [
   },
 ];
 
-
-
 const discountRules = {
   photos: [
     {
@@ -583,12 +583,7 @@ const discountLevels = [
   { items: 4, percent: 40 },
   { items: 5, percent: 50 },
   { items: 6, percent: 60 },
-  { items: 7, percent: 60 },
-  { items: 8, percent: 60 },
-  { items: 9, percent: 60 },
-  { items: 10, percent: 60 },
-  { items: 11, percent: 60 },
-  { items: 12, percent: 60 },
+ 
 ];
 
 const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
@@ -602,6 +597,13 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
   const totalLevels = levels.length;
   // const [modalValues, setModalValues] = useState({});
  
+useEffect(() => {
+  console.log("🔄 services state updated:", services);
+}, [services]);
+
+useEffect(() => {
+  console.log("🔄 formData updated:", formData);
+}, [formData]);
 
   const handlelearnModal = () => {
     return setLearnModal((state) => !state);
@@ -692,65 +694,95 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
 
     newFormData.a_la_carteOrder = a_la_carteOrder;
 
-    // console.log("✅ Built newFormData", JSON.stringify(newFormData, null, 2));
+    console.log("✅ Built newFormData", JSON.stringify(newFormData, null, 2));
+    console.log("Services", JSON.stringify(services, null, 2));
+
 
     // Save and move forward
     handleChange({ replaceFormData: true, value: newFormData });
     onNext();
   };
 
+// Open modal for a service item
 const handleModalOption = (serviceId, itemId, modalOption, isSelected) => {
-  const service = services.find((s) => s.id === serviceId);
+  console.log(
+    "📂 handleModalOption called with:",
+    JSON.stringify({ serviceId, itemId, modalOption, isSelected }, null, 2)
+  );
 
+  const service = services.find((s) => s.id === serviceId);
+  if (!service) {
+    console.warn("❌ No service found for serviceId:", serviceId);
+    return;
+  }
+
+  // If unselecting → just deselect and exit
   if (!isSelected) {
+    console.log(`⚡ Unselecting item ${itemId} from service ${serviceId}`);
     handleItemSelection(serviceId, itemId, false);
     return;
   }
 
-  const existingValues =
-    modalOption.eachItem
-      ? formData.modalValues?.[serviceId]?.[itemId] || {}
-      : formData.modalValues?.[serviceId] || {};
+  // Prefill from service.form.modalOption.form values
+  const existingValues = (service.form?.modalOption?.form || []).reduce(
+    (acc, field) => {
+      if (field.value !== undefined) acc[field.label] = field.value;
+      return acc;
+    },
+    {}
+  );
+
+  console.log(
+    "📝 Prefilled existingValues for modal:",
+    JSON.stringify(existingValues, null, 2)
+  );
 
   setModalOptionState({
-    service,
+    serviceId,
     itemId,
-    existingValues,   // ✅ move here
+    existingValues,
+    service,
   });
+};
 
-  const handleModalSubmit = (success, errorMsg, modalValues) => {
-    if (!success) return;
+// Handle modal submission
+const handleModalSubmit = (success, errorMsg, modalValues) => {
 
-    if (modalOption.eachItem) {
-      handleChange({
-        name: "modalValues",
-        value: {
-          ...formData.modalValues,
-          [serviceId]: {
-            ...formData.modalValues?.[serviceId],
-            [itemId]: modalValues,
-          },
-        },
-      });
-    } else {
-      handleChange({
-        name: "modalValues",
-        value: {
-          ...formData.modalValues,
-          [serviceId]: modalValues,
-        },
-      });
-    }
 
-    handleItemSelection(serviceId, itemId, true);
-    setModalOptionState(null);
+  if (!success) {
+    console.warn("❌ Modal submission failed:", errorMsg);
+    return;
+  }
+
+  const { serviceId, itemId } = modalOptionState;
+
+
+  // 1️⃣ Mirror into formData for backend payload
+  const newModalValues = {
+    ...formData.modalValues,
+    [serviceId]: {
+      ...formData.modalValues?.[serviceId],
+      [itemId]: modalValues,
+    },
   };
 
-  setModalOptionState((prev) => ({
-    ...prev,
-    onSubmit: handleModalSubmit,
-  }));
+
+  handleChange({
+    name: "modalValues",
+    value: newModalValues,
+  });
+
+  //  Mark item as selected and merge modal values into services
+ 
+  handleItemSelection(serviceId, itemId, true, modalValues);
+
+  //  Close modal
+
+  setModalOptionState(null);
 };
+
+
+
 
 
   const handleIncludeModal = (id = null) => {
@@ -758,120 +790,143 @@ const handleModalOption = (serviceId, itemId, modalOption, isSelected) => {
       return state ? null : id;
     });
   };
-  const handleItemSelection = (serviceId, itemId, selected) => {
-    const prevSelections = formData.selectedItems?.[serviceId] || {};
-    const newSelections = { ...prevSelections, [itemId]: selected };
+const handleItemSelection = (serviceId, itemId, selected, modalValues = null) => {
 
-    // start fresh copy
-    let newFormData = { ...formData };
 
-    // Ensure serviceType is a_la_carte
-    if (newFormData.serviceType !== "a_la_carte") {
-      newFormData.serviceType = "a_la_carte";
-    }
+  const prevSelections = formData.selectedItems?.[serviceId] || {};
+  const newSelections = { ...prevSelections, [itemId]: selected };
 
-    // Update selectedItems
-    newFormData.selectedItems = {
-      ...newFormData.selectedItems,
-      [serviceId]: newSelections,
+  let newFormData = { ...formData };
+
+  // Ensure serviceType
+  if (newFormData.serviceType !== "a_la_carte") {
+    newFormData.serviceType = "a_la_carte";
+  }
+
+  // Update selectedItems
+  newFormData.selectedItems = {
+    ...newFormData.selectedItems,
+    [serviceId]: newSelections,
+  };
+
+  const service = services.find((s) => s.id === serviceId);
+  const item = service?.form?.items?.find((i) => i.id === itemId);
+
+  if (service?.order_protection) {
+    handleProtectionToggle(service?.order_protection, service);
+  }
+
+  // Default item options
+  if (selected && item?.options?.items?.length) {
+    const prevItemOptions =
+      newFormData.selectedOptions?.[serviceId]?.[itemId] || {};
+    const defaultItemOptions = {};
+
+    item.options.items.forEach((opt) => {
+      defaultItemOptions[opt.id] =
+        prevItemOptions[opt.id] ?? opt.value ?? false;
+    });
+
+    newFormData.selectedOptions = {
+      ...newFormData.selectedOptions,
+      [serviceId]: {
+        ...newFormData.selectedOptions?.[serviceId],
+        [itemId]: defaultItemOptions,
+      },
     };
+  }
 
-    const service = services.find((s) => s.id === serviceId);
-    const item = service?.form?.items?.find((i) => i.id === itemId);
+  // Default service-level options
+  if (selected && Object.values(prevSelections).every((v) => !v)) {
+    if (service?.form) {
+      let defaultOptions = {};
 
-    //  If item is protectionInvalid, remove order protection
-    // if (selected && item?.protectionInvalid) {
-    //   if ("order_protection" in newFormData) {
-    //     delete newFormData.order_protection;
-    //   }
-    // }
-    if (service?.order_protection){
-      handleProtectionToggle(service?.order_protection, service)
-    }
+      if (service.form.options?.items?.length) {
+        service.form.options.items.forEach((opt) => {
+          defaultOptions[opt.id] = opt.value ?? false;
+        });
+      }
 
-    if (selected && item?.options?.items?.length) {
-      const prevItemOptions =
-        newFormData.selectedOptions?.[serviceId]?.[itemId] || {};
-      const defaultItemOptions = {};
+      if (service.form.submenu?.items?.length) {
+        service.form.submenu.items.forEach((sub) => {
+          defaultOptions[sub.id] =
+            sub.value ?? (sub.type === "counter" ? 0 : false);
+        });
+      }
 
-      item.options.items.forEach((opt) => {
-        defaultItemOptions[opt.id] =
-          prevItemOptions[opt.id] ?? opt.value ?? false;
-      });
-
-      newFormData.selectedOptions = {
-        ...newFormData.selectedOptions,
-        [serviceId]: {
-          ...newFormData.selectedOptions?.[serviceId],
-          [itemId]: defaultItemOptions,
-        },
-      };
-    }
-
-    // Set default service-level options on first selection
-
-    if (selected && Object.values(prevSelections).every((v) => !v)) {
-      if (service?.form) {
-        let defaultOptions = {};
-
-        if (service.form.options?.items?.length) {
-          service.form.options.items.forEach((opt) => {
-            defaultOptions[opt.id] = opt.value ?? false;
-          });
-        }
-
-        if (service.form.submenu?.items?.length) {
-          service.form.submenu.items.forEach((sub) => {
-            defaultOptions[sub.id] =
-              sub.value ?? (sub.type === "counter" ? 0 : false);
-          });
-        }
-
-        if (Object.keys(defaultOptions).length > 0) {
-          newFormData.selectedOptions = {
-            ...newFormData.selectedOptions,
-            [serviceId]: {
-              ...newFormData.selectedOptions?.[serviceId],
-              ...defaultOptions,
-            },
-          };
-        }
+      if (Object.keys(defaultOptions).length > 0) {
+        newFormData.selectedOptions = {
+          ...newFormData.selectedOptions,
+          [serviceId]: {
+            ...newFormData.selectedOptions?.[serviceId],
+            ...defaultOptions,
+          },
+        };
       }
     }
-    newFormData.order_protection = true;
-    //  Recalculate totals
-    const { total, savings } = calculateCartTotals(
-      newFormData,
-      services,
-      newFormData.order_protection
+  }
+
+  // ✅ Merge modal values directly into services state
+  if (modalValues) {
+    setServices((prev) =>
+      prev.map((s) =>
+        s.id === serviceId
+          ? {
+              ...s,
+              form: {
+                ...s.form,
+                modalOption: {
+                  ...s.form.modalOption,
+                  form: s.form.modalOption.form.map((field) => ({
+                    ...field,
+                    value:
+                      modalValues[field.label] !== undefined
+                        ? modalValues[field.label]
+                        : field.value,
+                  })),
+                },
+              },
+            }
+          : s
+      )
     );
+  }
 
-    newFormData.cartTotal = total;
-    newFormData.cartSaving = savings;
+  // Always keep order_protection true
+  newFormData.order_protection = true;
 
-    // Count discounts with *fresh* formData
-    const qualifiedCount = countQualifiedDiscounts(newFormData);
-    // console.log(`Qualifying Count ${qualifiedCount}`);
-    const currentIndex = levels.findIndex(
-      (lvl) => lvl.items === qualifiedCount
-    );
-    const fillPercent = ((currentIndex + 1) / totalLevels) * 100;
-    const currentPercent = currentIndex >= 0 ? levels[currentIndex].percent : 0;
+  // Discount progress
+  const qualifiedCount = countQualifiedDiscounts(newFormData);
+  const currentIndex = levels.findIndex((lvl) => lvl.items === qualifiedCount);
+  const fillPercent = ((currentIndex + 1) / totalLevels) * 100;
+  const currentPercent =
+    currentIndex >= 0 ? levels[currentIndex].percent : 0;
 
-    newFormData.progress = {
-      qualifiedCount,
-      currentIndex,
-      fillPercent,
-      currentPercent,
-    };
-
-    //  Commit once at the end
-    handleChange({ replaceFormData: true, value: newFormData });
-    calculateCartTotals(newFormData, services, )
-    //  Return updated formData in case caller needs it
-    // console.log(JSON.stringify(newFormData, null, 3));
-    return newFormData;
+  newFormData.progress = {
+    qualifiedCount,
+    currentIndex,
+    fillPercent,
+    currentPercent,
   };
+
+  // Recalculate totals
+ const { cartTotal, cartSavings, serviceTotals } = calculateCartTotals(
+   newFormData,
+   services
+ );
+
+ newFormData.cartTotal = cartTotal;
+ newFormData.cartSaving = cartSavings;
+ newFormData.serviceTotals = serviceTotals;
+
+
+
+  // Commit
+  handleChange({ replaceFormData: true, value: newFormData });
+
+  return newFormData;
+};
+
 
 const handleSubmenuChange = (serviceId, optionId, value, type, name) => {
   console.log("▶️ handleSubmenuChange called with:", {
@@ -1122,76 +1177,128 @@ const handleProtectionToggle = (checked=null, service) => {
 
 
 const calculateCartTotals = (formData, services) => {
-  let rawCartTotal = 0; // before discounts
-  let cartTotal = 0;    // after discounts + protections
+  let rawCartTotal = 0;
+  let cartTotal = 0;
   let cartSavings = 0;
-  let totalProtection = 0; // 🔹 new accumulator
+  let totalProtection = 0;
   const serviceTotals = {};
 
-  // 🔹 Step 1: Collect all selected items across all services
-  let allSelectedItems = [];
-
+  // Step 1: loop services
   services.forEach((service) => {
     const serviceSelections = formData.selectedItems?.[service.id] || {};
     const selectedItems =
       service.form?.items?.filter((item) => serviceSelections[item.id]) || [];
 
     let subtotal = 0;
+    let subsavings = 0;
+    let protectionAmount = 0;
+
+    // ✅ include items container
+    serviceTotals[service.id] = {
+      subtotal: 0,
+      protectionAmount: 0,
+      subsavings: 0,
+      items: {},
+    };
 
     selectedItems.forEach((item) => {
       let itemPrice = item.price || 0;
-      subtotal += itemPrice;
+      let originalPrice = itemPrice;
+
+      // Add options priceChange
+      if (item.options?.items?.length) {
+        item.options.items.forEach((opt) => {
+          if (opt.value && opt.priceChange) {
+            itemPrice += opt.priceChange;
+            originalPrice += opt.priceChange;
+          }
+        });
+      }
+
       rawCartTotal += itemPrice;
-      allSelectedItems.push(item);
+
+      // --- Item-level discount check ---
+      let isEligible = false;
+      const rules = discountRules[service.id] || [];
+      const ruleForItem = rules.find((rule) => rule.itemId === item.id);
+      if (ruleForItem && ruleForItem.condition(formData)) {
+        isEligible = true;
+      }
+
+      let discountApplied = 0;
+      if (isEligible) {
+        const qualifiedCount = countQualifiedDiscounts(formData); // total eligible items
+        const discountLevel =
+          [...discountLevels].reverse().find(
+            (lvl) => qualifiedCount >= lvl.items
+          ) || null;
+
+        if (discountLevel) {
+          discountApplied = (itemPrice * discountLevel.percent) / 100;
+          itemPrice -= discountApplied;
+          subsavings += discountApplied;
+        }
+      }
+
+      subtotal += itemPrice;
+
+      // ✅ save per-item totals
+      serviceTotals[service.id].items[item.id] = {
+        originalPrice: Number(originalPrice.toFixed(2)),
+        discountedPrice: Number(itemPrice.toFixed(2)),
+        discountApplied: Number(discountApplied.toFixed(2)),
+      };
     });
 
-    // 🔹 Step 1.5: Apply order protection if enabled
-    let protectionAmount = 0;
+    // Step 1.5: Apply order protection if enabled
     if (service.order_protection && subtotal > 0) {
       if (service.order_protection_type === "percent") {
         protectionAmount = (subtotal * service.order_protection_value) / 100;
       } else if (service.order_protection_type === "flat") {
         protectionAmount = service.order_protection_value;
       }
-
-      subtotal += protectionAmount; // add to subtotal
-      totalProtection += protectionAmount; // 🔹 accumulate
+      subtotal += protectionAmount;
+      totalProtection += protectionAmount;
     }
 
-    // Store per-service totals
-    serviceTotals[service.id] = { 
-      subtotal: Number(subtotal.toFixed(2)),
-      protectionAmount: Number(protectionAmount.toFixed(2)),
-    };
+    // Store service totals
+    serviceTotals[service.id].subtotal = Number(subtotal.toFixed(2));
+    serviceTotals[service.id].protectionAmount =
+      Number(protectionAmount.toFixed(2));
+    serviceTotals[service.id].subsavings = Number(subsavings.toFixed(2));
+
+    cartTotal += subtotal;
+    cartSavings += subsavings;
   });
 
-  // 🔹 Step 2: Apply discount at cart level
-  const qualifiedCount = countQualifiedDiscounts(formData);
-  const discountLevel =
-    [...discountLevels].reverse().find((lvl) => qualifiedCount >= lvl.items) ||
-    null;
-
-  if (discountLevel) {
-    const discountAmount = (rawCartTotal * discountLevel.percent) / 100;
-    cartSavings = discountAmount;
-    cartTotal = rawCartTotal - discountAmount;
-  } else {
-    cartTotal = rawCartTotal;
-  }
-
-  // Round final totals
+  // Step 2: Round totals
   cartTotal = Number(cartTotal.toFixed(2));
   cartSavings = Number(cartSavings.toFixed(2));
   totalProtection = Number(totalProtection.toFixed(2));
 
-  // 🔹 Step 3: Store in formData
+  // Step 3: Flip off order_protection if all protections are zero
+  const allProtectionZero = Object.values(serviceTotals).every(
+    (s) => s.protectionAmount === 0
+  );
+console.log("serviceTotals",JSON.stringify(serviceTotals, null, 3))
   handleChange({ name: "serviceTotals", value: serviceTotals });
   handleChange({ name: "cartTotal", value: cartTotal });
   handleChange({ name: "cartSavings", value: cartSavings });
-  handleChange({ name: "order_protection_price", value: totalProtection }); // ✅ store total protection
+  handleChange({ name: "order_protection_price", value: totalProtection });
+  handleChange({
+    name: "order_protection",
+    value: !allProtectionZero,
+  });
 
-  return { cartTotal, cartSavings, totalProtection, serviceTotals };
+  return {
+    cartTotal,
+    cartSavings,
+    totalProtection,
+    serviceTotals,
+    order_protection: !allProtectionZero,
+  };
 };
+
 
 
 
@@ -1451,17 +1558,7 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
 
               {/* Order Protection row */}
               {(() => {
-                const isDisabled = Object.entries(
-                  formData.selectedItems || {}
-                ).some(([serviceId, items]) => {
-                  const service = services.find((s) => s.id === serviceId);
-                  return Object.entries(items).some(
-                    ([itemId, selected]) =>
-                      selected &&
-                      service?.form?.items?.find((i) => i.id === itemId)
-                        ?.protectionInvalid
-                  );
-                });
+               
 
                 return (
                   <label
@@ -1471,8 +1568,8 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
         
         border-gray-300 rounded-md`}
                   >
-                    {/*Changed here*/}
-                    <div className="flex items-center justify-start gap-2">
+                   
+                    <div className="flex items-center justify-start gap-4">
                       <input
                         type="checkbox"
                         className="accent-primary"
@@ -1484,14 +1581,12 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
                         }
                         disabled={!service?.order_protection_value}
                       />
-                      <span className="font-medium">Order Protection</span>
+                    <span className={`font-medium ${ !service?.order_protection? "text-gray-600 hover:text-black" : "text-gray-700 hover:text-black"}`}>Order Protection</span>
                       <span className="text-[#0bc88c] font-semibold ml-1">
                         {/* ${ORDER_PROTECTION_PRICE} */}
                         {formData?.serviceTotals?.[service.id]?.protectionAmount
-                        ?`+$${formData?.serviceTotals?.[service.id]?.protectionAmount}`
-                        : service?.order_protection_type == 'percent'
-                        ? `+${service?.order_protection_value}%`
-                        : `$${service?.order_protection_value}`}
+                        ?`$${formData?.serviceTotals?.[service.id]?.protectionAmount}`
+                        : ""}
                 
                               
                       </span>
@@ -1500,9 +1595,9 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
                     <button
                       type="button"
                       className={`flex items-center justify-end gap-2 transition-colors 
-          ${isDisabled ? "text-gray-400" : "text-gray-700 hover:text-primary"}`}
+          ${ !service?.order_protection? "text-gray-400 hover:text-black" : "text-gray-700 hover:text-black"}`}
                       onClick={handlelearnModal}
-                      disabled={isDisabled}
+                      disabled={false}
                     >
                       <span className="text-sm font-medium">Learn More</span>
                     </button>
@@ -1555,7 +1650,8 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
                         key={`item-options-${item.id}`}
                         className={`gap-4 mt-2 mb-4 ml-4`}
                       >
-                        <p className="text-xs font-semibold text-gray-500 mb-2">
+                        <p className="text-xs text-start
+                         font-semibold text-gray-500 mb-2">
                           {item.title} Options
                         </p>
                         {item.options.items.map((option) => (
@@ -1617,7 +1713,7 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
                       <div className="flex justify-between text-green-600 font-semibold">
                         Savings{" "}
                         <span className="text-end">
-                          ${formData?.cartSavings ||
+                          ${formData?.serviceTotals?.[service.id]?.subsavings ||
                             0}
                         </span>
                       </div>
@@ -1668,16 +1764,17 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
   return (
     <>
       {learnModal && <OrderProtectionModal handleClose={handlelearnModal} />}
-      {modalOptionState && (
+{modalOptionState && (
   <ServiceOptionModal
     service={modalOptionState.service}
     itemId={modalOptionState.itemId}
-    existingValues={modalOptionState.existingValues}  // ✅ here
-    onSubmit={modalOptionState.onSubmit}
+    existingValues={modalOptionState.existingValues}
+    onSubmit={handleModalSubmit}
     onClose={() => setModalOptionState(null)}
     formData={formData}
   />
 )}
+
 
       {includeModal && <ServiceModal />}
       <div className="w-full max-w-2xl mx-auto">

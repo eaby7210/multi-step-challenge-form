@@ -459,7 +459,7 @@ const handleCouponValidation = async () => {
     Coupon Code
   </label>
 
-  {/* Show input + apply button if coupon is not applied */}
+  {/* Show input + apply button if coupon is not applied
   {!formData.coupon_code ? (
     <div className="flex flex-col md:flex-row items-stretch gap-2">
       <input
@@ -501,7 +501,7 @@ const handleCouponValidation = async () => {
         Remove Coupon
       </button>
     </div>
-  )}
+  )} */}
 
   {/* Error message */}
   {errors.coupon_code && (

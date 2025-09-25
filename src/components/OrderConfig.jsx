@@ -36,13 +36,7 @@ const Bundles = [
 // const ORDER_PROTECTION_PRICE = 15;
 
 const OrderConfig = ({ formData = {}, handleChange, onNext, onPrev }) => {
-  // const [selectedBundles, setSelectedBundles] = useState(() => {
-  //   if (formData && formData.bundles) {
-  //     console.log(formData.bundles)
-  //     return formData.bundles; // should be an array of bundle names
-  //   }
-  //   return [];
-  // });
+
   const bundles = formData?.bundles || [];
 
   const [orderProtection, setOrderProtection] = useState(
