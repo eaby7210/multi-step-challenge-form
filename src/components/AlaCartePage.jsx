@@ -1,4 +1,7 @@
-import { useState, useEffect } from "react";
+import {
+   useState,
+    // useEffect 
+  } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -487,7 +490,6 @@ const discountRules = {
         const res =
           !!formData.selectedItems?.photos?.basic &&
           Object.values(options).some((value) => value === true);
-        // console.log("basic res", res);
         return res;
       },
     },
@@ -596,11 +598,9 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
   // const [modalValues, setModalValues] = useState({});
 
   // useEffect(() => {
-  //   console.log("🔄 services state updated:", services);
   // }, [services]);
 
   // useEffect(() => {
-  //   console.log("🔄 formData updated:", formData);
   // }, [formData]);
 
   const handlelearnModal = () => {
@@ -608,15 +608,12 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
   };
 
   const handleValidation = () => {
-    // console.log("Inside Validation");
-    // console.log(JSON.stringify(formData, null, 3));
     setError("");
 
     let newFormData = { ...formData };
 
     const a_la_carteOrder = [];
     // newFormData.order_protection = formData.selectedOptions?.order_protection || false
-    // console.log("order protection",formData.selectedOptions?.order_protection)
 
     // newFormData.discountStatus = formData.selectedItemOptions?.progress || {}
     services.forEach((service) => {
@@ -692,8 +689,6 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
 
     newFormData.a_la_carteOrder = a_la_carteOrder;
 
-    console.log("✅ Built newFormData", JSON.stringify(newFormData, null, 2));
-    console.log("Services", JSON.stringify(services, null, 2));
 
     // Save and move forward
     handleChange({ replaceFormData: true, value: newFormData });
@@ -898,11 +893,9 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
       fillPercent,
       currentPercent,
     };
-    console.log(`progess: ${JSON.stringify({...newFormData?.progress,totalLevels}, null, 3)}`);
     // Recalculate totals
     const calculationResult = calculateCartTotals(newFormData, services);
     newFormData = calculationResult.nextFormData;
-    console.log(newFormData);
     return newFormData;
   };
 
@@ -941,9 +934,6 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
 
       // --- 2) Handle submenu-based price changes next
       if (item.submenuPriceChange) {
-        console.log(
-          `🔎 Checking submenuPriceChange for item "${item.id}" (basePrice=${basePrice})`
-        );
 
         // Only iterate price-change keys defined for this item
         let accumulatedAdd = 0;
@@ -953,50 +943,31 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
           const isActive = serviceOptions[optId];
 
           // nicer, safe logging of isActive
-          let isActiveLog;
-          try {
-            isActiveLog = JSON.stringify(isActive);
-          } catch (e) {
-            isActiveLog = String(isActive);
-          }
+          
 
-          console.log(
-            `   ➡️ Option "${optId}" | isActive=${isActiveLog} | change=`,
-            change
-          );
+   
 
           // skip if no change definition (shouldn't happen since iterating change keys) or inactive
           if (!change) {
-            console.log(`      ⏩ No change config for "${optId}", skipping`);
             return;
           }
           if (!isActive && isActive !== 0) {
             // treat 0 as possible valid numeric value
-            console.log(`      ⏩ Option "${optId}" not active, skipping`);
             return;
           }
 
           // Accumulate effects
           if (change.type === "add") {
             accumulatedAdd += Number(change.value || 0);
-            console.log(
-              `      ➕ Accumulate ADD: +${change.value} (acc=${accumulatedAdd})`
-            );
+       
           } else if (change.type === "multiple") {
             // Multiples expect a numeric isActive (count)
             if (typeof isActive === "number") {
               const add = Number(change.value || 0) * isActive;
               accumulatedAdd += add;
-            } else {
-              console.log(
-                `      ⚠️ MULTIPLE expected numeric active value but got: ${isActiveLog}; skipping`
-              );
-            }
-          } else {
-            console.log(
-              `      ⚠️ Unknown change.type "${change.type}" for "${optId}", skipping`
-            );
-          }
+            } 
+            
+          } 
         });
 
         finalPrice = basePrice + accumulatedAdd;
@@ -1164,14 +1135,13 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
       s.id === service.id ? { ...s, order_protection: checked } : s
     );
 
-    // console.log("updated formdata",JSON.stringify(newFormData, null, 3))
     handleChange({ replaceFormData: true, value: newFormData });
     setServices(updatedServices);
     calculateCartTotals(newFormData, updatedServices);
   };
 
   const calculateCartTotals = (formData, services) => {
-    let rawCartTotal = 0;
+    // let rawCartTotal = 0;
     let cartTotal = 0;
     let cartSavings = 0;
     let totalProtection = 0;
@@ -1200,7 +1170,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
         let itemPrice = item.price || 0;
         let originalPrice = itemPrice;
 
-        rawCartTotal += itemPrice;
+        // rawCartTotal += itemPrice;
 
         // --- Item-level discount check ---
         let isEligible = false;
@@ -1266,7 +1236,6 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
     const allProtectionZero = Object.values(serviceTotals).every(
       (s) => s.protectionAmount === 0
     );
-    // console.log("serviceTotals",JSON.stringify(serviceTotals, null, 3))
 
     nextFormData.cartTotal = cartTotal;
     nextFormData.cartSavings = cartSavings;
@@ -1276,7 +1245,6 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
 
     // Commit
     handleChange({ replaceFormData: true, value: nextFormData });
-    console.log(nextFormData);
     return {
       cartTotal,
       cartSavings,
@@ -1313,8 +1281,11 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
     return qualifiedCount;
   };
 
-  const RenderServiceForm = ({ service, open }) => {
-    // console.log("render service", JSON.stringify(service, null, 3))
+  const RenderServiceForm = ({
+     service,
+      // open 
+
+    }) => {
 
     return (
       <>
@@ -1819,7 +1790,6 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
           onValueChange={setOpenItem}
         >
           {services.map((service) => {
-            // console.log(`Inside Accordion ${openItem}`);
             return (
               <AccordionItem
                 key={service.id}
