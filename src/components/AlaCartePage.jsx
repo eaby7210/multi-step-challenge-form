@@ -877,11 +877,20 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
 
     // Discount progress
     const qualifiedCount = countQualifiedDiscounts(newFormData);
-    const currentIndex = levels.findIndex(
-      (lvl) => lvl.items === qualifiedCount
-    );
-    const fillPercent = ((currentIndex + 1) / totalLevels) * 100;
-    const currentPercent = currentIndex >= 0 ? levels[currentIndex].percent : 0;
+    // find the highest level we qualify for
+    const currentLevel =
+      [...levels].reverse().find((lvl) => qualifiedCount >= lvl.items) || null;
+
+    // index of that level in the original array
+    const currentIndex = currentLevel
+      ? levels.findIndex((lvl) => lvl.items === currentLevel.items)
+      : -1;
+
+    const fillPercent = currentLevel
+      ? ((currentIndex + 1) / totalLevels) * 100
+      : 0;
+
+    const currentPercent = currentLevel ? currentLevel.percent : 0;
 
     newFormData.progress = {
       qualifiedCount,
@@ -889,7 +898,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
       fillPercent,
       currentPercent,
     };
-
+    console.log(`progess: ${JSON.stringify({...newFormData?.progress,totalLevels}, null, 3)}`);
     // Recalculate totals
     const calculationResult = calculateCartTotals(newFormData, services);
     newFormData = calculationResult.nextFormData;
@@ -1088,14 +1097,14 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
     let newOptions = { ...prevOptions };
 
     // --- Handle radio groups (reset siblings)
- if (type === "radio" && name) {
-  const originalService = SERVICES.find((s) => s.id === serviceId);
-  originalService?.form?.submenu?.items
-    ?.filter((opt) => opt.type === "radio" && opt.name === name)
-    .forEach((opt) => {
-      newOptions[opt.id] = false; // reset siblings
-    });
-}
+    if (type === "radio" && name) {
+      const originalService = SERVICES.find((s) => s.id === serviceId);
+      originalService?.form?.submenu?.items
+        ?.filter((opt) => opt.type === "radio" && opt.name === name)
+        .forEach((opt) => {
+          newOptions[opt.id] = false; // reset siblings
+        });
+    }
 
     // --- Apply new selection
     newOptions[optionId] = value;
@@ -1208,7 +1217,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
             [...discountLevels]
               .reverse()
               .find((lvl) => qualifiedCount >= lvl.items) || null;
-
+         
           if (discountLevel) {
             discountApplied = (itemPrice * discountLevel.percent) / 100;
             itemPrice -= discountApplied;
