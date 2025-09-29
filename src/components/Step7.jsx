@@ -453,11 +453,11 @@ const handleCouponValidation = async () => {
 
         </div>
            {/* Coupon Code Field */}
-          <div className="mt-4 w-full">
-  <label className="font-semibold mb-2 flex items-center gap-2 text-main">
+          {/* <div className="mt-4 w-full"> */}
+  {/* <label className="font-semibold mb-2 flex items-center gap-2 text-main">
     <TicketPercent className="w-5 h-5 text-primary" />
     Coupon Code
-  </label>
+  </label> */}
 
   {/* Show input + apply button if coupon is not applied
   {!formData.coupon_code ? (
@@ -502,14 +502,14 @@ const handleCouponValidation = async () => {
       </button>
     </div>
   )} */}
-
-  {/* Error message */}
+{/* 
+  Error message
   {errors.coupon_code && (
     <div className="text-red-500 text-sm text-center mt-1">
       {errors.coupon_code}
     </div>
   )}
-</div>
+</div> */}
 
 
       </div>

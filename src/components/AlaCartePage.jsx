@@ -17,7 +17,7 @@ const SERVICES = [
     id: "photos",
     title: "Property Photos",
     subtitle: "Send a photographer to a property to take pictures",
-    order_protection:true,
+    order_protection: true,
     order_protection_type: "percent",
     order_protection_value: 4,
     form: {
@@ -289,7 +289,7 @@ const SERVICES = [
     id: "videos",
     title: "Property Videos",
     subtitle: "Send a videographer to a property to record video",
-    order_protection:true,
+    order_protection: true,
     order_protection_type: "percent",
     order_protection_value: 4,
     form: {
@@ -306,13 +306,12 @@ const SERVICES = [
         },
       ],
     },
-
   },
   {
     id: "repairs",
     title: "Home Maintenance & Repairs",
     subtitle: "Receive and approve bids for repair work on a property",
-    order_protection:true,
+    order_protection: true,
     order_protection_type: "percent",
     order_protection_value: 4,
     form: {
@@ -341,7 +340,7 @@ const SERVICES = [
                 label: "Complete It",
                 value: true,
                 disabled: false,
-                priceChange: 15,
+
                 valid_item_index: [],
               },
             ],
@@ -361,6 +360,7 @@ const SERVICES = [
                 label: "Bids Only",
                 value: true,
                 disabled: true,
+                priceChange: 15,
                 valid_item_index: [],
               },
               {
@@ -393,7 +393,7 @@ const SERVICES = [
     id: "inspections",
     title: "Home Inspections",
     subtitle: "Send a licensed home inspector to a property",
-    order_protection:true,
+    order_protection: true,
     order_protection_type: "percent",
     order_protection_value: 15,
     form: {
@@ -410,13 +410,12 @@ const SERVICES = [
         },
       ],
     },
-
   },
   {
     id: "onDemand",
     title: "On Demand Services",
     subtitle: "Send a representative to the property for onsite purposes",
-    order_protection:true,
+    order_protection: true,
     order_protection_type: "percent",
     order_protection_value: 4,
     form: {
@@ -583,7 +582,6 @@ const discountLevels = [
   { items: 4, percent: 40 },
   { items: 5, percent: 50 },
   { items: 6, percent: 60 },
- 
 ];
 
 const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
@@ -596,14 +594,14 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
   const [modalOptionState, setModalOptionState] = useState(null);
   const totalLevels = levels.length;
   // const [modalValues, setModalValues] = useState({});
- 
-useEffect(() => {
-  console.log("🔄 services state updated:", services);
-}, [services]);
 
-useEffect(() => {
-  console.log("🔄 formData updated:", formData);
-}, [formData]);
+  // useEffect(() => {
+  //   console.log("🔄 services state updated:", services);
+  // }, [services]);
+
+  // useEffect(() => {
+  //   console.log("🔄 formData updated:", formData);
+  // }, [formData]);
 
   const handlelearnModal = () => {
     return setLearnModal((state) => !state);
@@ -697,629 +695,614 @@ useEffect(() => {
     console.log("✅ Built newFormData", JSON.stringify(newFormData, null, 2));
     console.log("Services", JSON.stringify(services, null, 2));
 
-
     // Save and move forward
     handleChange({ replaceFormData: true, value: newFormData });
     onNext();
   };
 
-// Open modal for a service item
-const handleModalOption = (serviceId, itemId, modalOption, isSelected) => {
-  console.log(
-    "📂 handleModalOption called with:",
-    JSON.stringify({ serviceId, itemId, modalOption, isSelected }, null, 2)
-  );
+  // Open modal for a service item
+  const handleModalOption = (serviceId, itemId, modalOption, isSelected) => {
+    const service = services.find((s) => s.id === serviceId);
+    if (!service) {
+      console.warn("❌ No service found for serviceId:", serviceId);
+      return;
+    }
 
-  const service = services.find((s) => s.id === serviceId);
-  if (!service) {
-    console.warn("❌ No service found for serviceId:", serviceId);
-    return;
-  }
+    // If unselecting → just deselect and exit
+    if (!isSelected) {
+      handleItemSelection(serviceId, itemId, false);
+      return;
+    }
 
-  // If unselecting → just deselect and exit
-  if (!isSelected) {
-    console.log(`⚡ Unselecting item ${itemId} from service ${serviceId}`);
-    handleItemSelection(serviceId, itemId, false);
-    return;
-  }
+    // Prefill from service.form.modalOption.form values
+    const existingValues = (service.form?.modalOption?.form || []).reduce(
+      (acc, field) => {
+        if (field.value !== undefined) acc[field.label] = field.value;
+        return acc;
+      },
+      {}
+    );
 
-  // Prefill from service.form.modalOption.form values
-  const existingValues = (service.form?.modalOption?.form || []).reduce(
-    (acc, field) => {
-      if (field.value !== undefined) acc[field.label] = field.value;
-      return acc;
-    },
-    {}
-  );
-
-  console.log(
-    "📝 Prefilled existingValues for modal:",
-    JSON.stringify(existingValues, null, 2)
-  );
-
-  setModalOptionState({
-    serviceId,
-    itemId,
-    existingValues,
-    service,
-  });
-};
-
-// Handle modal submission
-const handleModalSubmit = (success, errorMsg, modalValues) => {
-
-
-  if (!success) {
-    console.warn("❌ Modal submission failed:", errorMsg);
-    return;
-  }
-
-  const { serviceId, itemId } = modalOptionState;
-
-
-  // 1️⃣ Mirror into formData for backend payload
-  const newModalValues = {
-    ...formData.modalValues,
-    [serviceId]: {
-      ...formData.modalValues?.[serviceId],
-      [itemId]: modalValues,
-    },
+    setModalOptionState({
+      serviceId,
+      itemId,
+      existingValues,
+      service,
+    });
   };
 
+  // Handle modal submission
+  const handleModalSubmit = (success, errorMsg, modalValues) => {
+    if (!success) {
+      console.warn("❌ Modal submission failed:", errorMsg);
+      return;
+    }
 
-  handleChange({
-    name: "modalValues",
-    value: newModalValues,
-  });
+    const { serviceId, itemId } = modalOptionState;
 
-  //  Mark item as selected and merge modal values into services
- 
-  handleItemSelection(serviceId, itemId, true, modalValues);
+    // 1️⃣ Mirror into formData for backend payload
+    const newModalValues = {
+      ...formData.modalValues,
+      [serviceId]: {
+        ...formData.modalValues?.[serviceId],
+        [itemId]: modalValues,
+      },
+    };
 
-  //  Close modal
+    handleChange({
+      name: "modalValues",
+      value: newModalValues,
+    });
 
-  setModalOptionState(null);
-};
+    //  Mark item as selected and merge modal values into services
 
+    handleItemSelection(serviceId, itemId, true, modalValues);
 
+    //  Close modal
 
-
+    setModalOptionState(null);
+  };
 
   const handleIncludeModal = (id = null) => {
     return setIncludeModal((state) => {
       return state ? null : id;
     });
   };
-const handleItemSelection = (serviceId, itemId, selected, modalValues = null) => {
+  const handleItemSelection = (
+    serviceId,
+    itemId,
+    selected,
+    modalValues = null
+  ) => {
+    const prevSelections = formData.selectedItems?.[serviceId] || {};
+    const newSelections = { ...prevSelections, [itemId]: selected };
 
+    let newFormData = { ...formData };
 
-  const prevSelections = formData.selectedItems?.[serviceId] || {};
-  const newSelections = { ...prevSelections, [itemId]: selected };
+    // Ensure serviceType
+    if (newFormData.serviceType !== "a_la_carte") {
+      newFormData.serviceType = "a_la_carte";
+    }
 
-  let newFormData = { ...formData };
-
-  // Ensure serviceType
-  if (newFormData.serviceType !== "a_la_carte") {
-    newFormData.serviceType = "a_la_carte";
-  }
-
-  // Update selectedItems
-  newFormData.selectedItems = {
-    ...newFormData.selectedItems,
-    [serviceId]: newSelections,
-  };
-
-  const service = services.find((s) => s.id === serviceId);
-  const item = service?.form?.items?.find((i) => i.id === itemId);
-
-  if (service?.order_protection) {
-    handleProtectionToggle(service?.order_protection, service);
-  }
-
-  // Default item options
-  if (selected && item?.options?.items?.length) {
-    const prevItemOptions =
-      newFormData.selectedOptions?.[serviceId]?.[itemId] || {};
-    const defaultItemOptions = {};
-
-    item.options.items.forEach((opt) => {
-      defaultItemOptions[opt.id] =
-        prevItemOptions[opt.id] ?? opt.value ?? false;
-    });
-
-    newFormData.selectedOptions = {
-      ...newFormData.selectedOptions,
-      [serviceId]: {
-        ...newFormData.selectedOptions?.[serviceId],
-        [itemId]: defaultItemOptions,
-      },
+    // Update selectedItems
+    newFormData.selectedItems = {
+      ...newFormData.selectedItems,
+      [serviceId]: newSelections,
     };
-  }
 
-  // Default service-level options
-  if (selected && Object.values(prevSelections).every((v) => !v)) {
-    if (service?.form) {
-      let defaultOptions = {};
+    const service = services.find((s) => s.id === serviceId);
+    const item = service?.form?.items?.find((i) => i.id === itemId);
 
-      if (service.form.options?.items?.length) {
-        service.form.options.items.forEach((opt) => {
-          defaultOptions[opt.id] = opt.value ?? false;
-        });
-      }
+    if (service?.order_protection) {
+      handleProtectionToggle(service?.order_protection, service);
+    }
 
-      if (service.form.submenu?.items?.length) {
-        service.form.submenu.items.forEach((sub) => {
-          defaultOptions[sub.id] =
-            sub.value ?? (sub.type === "counter" ? 0 : false);
-        });
-      }
+    // Default item options
+    if (selected && item?.options?.items?.length) {
+      const prevItemOptions =
+        newFormData.selectedOptions?.[serviceId]?.[itemId] || {};
+      const defaultItemOptions = {};
 
-      if (Object.keys(defaultOptions).length > 0) {
-        newFormData.selectedOptions = {
-          ...newFormData.selectedOptions,
-          [serviceId]: {
-            ...newFormData.selectedOptions?.[serviceId],
-            ...defaultOptions,
-          },
-        };
+      item.options.items.forEach((opt) => {
+        defaultItemOptions[opt.id] =
+          prevItemOptions[opt.id] ?? opt.value ?? false;
+      });
+
+      newFormData.selectedOptions = {
+        ...newFormData.selectedOptions,
+        [serviceId]: {
+          ...newFormData.selectedOptions?.[serviceId],
+          [itemId]: defaultItemOptions,
+        },
+      };
+    }
+
+    // Default service-level options
+    if (selected && Object.values(prevSelections).every((v) => !v)) {
+      if (service?.form) {
+        let defaultOptions = {};
+
+        if (service.form.options?.items?.length) {
+          service.form.options.items.forEach((opt) => {
+            defaultOptions[opt.id] = opt.value ?? false;
+          });
+        }
+
+        if (service.form.submenu?.items?.length) {
+          service.form.submenu.items.forEach((sub) => {
+            defaultOptions[sub.id] =
+              sub.value ?? (sub.type === "counter" ? 0 : false);
+          });
+        }
+
+        if (Object.keys(defaultOptions).length > 0) {
+          newFormData.selectedOptions = {
+            ...newFormData.selectedOptions,
+            [serviceId]: {
+              ...newFormData.selectedOptions?.[serviceId],
+              ...defaultOptions,
+            },
+          };
+        }
       }
     }
-  }
 
-  // ✅ Merge modal values directly into services state
-  if (modalValues) {
-    setServices((prev) =>
-      prev.map((s) =>
-        s.id === serviceId
-          ? {
-              ...s,
-              form: {
-                ...s.form,
-                modalOption: {
-                  ...s.form.modalOption,
-                  form: s.form.modalOption.form.map((field) => ({
-                    ...field,
-                    value:
-                      modalValues[field.label] !== undefined
-                        ? modalValues[field.label]
-                        : field.value,
-                  })),
+    // ✅ Merge modal values directly into services state
+    if (modalValues) {
+      setServices((prev) =>
+        prev.map((s) =>
+          s.id === serviceId
+            ? {
+                ...s,
+                form: {
+                  ...s.form,
+                  modalOption: {
+                    ...s.form.modalOption,
+                    form: s.form.modalOption.form.map((field) => ({
+                      ...field,
+                      value:
+                        modalValues[field.label] !== undefined
+                          ? modalValues[field.label]
+                          : field.value,
+                    })),
+                  },
                 },
-              },
-            }
-          : s
-      )
+              }
+            : s
+        )
+      );
+    }
+
+    // Always keep order_protection true
+
+    // Discount progress
+    const qualifiedCount = countQualifiedDiscounts(newFormData);
+    const currentIndex = levels.findIndex(
+      (lvl) => lvl.items === qualifiedCount
     );
-  }
+    const fillPercent = ((currentIndex + 1) / totalLevels) * 100;
+    const currentPercent = currentIndex >= 0 ? levels[currentIndex].percent : 0;
 
-  // Always keep order_protection true
-  newFormData.order_protection = true;
+    newFormData.progress = {
+      qualifiedCount,
+      currentIndex,
+      fillPercent,
+      currentPercent,
+    };
 
-  // Discount progress
-  const qualifiedCount = countQualifiedDiscounts(newFormData);
-  const currentIndex = levels.findIndex((lvl) => lvl.items === qualifiedCount);
-  const fillPercent = ((currentIndex + 1) / totalLevels) * 100;
-  const currentPercent =
-    currentIndex >= 0 ? levels[currentIndex].percent : 0;
-
-  newFormData.progress = {
-    qualifiedCount,
-    currentIndex,
-    fillPercent,
-    currentPercent,
+    // Recalculate totals
+    const calculationResult = calculateCartTotals(newFormData, services);
+    newFormData = calculationResult.nextFormData;
+    console.log(newFormData);
+    return newFormData;
   };
 
-  // Recalculate totals
- const { cartTotal, cartSavings, serviceTotals } = calculateCartTotals(
-   newFormData,
-   services
- );
+  // 🔄 Shared recalculation logic
+  const recalculateServicePrices = (serviceId, nextFormData, services) => {
+    const originalService = SERVICES.find((s) => s.id === serviceId);
+    if (!originalService) {
+      console.warn("❌ No service found for serviceId:", serviceId);
+      return services;
+    }
 
- newFormData.cartTotal = cartTotal;
- newFormData.cartSaving = cartSavings;
- newFormData.serviceTotals = serviceTotals;
+    const serviceOptions = nextFormData.selectedOptions?.[serviceId] || {};
 
+    const recalculatedItems = originalService.form.items.map((item) => {
+      const basePrice = item.basePrice ?? item.price;
+      let finalPrice = basePrice;
 
+      // --- 1) Handle item option-based price changes first
+      if (item.options?.items?.length) {
+        const itemOptions = serviceOptions[item.id] || {};
+        const activeOptionIds = Object.keys(itemOptions).filter(
+          (k) => itemOptions[k]
+        );
 
-  // Commit
-  handleChange({ replaceFormData: true, value: newFormData });
+        if (activeOptionIds.length === 1) {
+          const activeOpt = item.options.items.find(
+            (opt) => opt.id === activeOptionIds[0]
+          );
+          if (activeOpt?.priceChange) {
+            finalPrice = activeOpt.priceChange;
+          }
+        } else if (activeOptionIds.length === 0) {
+          finalPrice = basePrice;
+        }
+      }
 
-  return newFormData;
-};
+      // --- 2) Handle submenu-based price changes next
+      if (item.submenuPriceChange) {
+        console.log(
+          `🔎 Checking submenuPriceChange for item "${item.id}" (basePrice=${basePrice})`
+        );
 
+        // Only iterate price-change keys defined for this item
+        let accumulatedAdd = 0;
 
-const handleSubmenuChange = (serviceId, optionId, value, type, name) => {
-  console.log("▶️ handleSubmenuChange called with:", {
+        Object.keys(item.submenuPriceChange).forEach((optId) => {
+          const change = item.submenuPriceChange[optId];
+          const isActive = serviceOptions[optId];
+
+          // nicer, safe logging of isActive
+          let isActiveLog;
+          try {
+            isActiveLog = JSON.stringify(isActive);
+          } catch (e) {
+            isActiveLog = String(isActive);
+          }
+
+          console.log(
+            `   ➡️ Option "${optId}" | isActive=${isActiveLog} | change=`,
+            change
+          );
+
+          // skip if no change definition (shouldn't happen since iterating change keys) or inactive
+          if (!change) {
+            console.log(`      ⏩ No change config for "${optId}", skipping`);
+            return;
+          }
+          if (!isActive && isActive !== 0) {
+            // treat 0 as possible valid numeric value
+            console.log(`      ⏩ Option "${optId}" not active, skipping`);
+            return;
+          }
+
+          // Accumulate effects
+          if (change.type === "add") {
+            accumulatedAdd += Number(change.value || 0);
+            console.log(
+              `      ➕ Accumulate ADD: +${change.value} (acc=${accumulatedAdd})`
+            );
+          } else if (change.type === "multiple") {
+            // Multiples expect a numeric isActive (count)
+            if (typeof isActive === "number") {
+              const add = Number(change.value || 0) * isActive;
+              accumulatedAdd += add;
+            } else {
+              console.log(
+                `      ⚠️ MULTIPLE expected numeric active value but got: ${isActiveLog}; skipping`
+              );
+            }
+          } else {
+            console.log(
+              `      ⚠️ Unknown change.type "${change.type}" for "${optId}", skipping`
+            );
+          }
+        });
+
+        finalPrice = basePrice + accumulatedAdd;
+      }
+
+      return { ...item, price: finalPrice };
+    });
+
+    return services.map((s) =>
+      s.id === serviceId
+        ? { ...s, form: { ...s.form, items: recalculatedItems } }
+        : s
+    );
+  };
+
+  // 🟦 Refactored handleOptionChange
+  const handleOptionChange = (
     serviceId,
     optionId,
     value,
     type,
     name,
-  });
+    itemId
+  ) => {
+    const nextFormData = { ...formData };
+    const service = services.find((s) => s.id === serviceId);
+    const item = itemId
+      ? service?.form?.items?.find((i) => i.id === itemId)
+      : null;
 
-  let nextFormData = { ...formData };
+    // Get previous options
+    const prevOptions = itemId
+      ? formData.selectedOptions?.[serviceId]?.[itemId] || {}
+      : formData.selectedOptions?.[serviceId] || {};
 
-  // --- Get service fresh from SERVICES (not from mutated services state)
-  const originalService = SERVICES.find((s) => s.id === serviceId);
-  if (!originalService) {
-    console.warn("❌ No service found for serviceId:", serviceId);
-    return;
-  }
+    let newOptions = { ...prevOptions };
 
- 
+    // Handle radio reset
+    if (type === "radio" && name && item) {
+      item.options?.items
+        .filter((o) => o.type === "radio" && o.name === name)
+        .forEach((o) => (newOptions[o.id] = false));
+    }
 
-  let prevOptions = nextFormData.selectedOptions?.[serviceId] || {};
-  let newOptions = { ...prevOptions };
+    // Update clicked option
+    newOptions[optionId] = value;
 
-  console.log("🔄 Previous submenu options:", prevOptions);
+    const trueOptionIds = Object.keys(newOptions).filter((k) => newOptions[k]);
+    const trueOptionsCount = trueOptionIds.length;
 
-  // --- Handle radio groups (reset siblings)
-  if (type === "radio" && name) {
+    if (itemId) {
+      const minRequired = item?.options?.minimumRequired;
 
-    originalService.form.submenu.items
-      ?.filter((opt) => opt.type === "radio" && opt.name === name)
-      .forEach((opt) => {
-        newOptions[opt.id] = false;
-      });
-  }
-
-  // --- Apply new selection
-  newOptions[optionId] = value;
-  console.log("✅ Updated newOptions:", newOptions);
-
-  // --- Remove submenu group if all values are falsy/zero
-  const activeKeys = Object.keys(newOptions).filter(
-    (key) => newOptions[key] && newOptions[key] !== 0
-  );
-  console.log("🔑 Active submenu keys:", activeKeys);
-
-  if (activeKeys.length === 0) {
-    console.log("🗑️ No active submenu options, removing service from formData");
-    const updatedSelectedOptions = { ...nextFormData.selectedOptions };
-    delete updatedSelectedOptions[serviceId];
-    nextFormData.selectedOptions = updatedSelectedOptions;
-  } else {
-    console.log("💾 Saving submenu state into formData");
-    nextFormData.selectedOptions = {
-      ...nextFormData.selectedOptions,
-      [serviceId]: newOptions,
-    };
-  }
-
- 
-
-  // --- Recalculate prices based on original SERVICE definition
-  const recalculatedItems = originalService.form.items.map((item) => {
-    const basePrice = item.basePrice ?? item.price;
-    let finalPrice = basePrice;
-    console.log(`baseprice: ${basePrice}, price: ${item.price} item ${JSON.stringify(item, null, 3)}`)
-    if (item.submenuPriceChange) {
-      Object.keys(newOptions).forEach((optId) => {
-        const isActive = newOptions[optId];
-        const change = item.submenuPriceChange[optId];
-
-        if (isActive && change) {
-          console.log(
-            `📈 Applying priceChange for ${item.id}, option ${optId}:`,
-            change,
-            "isActive:",
-            isActive
-          );
-
-          if (change.type === "add") {
-            finalPrice = basePrice + change.value; // reset to OG + value
-          } else if (change.type === "multiple" && typeof isActive === "number") {
-            finalPrice = basePrice + change.value * isActive;
+      if (minRequired && trueOptionsCount < minRequired) {
+        // ❌ Below minimum requirement → remove item completely
+        if (nextFormData.selectedOptions?.[serviceId]?.[itemId]) {
+          delete nextFormData.selectedOptions[serviceId][itemId];
+          if (!Object.keys(nextFormData.selectedOptions[serviceId]).length) {
+            delete nextFormData.selectedOptions[serviceId];
           }
         }
-      });
-    }
-
-    console.log(`✅ Final price for ${item.id}:`, finalPrice);
-    return { ...item, price: finalPrice };
-  });
-
-  // --- Update services state with recalculated prices
-  const updatedServices = services.map((s) =>
-    s.id === serviceId
-      ? { ...s, form: { ...s.form, items: recalculatedItems } }
-      : s
-  );
-
-  // setFormData(nextFormData);
-  handleChange({ replaceFormData: true, value: nextFormData });
-  setServices(updatedServices);
-  calculateCartTotals(nextFormData, updatedServices);
-  console.log("💾 Updated services state:", updatedServices);
-};
-
-const handleOptionChange = (serviceId, optionId, value, type, name, itemId) => {
-  console.log("parameter",JSON.stringify({ serviceId, optionId, value, type, name, itemId }, null, 3))
-  const newFormData = { ...formData };
-  const service = services.find((s) => s.id === serviceId);
-  const item = itemId ? service?.form?.items?.find((i) => i.id === itemId) : null;
-
-  // Get previous options
-  const prevOptions = itemId
-    ? formData.selectedOptions?.[serviceId]?.[itemId] || {}
-    : formData.selectedOptions?.[serviceId] || {};
-
-  let newOptions = { ...prevOptions };
-
-  // Handle radio reset
-  if (type === "radio" && name && item) {
-    item.options?.items
-      .filter((o) => o.type === "radio" && o.name === name)
-      .forEach((o) => (newOptions[o.id] = false));
-  }
-
-  // Update clicked option
-  newOptions[optionId] = value;
-
-  const trueOptionIds = Object.keys(newOptions).filter((k) => newOptions[k]);
-  const trueOptionsCount = trueOptionIds.length;
-  const totalOptionsCount = item?.options?.items?.length || 0;
-
-  let updatedServices = services;
-
-  if (itemId) {
-    // Handle price changes
-    const originalItem = SERVICES.find((s) => s.id === serviceId)
-      ?.form?.items?.find((i) => i.id === itemId);
-
-    if (trueOptionsCount === 1) {
-      // Only one option selected → apply its priceChange
-      const remainingOption = item.options.items.find((o) => o.id === trueOptionIds[0]);
-      if (remainingOption?.priceChange) {
-        updatedServices = services.map((s) =>
-          s.id !== serviceId
-            ? s
-            : {
-                ...s,
-                form: {
-                  ...s.form,
-                  items: s.form.items.map((i) =>
-                    i.id === itemId ? { ...i, price: remainingOption.priceChange } : i
-                  ),
-                },
-              }
-        );
-      }
-    } else {
-      // Reset to original price when all or none selected
-      updatedServices = services.map((s) =>
-        s.id !== serviceId
-          ? s
-          : {
-              ...s,
-              form: {
-                ...s.form,
-                items: s.form.items.map((i) =>
-                  i.id === itemId ? { ...i, price: originalItem?.price } : i
-                ),
-              },
-            }
-      );
-    }
-
-    // Update selectedOptions and selectedItems based on trueOptionsCount
-    if (trueOptionsCount === 0) {
-      // Remove this item completely
-      if (newFormData.selectedOptions?.[serviceId]?.[itemId]) {
-        delete newFormData.selectedOptions[serviceId][itemId];
-        if (!Object.keys(newFormData.selectedOptions[serviceId]).length) {
-          delete newFormData.selectedOptions[serviceId];
+        if (nextFormData.selectedItems?.[serviceId]?.[itemId]) {
+          delete nextFormData.selectedItems[serviceId][itemId];
+          if (!Object.keys(nextFormData.selectedItems[serviceId]).length) {
+            delete nextFormData.selectedItems[serviceId];
+          }
         }
+      } else {
+        // ✅ Save updated options (meets or exceeds min requirement,
+        // or no minRequired defined, so deselection allowed)
+        nextFormData.selectedOptions = {
+          ...nextFormData.selectedOptions,
+          [serviceId]: {
+            ...nextFormData.selectedOptions?.[serviceId],
+            [itemId]: newOptions,
+          },
+        };
       }
-      if (newFormData.selectedItems?.[serviceId]?.[itemId]) {
-        delete newFormData.selectedItems[serviceId][itemId];
-        if (!Object.keys(newFormData.selectedItems[serviceId]).length) {
-          delete newFormData.selectedItems[serviceId];
-        }
-      }
-    } else {
-      // Save updated options
-      newFormData.selectedOptions = {
-        ...newFormData.selectedOptions,
-        [serviceId]: {
-          ...newFormData.selectedOptions?.[serviceId],
-          [itemId]: newOptions,
-        },
-      };
     }
 
+    // 🔄 Recalculate with unified logic
+    const updatedServices = recalculateServicePrices(
+      serviceId,
+      nextFormData,
+      services
+    );
+
+    handleChange({ replaceFormData: true, value: nextFormData });
     setServices(updatedServices);
-  }
+    calculateCartTotals(nextFormData, updatedServices);
+  };
 
-  // Replace formData completely
-  handleChange({ replaceFormData: true, value: newFormData });
-  calculateCartTotals(newFormData, updatedServices);
-};
+  // 🟦 Refactored handleSubmenuChange
+  const handleSubmenuChange = (serviceId, optionId, value, type, name) => {
+    let nextFormData = { ...formData };
 
+    let prevOptions = nextFormData.selectedOptions?.[serviceId] || {};
+    let newOptions = { ...prevOptions };
 
-const handleProtectionToggle = (checked=null, service) => {
-
-
-  // --- Update formData
-  const newFormData = { ...formData };
-
-  // Ensure structure
-  if (!newFormData.orderProtection) {
-    newFormData.orderProtection = {};
-  }
-
-  if (checked) {
-    newFormData.orderProtection[service.id] = {
-      enabled: true,
-      type: service.order_protection_type,
-      value: service.order_protection_value,
-    };
-  } else {
-    // If unchecked → remove entry
-    const copy = { ...newFormData.orderProtection };
-    delete copy[service.id];
-    newFormData.orderProtection = copy;
-  }
-
- 
-
-  // --- Update services state so checkbox reflects
-  const updatedServices = services.map((s) =>
-    s.id === service.id ? { ...s, order_protection: checked } : s
-  );
-
-
-// console.log("updated formdata",JSON.stringify(newFormData, null, 3))
-  handleChange({ replaceFormData: true, value: newFormData });
-  setServices(updatedServices);
-  calculateCartTotals(newFormData, updatedServices);
-};
-
-
-const calculateCartTotals = (formData, services) => {
-  let rawCartTotal = 0;
-  let cartTotal = 0;
-  let cartSavings = 0;
-  let totalProtection = 0;
-  const serviceTotals = {};
-
-  // Step 1: loop services
-  services.forEach((service) => {
-    const serviceSelections = formData.selectedItems?.[service.id] || {};
-    const selectedItems =
-      service.form?.items?.filter((item) => serviceSelections[item.id]) || [];
-
-    let subtotal = 0;
-    let subsavings = 0;
-    let protectionAmount = 0;
-
-    // ✅ include items container
-    serviceTotals[service.id] = {
-      subtotal: 0,
-      protectionAmount: 0,
-      subsavings: 0,
-      items: {},
-    };
-
-    selectedItems.forEach((item) => {
-      let itemPrice = item.price || 0;
-      let originalPrice = itemPrice;
-
-   
-
-      rawCartTotal += itemPrice;
-
-      // --- Item-level discount check ---
-      let isEligible = false;
-      const rules = discountRules[service.id] || [];
-      const ruleForItem = rules.find((rule) => rule.itemId === item.id);
-      if (ruleForItem && ruleForItem.condition(formData)) {
-        isEligible = true;
-      }
-
-      let discountApplied = 0;
-      if (isEligible) {
-        const qualifiedCount = countQualifiedDiscounts(formData); // total eligible items
-        const discountLevel =
-          [...discountLevels].reverse().find(
-            (lvl) => qualifiedCount >= lvl.items
-          ) || null;
-
-        if (discountLevel) {
-          discountApplied = (itemPrice * discountLevel.percent) / 100;
-          itemPrice -= discountApplied;
-          subsavings += discountApplied;
-        }
-      }
-
-      subtotal += itemPrice;
-
-      // ✅ save per-item totals
-      serviceTotals[service.id].items[item.id] = {
-        originalPrice: Number(originalPrice.toFixed(2)),
-        discountedPrice: Number(itemPrice.toFixed(2)),
-        discountApplied: Number(discountApplied.toFixed(2)),
-      };
+    // --- Handle radio groups (reset siblings)
+ if (type === "radio" && name) {
+  const originalService = SERVICES.find((s) => s.id === serviceId);
+  originalService?.form?.submenu?.items
+    ?.filter((opt) => opt.type === "radio" && opt.name === name)
+    .forEach((opt) => {
+      newOptions[opt.id] = false; // reset siblings
     });
+}
 
-    // Step 1.5: Apply order protection if enabled
-    if (service.order_protection && subtotal > 0) {
-      if (service.order_protection_type === "percent") {
-        protectionAmount = (subtotal * service.order_protection_value) / 100;
-      } else if (service.order_protection_type === "flat") {
-        protectionAmount = service.order_protection_value;
-      }
-      subtotal += protectionAmount;
-      totalProtection += protectionAmount;
+    // --- Apply new selection
+    newOptions[optionId] = value;
+
+    // --- Remove submenu group if all values are falsy/zero
+    const activeKeys = Object.keys(newOptions).filter(
+      (key) => newOptions[key] && newOptions[key] !== 0
+    );
+
+    if (activeKeys.length === 0) {
+      const updatedSelectedOptions = { ...nextFormData.selectedOptions };
+      delete updatedSelectedOptions[serviceId];
+      nextFormData.selectedOptions = updatedSelectedOptions;
+    } else {
+      nextFormData.selectedOptions = {
+        ...nextFormData.selectedOptions,
+        [serviceId]: newOptions,
+      };
     }
 
-    // Store service totals
-    serviceTotals[service.id].subtotal = Number(subtotal.toFixed(2));
-    serviceTotals[service.id].protectionAmount =
-      Number(protectionAmount.toFixed(2));
-    serviceTotals[service.id].subsavings = Number(subsavings.toFixed(2));
+    // 🔄 Recalculate with unified logic
+    const updatedServices = recalculateServicePrices(
+      serviceId,
+      nextFormData,
+      services
+    );
 
-    cartTotal += subtotal;
-    cartSavings += subsavings;
-  });
-
-  // Step 2: Round totals
-  cartTotal = Number(cartTotal.toFixed(2));
-  cartSavings = Number(cartSavings.toFixed(2));
-  totalProtection = Number(totalProtection.toFixed(2));
-
-  // Step 3: Flip off order_protection if all protections are zero
-  const allProtectionZero = Object.values(serviceTotals).every(
-    (s) => s.protectionAmount === 0
-  );
-console.log("serviceTotals",JSON.stringify(serviceTotals, null, 3))
-  handleChange({ name: "serviceTotals", value: serviceTotals });
-  handleChange({ name: "cartTotal", value: cartTotal });
-  handleChange({ name: "cartSavings", value: cartSavings });
-  handleChange({ name: "order_protection_price", value: totalProtection });
-  handleChange({
-    name: "order_protection",
-    value: !allProtectionZero,
-  });
-
-  return {
-    cartTotal,
-    cartSavings,
-    totalProtection,
-    serviceTotals,
-    order_protection: !allProtectionZero,
+    handleChange({ replaceFormData: true, value: nextFormData });
+    setServices(updatedServices);
+    calculateCartTotals(nextFormData, updatedServices);
   };
-};
 
+  const handleProtectionToggle = (checked = null, service) => {
+    // --- Update formData
+    const newFormData = { ...formData };
 
+    // Ensure structure
+    if (!newFormData.orderProtection) {
+      newFormData.orderProtection = {};
+    }
 
+    if (checked) {
+      newFormData.orderProtection[service.id] = {
+        enabled: true,
+        type: service.order_protection_type,
+        value: service.order_protection_value,
+      };
+    } else {
+      // If unchecked → remove entry
+      const copy = { ...newFormData.orderProtection };
+      delete copy[service.id];
+      newFormData.orderProtection = copy;
+    }
 
- 
-const countQualifiedDiscounts = (formData, serviceId = null) => {
-  let qualifiedCount = 0;
+    // --- Update services state so checkbox reflects
+    const updatedServices = services.map((s) =>
+      s.id === service.id ? { ...s, order_protection: checked } : s
+    );
 
-  // If serviceId is passed → only use that slice of rules
-  const servicesToCheck = serviceId
-    ? { [serviceId]: discountRules[serviceId] || [] }
-    : discountRules;
+    // console.log("updated formdata",JSON.stringify(newFormData, null, 3))
+    handleChange({ replaceFormData: true, value: newFormData });
+    setServices(updatedServices);
+    calculateCartTotals(newFormData, updatedServices);
+  };
 
-  Object.entries(servicesToCheck).forEach(([svcId, rules]) => {
-    rules.forEach((rule) => {
-      try {
-        if (rule.condition(formData)) {
-          qualifiedCount += 1;
+  const calculateCartTotals = (formData, services) => {
+    let rawCartTotal = 0;
+    let cartTotal = 0;
+    let cartSavings = 0;
+    let totalProtection = 0;
+    const serviceTotals = {};
+    const nextFormData = { ...formData };
+
+    // Step 1: loop services
+    services.forEach((service) => {
+      const serviceSelections = formData.selectedItems?.[service.id] || {};
+      const selectedItems =
+        service.form?.items?.filter((item) => serviceSelections[item.id]) || [];
+
+      let subtotal = 0;
+      let subsavings = 0;
+      let protectionAmount = 0;
+
+      // ✅ include items container
+      serviceTotals[service.id] = {
+        subtotal: 0,
+        protectionAmount: 0,
+        subsavings: 0,
+        items: {},
+      };
+
+      selectedItems.forEach((item) => {
+        let itemPrice = item.price || 0;
+        let originalPrice = itemPrice;
+
+        rawCartTotal += itemPrice;
+
+        // --- Item-level discount check ---
+        let isEligible = false;
+        const rules = discountRules[service.id] || [];
+        const ruleForItem = rules.find((rule) => rule.itemId === item.id);
+        if (ruleForItem && ruleForItem.condition(formData)) {
+          isEligible = true;
         }
-      } catch (err) {
-        console.warn(
-          `Error evaluating discount rule for ${svcId}:${rule.itemId}`,
-          err
-        );
-      }
-    });
-  });
 
-  return qualifiedCount;
-};
+        let discountApplied = 0;
+        if (isEligible) {
+          const qualifiedCount = countQualifiedDiscounts(formData); // total eligible items
+          const discountLevel =
+            [...discountLevels]
+              .reverse()
+              .find((lvl) => qualifiedCount >= lvl.items) || null;
+
+          if (discountLevel) {
+            discountApplied = (itemPrice * discountLevel.percent) / 100;
+            itemPrice -= discountApplied;
+            subsavings += discountApplied;
+          }
+        }
+
+        subtotal += itemPrice;
+
+        // ✅ save per-item totals
+        serviceTotals[service.id].items[item.id] = {
+          originalPrice: Number(originalPrice.toFixed(2)),
+          discountedPrice: Number(itemPrice.toFixed(2)),
+          discountApplied: Number(discountApplied.toFixed(2)),
+        };
+      });
+
+      // Step 1.5: Apply order protection if enabled
+      if (service.order_protection && subtotal > 0) {
+        if (service.order_protection_type === "percent") {
+          protectionAmount = (subtotal * service.order_protection_value) / 100;
+        } else if (service.order_protection_type === "flat") {
+          protectionAmount = service.order_protection_value;
+        }
+        subtotal += protectionAmount;
+        totalProtection += protectionAmount;
+      }
+
+      // Store service totals
+      serviceTotals[service.id].subtotal = Number(subtotal.toFixed(2));
+      serviceTotals[service.id].protectionAmount = Number(
+        protectionAmount.toFixed(2)
+      );
+      serviceTotals[service.id].subsavings = Number(subsavings.toFixed(2));
+
+      cartTotal += subtotal;
+      cartSavings += subsavings;
+    });
+
+    // Step 2: Round totals
+    cartTotal = Number(cartTotal.toFixed(2));
+    cartSavings = Number(cartSavings.toFixed(2));
+    totalProtection = Number(totalProtection.toFixed(2));
+
+    // Step 3: Flip off order_protection if all protections are zero
+    const allProtectionZero = Object.values(serviceTotals).every(
+      (s) => s.protectionAmount === 0
+    );
+    // console.log("serviceTotals",JSON.stringify(serviceTotals, null, 3))
+
+    nextFormData.cartTotal = cartTotal;
+    nextFormData.cartSavings = cartSavings;
+    nextFormData.serviceTotals = serviceTotals;
+    nextFormData.order_protection = !allProtectionZero;
+    nextFormData.order_protection_price = totalProtection;
+
+    // Commit
+    handleChange({ replaceFormData: true, value: nextFormData });
+    console.log(nextFormData);
+    return {
+      cartTotal,
+      cartSavings,
+      totalProtection,
+      serviceTotals,
+      order_protection: !allProtectionZero,
+      nextFormData,
+    };
+  };
+
+  const countQualifiedDiscounts = (formData, serviceId = null) => {
+    let qualifiedCount = 0;
+
+    // If serviceId is passed → only use that slice of rules
+    const servicesToCheck = serviceId
+      ? { [serviceId]: discountRules[serviceId] || [] }
+      : discountRules;
+
+    Object.entries(servicesToCheck).forEach(([svcId, rules]) => {
+      rules.forEach((rule) => {
+        try {
+          if (rule.condition(formData)) {
+            qualifiedCount += 1;
+          }
+        } catch (err) {
+          console.warn(
+            `Error evaluating discount rule for ${svcId}:${rule.itemId}`,
+            err
+          );
+        }
+      });
+    });
+
+    return qualifiedCount;
+  };
 
   const RenderServiceForm = ({ service, open }) => {
     // console.log("render service", JSON.stringify(service, null, 3))
@@ -1433,8 +1416,7 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
                           key={submenuItem.id}
                           className="flex items-center gap-2 cursor-pointer"
                         >
-                          {submenuItem.type === "counter" 
-                          ? (
+                          {submenuItem.type === "counter" ? (
                             // 🔹 Counter with Number Input
                             <div className="flex items-center gap-2">
                               <span className="text-sm">
@@ -1501,20 +1483,32 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
                             // 🔹 Radio
                             <>
                               <input
-                                type="radio"
-                                name={`${service.id}-${submenuItem.name}`} // group by name
-                                checked={currentValue}
-                                onChange={(e) =>{
-                             
-                                  handleSubmenuChange(
-                                    service.id,
-                                    submenuItem.id,
-                                    e.target.checked,
-                                    "radio",
-                                    submenuItem.name
-                                  )}
-                                }
-                                className="w-4 h-4 text-blue-600 border-2 border-gray-300 rounded-full"
+                                type="checkbox"
+                                checked={!!currentValue}
+                                onChange={(e) => {
+                                  const newValue = e.target.checked;
+
+                                  // If already selected and clicked again → deselect (none selected)
+                                  if (currentValue && !newValue) {
+                                    handleSubmenuChange(
+                                      service.id,
+                                      submenuItem.id,
+                                      false,
+                                      "radio",
+                                      submenuItem.name
+                                    );
+                                  } else {
+                                    // Selecting → reset group first, then activate only this one
+                                    handleSubmenuChange(
+                                      service.id,
+                                      submenuItem.id,
+                                      true,
+                                      "radio",
+                                      submenuItem.name
+                                    );
+                                  }
+                                }}
+                                className="w-4 h-4 text-blue-600 border-2 border-gray-300 rounded"
                               />
                               <span className="text-sm">
                                 {submenuItem.label}
@@ -1550,8 +1544,6 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
 
               {/* Order Protection row */}
               {(() => {
-               
-
                 return (
                   <label
                     className={`w-full mt-auto flex items-center justify-between gap-2 border px-3 py-3 bg-card 
@@ -1560,34 +1552,45 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
         
         border-gray-300 rounded-md`}
                   >
-                   
                     <div className="flex items-center justify-start gap-4">
                       <input
                         type="checkbox"
                         className="accent-primary"
                         // checked={!!formData.order_protection}
                         checked={service?.order_protection}
-                        onChange={(e) =>{
-                          
-                          handleProtectionToggle(e.target.checked, service)}
-                        }
+                        onChange={(e) => {
+                          handleProtectionToggle(e.target.checked, service);
+                        }}
                         disabled={!service?.order_protection_value}
                       />
-                    <span className={`font-medium ${ !service?.order_protection? "text-gray-600 hover:text-black" : "text-gray-700 hover:text-black"}`}>Order Protection</span>
+                      <span
+                        className={`font-medium ${
+                          !service?.order_protection
+                            ? "text-gray-600 hover:text-black"
+                            : "text-gray-700 hover:text-black"
+                        }`}
+                      >
+                        Order Protection
+                      </span>
                       <span className="text-[#0bc88c] font-semibold ml-1">
                         {/* ${ORDER_PROTECTION_PRICE} */}
                         {formData?.serviceTotals?.[service.id]?.protectionAmount
-                        ?`$${formData?.serviceTotals?.[service.id]?.protectionAmount}`
-                        : ""}
-                
-                              
+                          ? `$${
+                              formData?.serviceTotals?.[service.id]
+                                ?.protectionAmount
+                            }`
+                          : ""}
                       </span>
                     </div>
 
                     <button
                       type="button"
                       className={`flex items-center justify-end gap-2 transition-colors 
-          ${ !service?.order_protection? "text-gray-400 hover:text-black" : "text-gray-700 hover:text-black"}`}
+          ${
+            !service?.order_protection
+              ? "text-gray-400 hover:text-black"
+              : "text-gray-700 hover:text-black"
+          }`}
                       onClick={handlelearnModal}
                       disabled={false}
                     >
@@ -1642,8 +1645,10 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
                         key={`item-options-${item.id}`}
                         className={`gap-4 mt-2 mb-4 ml-4`}
                       >
-                        <p className="text-xs text-start
-                         font-semibold text-gray-500 mb-2">
+                        <p
+                          className="text-xs text-start
+                         font-semibold text-gray-500 mb-2"
+                        >
                           {item.title} Options
                         </p>
                         {item.options.items.map((option) => (
@@ -1705,15 +1710,16 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
                       <div className="flex justify-between text-green-600 font-semibold">
                         Savings{" "}
                         <span className="text-end">
-                          ${formData?.serviceTotals?.[service.id]?.subsavings ||
+                          $
+                          {formData?.serviceTotals?.[service.id]?.subsavings ||
                             0}
                         </span>
                       </div>
                       <div className="flex justify-between text-main font-bold">
                         Total{" "}
                         <span className="text-end">
-                          ${formData?.serviceTotals?.[service.id]?.subtotal ||
-                            0}
+                          $
+                          {formData?.serviceTotals?.[service.id]?.subtotal || 0}
                         </span>
                       </div>
                     </div>
@@ -1756,17 +1762,16 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
   return (
     <>
       {learnModal && <OrderProtectionModal handleClose={handlelearnModal} />}
-{modalOptionState && (
-  <ServiceOptionModal
-    service={modalOptionState.service}
-    itemId={modalOptionState.itemId}
-    existingValues={modalOptionState.existingValues}
-    onSubmit={handleModalSubmit}
-    onClose={() => setModalOptionState(null)}
-    formData={formData}
-  />
-)}
-
+      {modalOptionState && (
+        <ServiceOptionModal
+          service={modalOptionState.service}
+          itemId={modalOptionState.itemId}
+          existingValues={modalOptionState.existingValues}
+          onSubmit={handleModalSubmit}
+          onClose={() => setModalOptionState(null)}
+          formData={formData}
+        />
+      )}
 
       {includeModal && <ServiceModal />}
       <div className="w-full max-w-2xl mx-auto">
@@ -1888,7 +1893,7 @@ const countQualifiedDiscounts = (formData, serviceId = null) => {
 
               <div className="flex justify-between text-sm md:text-base font-semibold text-emerald-600">
                 <span>You Saved:</span>
-                <span>${formData?.cartSavings || 0}</span>
+                <span>${formData?.cartSavings || "0"}</span>
               </div>
             </div>
 

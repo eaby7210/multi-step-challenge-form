@@ -1,6 +1,7 @@
-import React, { useState,
-  //  useEffect 
-  } from "react";
+import React, {
+  useState,
+  //  useEffect
+} from "react";
 import { PlusCircle, CheckSquare } from "lucide-react";
 import { ChevronRight } from "lucide-react";
 import AlaCartePage from "./AlaCartePage";
@@ -36,7 +37,6 @@ const Bundles = [
 // const ORDER_PROTECTION_PRICE = 15;
 
 const OrderConfig = ({ formData = {}, handleChange, onNext, onPrev }) => {
-
   const bundles = formData?.bundles || [];
 
   const [orderProtection, setOrderProtection] = useState(
@@ -44,117 +44,113 @@ const OrderConfig = ({ formData = {}, handleChange, onNext, onPrev }) => {
   );
   const [error, setError] = useState("");
   const [bundleModal, setBundleModal] = useState(false);
-  const [indSerivceModal, setIndServiceModal] = useState(false)
- const [learnModal, setLearnModal] = useState(false);
+  const [indSerivceModal, setIndServiceModal] = useState(false);
+  const [learnModal, setLearnModal] = useState(false);
 
-   const handlelearnModal = () => {
+  const handlelearnModal = () => {
     return setLearnModal((state) => !state);
   };
 
   const handlebundleModal = () => {
     return setBundleModal((state) => !state);
   };
-  const handleindServiceModal = () =>{
-    return setIndServiceModal((state) => !state)
-  }
+  const handleindServiceModal = () => {
+    return setIndServiceModal((state) => !state);
+  };
 
   const calcOrderProtection = (subtotal) => {
-  return +(subtotal * 0.04).toFixed(2);
-};
+    return +(subtotal * 0.04).toFixed(2);
+  };
 
-const total =
-  formData.cartTotal ??
-  (bundles.length
-    ? bundles.reduce((sum, b) => sum + b.price, 0) +
-      (orderProtection ? ORDER_PROTECTION_PRICE : 0)
-    : formData.bundleTotal || 0);
+  const total =
+    formData.cartTotal ??
+    (bundles.length
+      ? bundles.reduce((sum, b) => sum + b.price, 0) +
+        (orderProtection ? ORDER_PROTECTION_PRICE : 0)
+      : formData.bundleTotal || 0);
 
-const savings =
-  formData.cartSaving ??
-  (bundles.length
-    ? bundles.reduce((sum, b) => sum + (b.basePrice - b.price), 0)
-    : formData.bundleSavings || 0);
+  const savings =
+    formData.cartSaving ??
+    (bundles.length
+      ? bundles.reduce((sum, b) => sum + (b.basePrice - b.price), 0)
+      : formData.bundleSavings || 0);
 
+  const updateCartValues = (bundles, protectionChecked) => {
+    if (!handleChange) return;
 
-const updateCartValues = (bundles, protectionChecked) => {
-  if (!handleChange) return;
+    const alaCarte = formData.a_la_carte_total || 0;
+    const bundlePrice = bundles.reduce((sum, b) => sum + (b.price || 0), 0);
+    const bundleBase = bundles.reduce((sum, b) => sum + (b.basePrice || 0), 0);
 
-  const alaCarte = formData.a_la_carte_total || 0;
-  const bundlePrice = bundles.reduce((sum, b) => sum + (b.price || 0), 0);
-  const bundleBase = bundles.reduce((sum, b) => sum + (b.basePrice || 0), 0);
+    let cartTotal = bundlePrice + alaCarte;
 
-  let cartTotal = bundlePrice + alaCarte;
+    // ✅ Always calculate protection dynamically
+    const protection = protectionChecked ? calcOrderProtection(cartTotal) : 0;
+    cartTotal += protection;
 
-  // ✅ Always calculate protection dynamically
-  const protection = protectionChecked ? calcOrderProtection(cartTotal) : 0;
-  cartTotal += protection;
+    const cartSaving = bundleBase - bundlePrice;
 
-  const cartSaving = bundleBase - bundlePrice;
+    handleChange({ name: "cartTotal", value: Number(cartTotal.toFixed(2)) });
+    handleChange({ name: "cartSaving", value: Number(cartSaving.toFixed(2)) });
+    handleChange({ name: "order_protection", value: protectionChecked });
+    handleChange({
+      name: "order_protection_price",
+      value: Number(protection.toFixed(2)),
+    });
+  };
 
-  handleChange({ name: "cartTotal", value: Number(cartTotal.toFixed(2)) });
-  handleChange({ name: "cartSaving", value: Number(cartSaving.toFixed(2)) });
-  handleChange({ name: "order_protection", value: protectionChecked });
-  handleChange({ name: "order_protection_price", value: Number(protection.toFixed(2)) });
-};
+  const handleSelectionLogic = (bundle) => {
+    const bundles = formData.bundles || [];
 
+    let newSelection;
+    if (bundles.some((b) => b?.name === bundle.name)) {
+      // remove
+      newSelection = bundles.filter((b) => b?.name !== bundle.name);
+    } else {
+      // add
+      newSelection = [...bundles, bundle];
+    }
+    if (formData?.serviceType === "a_la_carte") {
+      handleChange({ name: "selectedItems", remove: true });
+    }
+    handleChange({ name: "serviceType", value: "bundle" });
 
+    handleChange({ name: "bundles", value: newSelection });
+    // updateCartValues(newSelection, orderProtection);
+    handleProtectionToggle(true);
+    updateCartValues(newSelection, true);
+  };
 
+  const handleProtectionToggle = (checked) => {
+    const bundles = formData?.bundles || [];
 
-const handleSelectionLogic = (bundle) => {
-  const bundles = formData.bundles || [];
+    setOrderProtection(checked);
+    // handleChange({ name: "order_protection", value: checked });
+    // handleChange({
+    //   name: "order_protection_price",
+    //   value: checked ? ORDER_PROTECTION_PRICE : 0,
+    // });
 
-  let newSelection;
-  if (bundles.some((b) => b?.name === bundle.name)) {
-    // remove
-    newSelection = bundles.filter((b) => b?.name !== bundle.name);
-  } else {
-    // add
-    newSelection = [...bundles, bundle];
-  }
-  if (formData?.serviceType === "a_la_carte"){
-    handleChange({name:"selectedItems",remove:true})
-  }
-  handleChange({name:"serviceType", value:"bundle"})
-
-  handleChange({ name: "bundles", value: newSelection });
-  // updateCartValues(newSelection, orderProtection);
-  handleProtectionToggle(true)
-  updateCartValues(newSelection, true);
-};
-
-const handleProtectionToggle = (checked) => {
-  const bundles = formData?.bundles || [];
-
-  setOrderProtection(checked);
-  // handleChange({ name: "order_protection", value: checked });
-  // handleChange({
-  //   name: "order_protection_price",
-  //   value: checked ? ORDER_PROTECTION_PRICE : 0,
-  // });
-
-  updateCartValues(bundles, checked);
-};
-
+    updateCartValues(bundles, checked);
+  };
 
   const handleValidation = () => {
     const bundles = formData?.bundles || [];
 
-   if (!bundles.length) {
-    setError("Please select at least one bundled option to continue");
-    return;
-  }
-  setError("");
-  onNext();
-};
-
-
+    if (!bundles.length) {
+      setError("Please select at least one bundled option to continue");
+      return;
+    }
+    setError("");
+    onNext();
+  };
 
   const handleGoAlaCarte = () => {
     if (handleChange) {
       handleChange({ name: "serviceType", value: "a_la_carte" });
-      handleChange({name:"bundles", remove:true})
-      handleChange({name:"cartTotal", value:0})
-      handleChange({name:"cartSaving", value:0})
+      handleChange({ name: "bundles", remove: true });
+      handleChange({ name: "cartTotal", value: 0 });
+      handleChange({ name: "cartSaving", value: 0 });
       onNext("a_la_carte");
     }
     // onNext && onNext();
@@ -248,90 +244,91 @@ const handleProtectionToggle = (checked) => {
         </ModalWrapper>
       )}
       {learnModal && <OrderProtectionModal handleClose={handlelearnModal} />}
-{indSerivceModal && (
-  <ModalWrapper handleClose={handleindServiceModal}>
-    <div className="space-y-6 text-sm text-start w-full">
-      {/* Title */}
-      <h2 className="text-lg font-semibold text-center">
-        What's Included in Your Individual Services
-      </h2>
+      {indSerivceModal && (
+        <ModalWrapper handleClose={handleindServiceModal}>
+          <div className="space-y-6 text-sm text-start w-full">
+            {/* Title */}
+            <h2 className="text-lg font-semibold text-center">
+              What's Included in Your Individual Services
+            </h2>
 
-      {/* Section: We Handle Everything */}
-      <div>
-        <h3 className="font-semibold mb-2">We Handle Everything</h3>
-        <ul className="space-y-1">
-          <li className="flex items-start gap-2">
-            <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            Professional vendors delivered to your address (+ remote notarizations)
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            Contract coordination & scheduling
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            All travel fees included – no hidden costs
-          </li>
-        </ul>
-      </div>
+            {/* Section: We Handle Everything */}
+            <div>
+              <h3 className="font-semibold mb-2">We Handle Everything</h3>
+              <ul className="space-y-1">
+                <li className="flex items-start gap-2">
+                  <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  Professional vendors delivered to your address (+ remote
+                  notarizations)
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  Contract coordination & scheduling
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  All travel fees included – no hidden costs
+                </li>
+              </ul>
+            </div>
 
-      {/* Section: Customizeable Savings */}
-      <div>
-        <h3 className="font-semibold mb-2">Customizeable Savings</h3>
-        <ul className="space-y-1">
-          <li className="flex items-start gap-2">
-            <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            Multiple services available — faster turnaround, fewer delays
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            Huge discounts available on many of our most popular products
-          </li>
-        </ul>
-      </div>
+            {/* Section: Customizeable Savings */}
+            <div>
+              <h3 className="font-semibold mb-2">Customizeable Savings</h3>
+              <ul className="space-y-1">
+                <li className="flex items-start gap-2">
+                  <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  Multiple services available — faster turnaround, fewer delays
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  Huge discounts available on many of our most popular products
+                </li>
+              </ul>
+            </div>
 
-      {/* Section: Onsite Excellence */}
-      <div>
-        <h3 className="font-semibold mb-2">Onsite Excellence</h3>
-        <ul className="space-y-1">
-          <li className="flex items-start gap-2">
-            <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            Safety & access verification before work begins
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            Professional work exactly as ordered
-          </li>
-        </ul>
-      </div>
+            {/* Section: Onsite Excellence */}
+            <div>
+              <h3 className="font-semibold mb-2">Onsite Excellence</h3>
+              <ul className="space-y-1">
+                <li className="flex items-start gap-2">
+                  <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  Safety & access verification before work begins
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  Professional work exactly as ordered
+                </li>
+              </ul>
+            </div>
 
-      {/* Section: Quality Guaranteed */}
-      <div>
-        <h3 className="font-semibold mb-2">Quality Guaranteed</h3>
-        <ul className="space-y-1">
-          <li className="flex items-start gap-2">
-            <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            Quality control review of services
-          </li>
-          <li className="flex items-start gap-2">
-            <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            Exception handling for any special requests
-          </li>
-        </ul>
-      </div>
+            {/* Section: Quality Guaranteed */}
+            <div>
+              <h3 className="font-semibold mb-2">Quality Guaranteed</h3>
+              <ul className="space-y-1">
+                <li className="flex items-start gap-2">
+                  <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  Quality control review of services
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  Exception handling for any special requests
+                </li>
+              </ul>
+            </div>
 
-      {/* Footer note */}
-      <p className="font-semibold">
-        Save big on your favorite orders. Professional results delivered.*
-      </p>
-      <p className="text-xs text-muted-foreground">
-        *Properties must be safe and accessible for service completion.
-        Price includes one trip fee only. See Order Protection for
-        additional options.
-      </p>
-    </div>
-  </ModalWrapper>
-)}
+            {/* Footer note */}
+            <p className="font-semibold">
+              Save big on your favorite orders. Professional results delivered.*
+            </p>
+            <p className="text-xs text-muted-foreground">
+              *Properties must be safe and accessible for service completion.
+              Price includes one trip fee only. See Order Protection for
+              additional options.
+            </p>
+          </div>
+        </ModalWrapper>
+      )}
 
       <div className="flex flex-col flex-1 mb-8">
         {/* Order Individual Services */}
@@ -442,30 +439,31 @@ const handleProtectionToggle = (checked) => {
                   );
                 })}
               </div>
-             {/* Order Protection row */}
-<label className="w-full mt-auto flex items-center justify-start gap-2 cursor-pointer border px-3 py-3 bg-card border-gray-300">
-  <input
-    type="checkbox"
-    className="accent-primary"
-    checked={orderProtection}
-    onChange={(e) => handleProtectionToggle(e.target.checked)}
-  />
-  <span className="text-main font-medium">Order Protection</span>
-  <span className="font-semibold ml-1 text-[#0bc88c]">
-    {formData?.order_protection_price && formData.order_protection_price > 0
-      ? `+$${formData.order_protection_price.toFixed(2)}`
-      : "+4%"}
-  </span>
-  <button
-    type="button"
-    className="flex items-center justify-end gap-2 text-gray-700 hover:text-primary transition-colors"
-    onClick={handlelearnModal}
-  >
-    <span className="text-sm font-medium">Learn More</span>
-  </button>
-</label>
-
-
+              {/* Order Protection row */}
+              <label className="w-full mt-auto flex items-center justify-between gap-2 cursor-pointer border px-3 py-3 bg-card border-gray-300">
+                <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  className="accent-primary"
+                  checked={orderProtection}
+                  onChange={(e) => handleProtectionToggle(e.target.checked)}
+                />
+                <span className="text-main font-medium">Order Protection</span>
+                </div>
+                <span className="font-semibold ml-1 text-[#0bc88c]">
+                  {formData?.order_protection_price &&
+                  formData.order_protection_price > 0
+                    ? `+$${formData.order_protection_price.toFixed(2)}`
+                    : ""}
+                </span>
+                <button
+                  type="button"
+                  className="flex items-center justify-end gap-2 text-gray-700 hover:text-primary transition-colors"
+                  onClick={handlelearnModal}
+                >
+                  <span className="text-sm font-medium hover:cursor-pointer">Learn More</span>
+                </button>
+              </label>
             </div>
 
             {/* Totals cart section */}
@@ -522,8 +520,6 @@ const handleProtectionToggle = (checked) => {
             </div>
           </div>
         )}
-
-   
       </div>
     </>
   );
