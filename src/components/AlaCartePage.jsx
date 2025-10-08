@@ -1,7 +1,7 @@
 import {
-   useState,
-    // useEffect 
-  } from "react";
+  useState,
+  // useEffect
+} from "react";
 import {
   Accordion,
   AccordionContent,
@@ -22,6 +22,7 @@ const SERVICES = [
     subtitle: "Send a photographer to a property to take pictures",
     order_protection: true,
     order_protection_type: "percent",
+    order_protection_disabled: false,
     order_protection_value: 4,
     form: {
       title: "Photography Order Options",
@@ -89,6 +90,7 @@ const SERVICES = [
           subtitle: "Professionally edited, High-Definition images",
           price: 289,
           basePrice: null,
+          protectionInvalid: true,
           options: {
             type: "checkbox",
             items: [
@@ -196,6 +198,7 @@ const SERVICES = [
                 label: "Ship Doc",
                 value: false,
                 disabled: false,
+                priceAdd: 15,
                 valid_item_index: [],
               },
             ],
@@ -229,6 +232,7 @@ const SERVICES = [
                 label: "Ship Doc",
                 value: false,
                 disabled: false,
+                priceAdd: 15,
                 valid_item_index: [],
               },
             ],
@@ -314,9 +318,10 @@ const SERVICES = [
     id: "repairs",
     title: "Home Maintenance & Repairs",
     subtitle: "Receive and approve bids for repair work on a property",
-    order_protection: true,
+    order_protection: false,
+    order_protection_disabled: true,
     order_protection_type: "percent",
-    order_protection_value: 4,
+    order_protection_value: null,
     form: {
       title: "Quotes and Bids Options",
       description: "Receive and approve bids for repair work on a property",
@@ -376,6 +381,63 @@ const SERVICES = [
             ],
           },
         },
+        {
+          id: "locksmith q",
+          title: "Locksmith Quotes",
+          subtitle:
+            "Have our team source and coordinate locksmith service quotes",
+          basePrice: null,
+          price: 50,
+          options: {
+            type: "checkbox",
+            items: [
+              {
+                id: "bidOnly",
+                label: "Bids Only",
+                value: true,
+                disabled: true,
+                priceChange: 15,
+                valid_item_index: [],
+              },
+              {
+                id: "complete",
+                label: "Complete It",
+                value: true,
+                disabled: false,
+                valid_item_index: [],
+              },
+            ],
+          },
+        },
+        // ✅ New Handyman Quotes
+        {
+          id: "handyman q",
+          title: "Handyman Quotes",
+          subtitle:
+            "Have our team source and coordinate handyman service quotes",
+          basePrice: null,
+          price: 50,
+          options: {
+            type: "checkbox",
+            items: [
+              {
+                id: "bidOnly",
+                label: "Bids Only",
+                value: true,
+                disabled: true,
+                priceChange: 15,
+                valid_item_index: [],
+              },
+              {
+                id: "complete",
+                label: "Complete It",
+                value: true,
+                disabled: false,
+                valid_item_index: [],
+              },
+            ],
+          },
+        },
       ],
       submenu: {
         type: "mixed",
@@ -398,7 +460,8 @@ const SERVICES = [
     subtitle: "Send a licensed home inspector to a property",
     order_protection: true,
     order_protection_type: "percent",
-    order_protection_value: 15,
+
+    order_protection_value: null,
     form: {
       title: "Home Inspection Options",
       description: "Book a licensed home inspection with 2D floor plan",
@@ -531,9 +594,16 @@ const discountRules = {
         const notaryOptions = formData.selectedOptions?.notary || {};
         // Check page count from submenu: pages20_75 = true => <=15 pages, pages75_150 = true => >15
         if (!formData.selectedItems?.notary?.inperson) return false;
-        if (notaryOptions.pages20_75 || notaryOptions.pages75_150) return true;
-        return false; // only qualify if pages <= 15
+        if (notaryOptions?.pages20_75 || notaryOptions?.pages75_150)
+          return true;
+        return true; // only qualify if pages <= 15
       },
+    },
+  ],
+  videos: [
+    {
+      itemId: "wt-videos", // ✅ Walk-through Video
+      condition: (formData) => !!formData.selectedItems?.videos?.["wt-videos"],
     },
   ],
   onDemand: [
@@ -546,6 +616,19 @@ const discountRules = {
       itemId: "letterPosting",
       condition: (formData) =>
         !!formData.selectedItems?.onDemand?.letterPosting,
+    },
+    {
+      itemId: "letSomeoneIn", // ✅ New
+      condition: (formData) => !!formData.selectedItems?.onDemand?.letSomeoneIn,
+    },
+    {
+      itemId: "courierServices", // ✅ New
+      condition: (formData) =>
+        !!formData.selectedItems?.onDemand?.courierServices,
+    },
+    {
+      itemId: "banditSign", // ✅ New
+      condition: (formData) => !!formData.selectedItems?.onDemand?.banditSign,
     },
   ],
   lockboxes: [
@@ -689,7 +772,6 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
 
     newFormData.a_la_carteOrder = a_la_carteOrder;
 
-
     // Save and move forward
     handleChange({ replaceFormData: true, value: newFormData });
     onNext();
@@ -773,6 +855,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
     const newSelections = { ...prevSelections, [itemId]: selected };
 
     let newFormData = { ...formData };
+    let newServices = [...services];
 
     // Ensure serviceType
     if (newFormData.serviceType !== "a_la_carte") {
@@ -785,8 +868,47 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
       [serviceId]: newSelections,
     };
 
-    const service = services.find((s) => s.id === serviceId);
+    const serviceIndex = newServices.findIndex((s) => s.id === serviceId);
+    const service = newServices[serviceIndex];
     const item = service?.form?.items?.find((i) => i.id === itemId);
+    if (!service) return newFormData;
+    if (item?.protectionInvalid && selected) {
+      console.log(
+        `⚠️ Item ${itemId} invalidates protection for service ${serviceId}`
+      );
+      newServices[serviceIndex] = {
+        ...service,
+        order_protection: false,
+        order_protection_disabled: true,
+      };
+    }else if (item?.protectionInvalid && !selected) {
+  // 🔍 Check if ANY selected item in this service has protectionInvalid
+  const originalService = SERVICES.find((s) => s.id === serviceId);
+  const stillHasInvalid = service.form.items.some((svcItem) => {
+    const isSelected = newFormData.selectedItems?.[serviceId]?.[svcItem.id];
+    return svcItem.protectionInvalid && isSelected;
+  });
+
+  if (stillHasInvalid) {
+    console.log(
+      `⚠️ Another protectionInvalid item still selected for ${serviceId}, keeping protection disabled`
+    );
+    newServices[serviceIndex] = {
+      ...service,
+      order_protection: false,
+      order_protection_disabled: true,
+    };
+  } else if (originalService) {
+    // ♻️ Revert back to original defaults
+    console.log(`♻️ Reverting protection defaults for ${serviceId}`);
+    newServices[serviceIndex] = {
+      ...service,
+      order_protection: originalService.order_protection,
+      order_protection_disabled:
+        originalService.order_protection_disabled ?? false,
+    };
+  }
+}
 
     if (service?.order_protection) {
       handleProtectionToggle(service?.order_protection, service);
@@ -844,27 +966,25 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
 
     // ✅ Merge modal values directly into services state
     if (modalValues) {
-      setServices((prev) =>
-        prev.map((s) =>
-          s.id === serviceId
-            ? {
-                ...s,
-                form: {
-                  ...s.form,
-                  modalOption: {
-                    ...s.form.modalOption,
-                    form: s.form.modalOption.form.map((field) => ({
-                      ...field,
-                      value:
-                        modalValues[field.label] !== undefined
-                          ? modalValues[field.label]
-                          : field.value,
-                    })),
-                  },
+      newServices = newServices.map((s) =>
+        s.id === serviceId
+          ? {
+              ...s,
+              form: {
+                ...s.form,
+                modalOption: {
+                  ...s.form.modalOption,
+                  form: s.form.modalOption.form.map((field) => ({
+                    ...field,
+                    value:
+                      modalValues[field.label] !== undefined
+                        ? modalValues[field.label]
+                        : field.value,
+                  })),
                 },
-              }
-            : s
-        )
+              },
+            }
+          : s
       );
     }
 
@@ -894,8 +1014,10 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
       currentPercent,
     };
     // Recalculate totals
-    const calculationResult = calculateCartTotals(newFormData, services);
+    const calculationResult = calculateCartTotals(newFormData, newServices);
+    setServices(newServices);
     newFormData = calculationResult.nextFormData;
+    console.log(`nextForm ${JSON.stringify(newFormData, null, 3)}`);
     return newFormData;
   };
 
@@ -913,28 +1035,38 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
       const basePrice = item.basePrice ?? item.price;
       let finalPrice = basePrice;
 
-      // --- 1) Handle item option-based price changes first
+      // --- 1) Handle item option-based price changes/addition first
       if (item.options?.items?.length) {
         const itemOptions = serviceOptions[item.id] || {};
         const activeOptionIds = Object.keys(itemOptions).filter(
           (k) => itemOptions[k]
         );
-
+        console.log(
+          "opts lengths",
+          activeOptionIds.length === 1,
+          `options ${item.id} : ${JSON.stringify(serviceOptions, null, 3)}`
+        );
         if (activeOptionIds.length === 1) {
+          console.log(JSON.stringify(activeOptionIds));
           const activeOpt = item.options.items.find(
             (opt) => opt.id === activeOptionIds[0]
           );
           if (activeOpt?.priceChange) {
             finalPrice = activeOpt.priceChange;
+          } else if (activeOpt?.priceAdd) {
+            console.log(
+              `price addition: ${finalPrice}+ ${activeOpt.priceAdd} `
+            );
+            finalPrice = finalPrice + activeOpt.priceAdd;
           }
         } else if (activeOptionIds.length === 0) {
+          console.log("baseprice assign");
           finalPrice = basePrice;
         }
       }
 
       // --- 2) Handle submenu-based price changes next
       if (item.submenuPriceChange) {
-
         // Only iterate price-change keys defined for this item
         let accumulatedAdd = 0;
 
@@ -943,9 +1075,6 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
           const isActive = serviceOptions[optId];
 
           // nicer, safe logging of isActive
-          
-
-   
 
           // skip if no change definition (shouldn't happen since iterating change keys) or inactive
           if (!change) {
@@ -959,18 +1088,16 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
           // Accumulate effects
           if (change.type === "add") {
             accumulatedAdd += Number(change.value || 0);
-       
           } else if (change.type === "multiple") {
             // Multiples expect a numeric isActive (count)
             if (typeof isActive === "number") {
               const add = Number(change.value || 0) * isActive;
               accumulatedAdd += add;
-            } 
-            
-          } 
+            }
+          }
         });
 
-        finalPrice = basePrice + accumulatedAdd;
+        finalPrice = finalPrice + accumulatedAdd;
       }
 
       return { ...item, price: finalPrice };
@@ -1187,7 +1314,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
             [...discountLevels]
               .reverse()
               .find((lvl) => qualifiedCount >= lvl.items) || null;
-         
+
           if (discountLevel) {
             discountApplied = (itemPrice * discountLevel.percent) / 100;
             itemPrice -= discountApplied;
@@ -1282,11 +1409,9 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
   };
 
   const RenderServiceForm = ({
-     service,
-      // open 
-
-    }) => {
-
+    service,
+    // open
+  }) => {
     return (
       <>
         <div className="flex flex-col min-h-0 border-2 border-gray-200 bg-white flex-1">
@@ -1358,7 +1483,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                       >
                         {item.subtitle}
                       </p>
-                      <div className="flex items-baseline gap-3">
+                      {/* <div className="flex items-baseline gap-3">
                         {item.basePrice && (
                           <span
                             className={`text-sm line-through ${
@@ -1375,6 +1500,51 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                         >
                           {item.price === "xx" ? "$xx" : `$${item.price}`}
                         </span>
+                      </div> */}
+                      <div className="flex items-baseline gap-3">
+                        {(() => {
+                          const discountedInfo =
+                            formData?.serviceTotals?.[service.id]?.items?.[
+                              item.id
+                            ];
+
+                          if (
+                            discountedInfo &&
+                            discountedInfo.discountApplied > 0
+                          ) {
+                            return (
+                              <>
+                                <span
+                                  className={`text-sm line-through ${
+                                    isSelected
+                                      ? "text-inverse/80"
+                                      : "text-gray-400"
+                                  }`}
+                                >
+                                  ${discountedInfo.originalPrice}
+                                </span>
+                                <span
+                                  className={`text-lg font-bold ${
+                                    isSelected ? "text-inverse" : "text-primary"
+                                  }`}
+                                >
+                                  ${discountedInfo.discountedPrice}
+                                </span>
+                              </>
+                            );
+                          }
+
+                          // fallback → normal rendering
+                          return (
+                            <span
+                              className={`text-lg font-bold ${
+                                isSelected ? "text-inverse" : "text-primary"
+                              }`}
+                            >
+                              {item.price === "xx" ? "$xx" : `$${item.price}`}
+                            </span>
+                          );
+                        })()}
                       </div>
                     </label>
                   );
@@ -1527,21 +1697,29 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                 return (
                   <label
                     className={`w-full mt-auto flex items-center justify-between gap-2 border px-3 py-3 bg-card 
+        ${
+          !service?.order_protection_value || service?.order_protection_disabled
+            ? "cursor-not-allowed"
+            : "cursor-pointer"
+        }
         
-        cursor-pointer
         
         border-gray-300 rounded-md`}
                   >
-                    <div className="flex items-center justify-start gap-4">
+                    <div className={`flex items-center justify-start gap-4 `}>
                       <input
                         type="checkbox"
                         className="accent-primary"
                         // checked={!!formData.order_protection}
+                        // disabled={!!service?.order_protection_disabled}
                         checked={service?.order_protection}
                         onChange={(e) => {
                           handleProtectionToggle(e.target.checked, service);
                         }}
-                        disabled={!service?.order_protection_value}
+                        disabled={
+                          !service?.order_protection_value ||
+                          service?.order_protection_disabled
+                        }
                       />
                       <span
                         className={`font-medium ${
@@ -1552,7 +1730,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                       >
                         Order Protection
                       </span>
-                      <span className="text-[#0bc88c] font-semibold ml-1">
+                      <span className="text-[#0BC88C] font-semibold ml-1">
                         {/* ${ORDER_PROTECTION_PRICE} */}
                         {formData?.serviceTotals?.[service.id]?.protectionAmount
                           ? `$${
@@ -1704,7 +1882,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                       </div>
                     </div>
                     <AccordionPrimitive.Trigger asChild>
-                      <button className="w-full px-4 py-2 bg-emerald-500 text-white font-semibold hover:bg-emerald-600">
+                      <button className="w-full px-4 py-2 bg-[#0BC88C] text-white font-semibold hover:bg-[#0BC88C]">
                         Add to Cart
                       </button>
                     </AccordionPrimitive.Trigger>
@@ -1760,7 +1938,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
           <div className="relative w-full h-3 overflow-hidden bg-gray-100">
             {/* Filled portion */}
             <div
-              className="h-full bg-emerald-500 transition-all duration-300"
+              className="h-full bg-[#0BC88C] transition-all duration-300"
               style={{ width: `${formData.progress?.fillPercent || 0}%` }}
             />
 
@@ -1777,7 +1955,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
           {/* Text */}
           <p className="mt-2 text-start text-sm text-gray-700">
             You’re saving an additional{" "}
-            <span className="font-semibold text-emerald-600">
+            <span className="font-semibold text-[#0BC88C]">
               {formData.progress?.currentPercent || 0}%
             </span>
           </p>
@@ -1870,7 +2048,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                 <span>${formData?.cartTotal}</span>
               </div>
 
-              <div className="flex justify-between text-sm md:text-base font-semibold text-emerald-600">
+              <div className="flex justify-between text-sm md:text-base font-semibold text-[#0BC88C]">
                 <span>You Saved:</span>
                 <span>${formData?.cartSavings || "0"}</span>
               </div>
@@ -1883,7 +2061,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                   e.preventDefault();
                   handleValidation();
                 }}
-                className="w-full  px-5 py-2 bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors"
+                className="w-full  px-5 py-2 bg-[#00d892] text-white font-semibold hover:bg-[#0BC88C] transition-colors"
               >
                 Checkout
               </button>

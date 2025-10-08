@@ -67,7 +67,7 @@ function AccordionTrigger({
           </div>
 
           {subText && (
-            <span className="text-xs text-emerald-600 mt-1">{subText}</span>
+            <span className="text-xs text-[#0BC88C] mt-1">{subText}</span>
           )}
         </div>
       </AccordionPrimitive.Trigger>

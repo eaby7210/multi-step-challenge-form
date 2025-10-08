@@ -63,12 +63,11 @@ const OrderConfig = ({ formData = {}, handleChange, onNext, onPrev }) => {
   };
 
   const total =
-    formData.cartTotal ??
-    (bundles.length
-      ? bundles.reduce((sum, b) => sum + b.price, 0) +
-        (orderProtection ? ORDER_PROTECTION_PRICE : 0)
-      : formData.bundleTotal || 0);
-
+    formData?.cartTotal 
+    // ??(bundles.length
+    //   ? bundles.reduce((sum, b) => sum + b.price, 0) 
+    //   : formData.bundleTotal || 0);
+console.log(JSON.stringify(formData,null,3))
   const savings =
     formData.cartSaving ??
     (bundles.length
@@ -337,7 +336,7 @@ const OrderConfig = ({ formData = {}, handleChange, onNext, onPrev }) => {
             <div className="col-span-1 md:col-span-2 flex flex-col h-full w-full items-center justify-between mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 {/* Left Title */}
-                <h3 className="text-md font-bold text-main">
+                <h3 className="text-md font-bold text-main lg:text-nowrap">
                   Order Individual Services
                 </h3>
 
@@ -360,10 +359,10 @@ const OrderConfig = ({ formData = {}, handleChange, onNext, onPrev }) => {
           </div>
           <button
             type="button"
-            className="flex w-full sm:w-auto items-center justify-center gap-2 px-5 py-2 bg-primary text-white font-semibold hover:bg-blue-700 transition-all"
+            className="flex w-full sm:w-auto items-center justify-center gap-2 px-4 text-nowrap py-3 bg-primary text-white font-semibold hover:bg-blue-700 transition-all"
             onClick={handleGoAlaCarte}
           >
-            Customize
+            Build My Order
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>

@@ -10,6 +10,7 @@ import Step6 from "./components/Step6";
 import Step7 from "./components/Step7";
 import AlaCartePage from "./components/AlaCartePage";
 import "./App.css";
+import useFormPersistence from "./lib/useFormPersist"
 import {
   Home,
   MapPin,
@@ -29,7 +30,7 @@ import ErrorPage from "./components/Error";
 import LoadingOverlay from "./components/Spinner";
 
 export default function App() {
-
+  const ENABLE_FORM_PERSISTENCE = true;
   const searchParams = new URLSearchParams(window.location.search);
   const status = searchParams.get("status");
   const session_id = searchParams.get("session_id");
@@ -42,6 +43,15 @@ export default function App() {
   const [showFraudModal, setShowFraudModal] = useState(false);
   const [pgloading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ company_id, user_id });
+  
+useFormPersistence({
+    userId: user_id,
+    formData,
+    setFormData,
+    status,
+    enable: ENABLE_FORM_PERSISTENCE,
+  });
+  
 const handleChange = (e) => {
   let nextFormData = null;
 
@@ -228,20 +238,21 @@ const handleChange = (e) => {
   );
 
   // console.log("data" + data);
-
-  // if (
-  //   error
-  //   //  && (company_id && user_id)
-  //   ){
-  //   const errMsg =error?.response?.data?.message
-  //   return <ErrorPage message={
-  //     errMsg ? errMsg:error} code={error?.status}/>
-  // }
-  if (status === "success") {
+if (status === "success") {
     return <Success session_id={session_id} />;
-  } else if (status === "cancel") {
-    return <Cancel />;
   }
+  //  else if (status === "cancel") {
+  //   return <Cancel />;
+  // }
+  if (
+    error && !status
+    //  && (company_id && user_id)
+    ){
+    const errMsg =error?.response?.data?.message
+    return <ErrorPage message={
+      errMsg ? errMsg:error} code={error?.status}/>
+  }
+  
 
   // Map step index to Lucide icon
   const stepIcons = [
