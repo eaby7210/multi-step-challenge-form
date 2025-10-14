@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "./Accordian";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { ChevronDown, PlusCircle } from "lucide-react";
+import { ChevronDown, PlusCircle, ShieldCheck, Shield } from "lucide-react";
 import IndModals from "../config/IndividualModal";
 import ModalWrapper from "./ModalWrapper";
 import OrderProtectionModal from "../config/OrderProtectionModal";
@@ -20,6 +20,8 @@ const SERVICES = [
     id: "photos",
     title: "Property Photos",
     subtitle: "Send a photographer to a property to take pictures",
+    header:"Photographs at the speed of now",
+    subheader:<><p>Fast, professional photography for your listings, projects, or marketing needs</p></>,
     order_protection: true,
     order_protection_type: "percent",
     order_protection_disabled: false,
@@ -145,6 +147,8 @@ const SERVICES = [
     id: "lockboxes",
     title: "LockBoxes",
     subtitle: "Have a lockbox installed at the property",
+    header:"Lockboxes as soon as today",
+    subheader:<p>Place a lockbox with your custom code.  Same day installation available.</p>,
     order_protection: true,
     order_protection_type: "percent",
     order_protection_value: 4,
@@ -171,12 +175,28 @@ const SERVICES = [
         type: "none", // no extra options in UI
         items: [],
       },
+      modalOption: {
+        eachItem: false,
+        validItem: [],
+        form: [
+          {
+            label: "LockBox Code",
+            type: "text",
+            name: "lockbox",
+            value: "",
+            required: true,
+            // valid_item_index: ["standard", ""],
+          },
+        ],
+      },
     },
   },
   {
     id: "notary",
     title: "Notarizations & Signings",
     subtitle: "Have documents signed or notarized",
+        header:"Notarizations - remote or onsite",
+    subheader:<p>Vetted & background screened notaries available for in-person or online signings.</p>,
     order_protection: true,
     order_protection_type: "percent",
     order_protection_value: 4,
@@ -204,11 +224,11 @@ const SERVICES = [
             ],
           },
           submenuPriceChange: {
-            pages20_75: {
+            pages21_75: {
               type: "add",
               value: 30,
             },
-            pages75_150: {
+            pages76_150: {
               type: "add",
               value: 60,
             },
@@ -244,16 +264,16 @@ const SERVICES = [
         type: "mixed",
         items: [
           {
-            id: "pages20_75",
-            label: "20-75 Pages",
+            id: "pages21_75",
+            label: "21-75 Pages",
             value: false,
             type: "radio",
             name: "pages",
             valid_item_index: [],
           },
           {
-            id: "pages75_150",
-            label: "75-150 Pages",
+            id: "pages76_150",
+            label: "76-150 Pages",
             value: false,
             type: "radio",
             name: "pages",
@@ -296,6 +316,8 @@ const SERVICES = [
     id: "videos",
     title: "Property Videos",
     subtitle: "Send a videographer to a property to record video",
+        header:"Digital Property Walk-throughs",
+    subheader:<p>See every angle - interior and exterior video tours for due diligence or marketing.</p>,
     order_protection: true,
     order_protection_type: "percent",
     order_protection_value: 4,
@@ -318,10 +340,19 @@ const SERVICES = [
     id: "repairs",
     title: "Home Maintenance & Repairs",
     subtitle: "Receive and approve bids for repair work on a property",
+    header:"Choose Your Level of Service",
+    subheader:<><p><span className="font-bold">Bid-Only</span>: We find local vendors and send you quotes.</p>
+    <p><span className="font-bold">Complete It</span>: We handle the work start-to-finish</p></>,
     order_protection: false,
     order_protection_disabled: true,
     order_protection_type: "percent",
     order_protection_value: null,
+    disclosure:[
+      {
+        type:"info",
+        message:"Quotes contingent on availability"
+      }
+    ],
     form: {
       title: "Quotes and Bids Options",
       description: "Receive and approve bids for repair work on a property",
@@ -353,6 +384,13 @@ const SERVICES = [
               },
             ],
           },
+          submenuPriceChange: {
+         
+            quotes: {
+              type: "multiple",
+              // value: 2,
+            },
+          },
         },
         {
           id: "trash q",
@@ -379,6 +417,13 @@ const SERVICES = [
                 valid_item_index: [],
               },
             ],
+          },
+            submenuPriceChange: {
+         
+            quotes: {
+              type: "multiple",
+              // value: 2,
+            },
           },
         },
         {
@@ -407,6 +452,13 @@ const SERVICES = [
                 valid_item_index: [],
               },
             ],
+          },
+            submenuPriceChange: {
+         
+            quotes: {
+              type: "multiple",
+              // value: 2,
+            },
           },
         },
         // ✅ New Handyman Quotes
@@ -437,6 +489,13 @@ const SERVICES = [
               },
             ],
           },
+            submenuPriceChange: {
+         
+            quotes: {
+              type: "multiple",
+              // value: 2,
+            },
+          },
         },
       ],
       submenu: {
@@ -446,8 +505,9 @@ const SERVICES = [
             id: "quotes",
             label: "Number of Quotes",
             type: "counter",
-            value: 0,
-            // max: 2,
+            value: 1,
+            max: 4,
+            min:1,
             valid_item_index: [],
           },
         ],
@@ -458,6 +518,8 @@ const SERVICES = [
     id: "inspections",
     title: "Home Inspections",
     subtitle: "Send a licensed home inspector to a property",
+        header:"Licensed Home Inspections",
+    subheader:<p>Book a licensed local home inspection with 2D floor plan included. </p>,
     order_protection: true,
     order_protection_type: "percent",
 
@@ -481,6 +543,8 @@ const SERVICES = [
     id: "onDemand",
     title: "On Demand Services",
     subtitle: "Send a representative to the property for onsite purposes",
+        header:"On-Demand Property Services",
+    subheader:<p>Send a local rep for access, checks, and onsite tasks - fast!</p>,
     order_protection: true,
     order_protection_type: "percent",
     order_protection_value: 4,
@@ -881,34 +945,34 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
         order_protection: false,
         order_protection_disabled: true,
       };
-    }else if (item?.protectionInvalid && !selected) {
-  // 🔍 Check if ANY selected item in this service has protectionInvalid
-  const originalService = SERVICES.find((s) => s.id === serviceId);
-  const stillHasInvalid = service.form.items.some((svcItem) => {
-    const isSelected = newFormData.selectedItems?.[serviceId]?.[svcItem.id];
-    return svcItem.protectionInvalid && isSelected;
-  });
+    } else if (item?.protectionInvalid && !selected) {
+      // 🔍 Check if ANY selected item in this service has protectionInvalid
+      const originalService = SERVICES.find((s) => s.id === serviceId);
+      const stillHasInvalid = service.form.items.some((svcItem) => {
+        const isSelected = newFormData.selectedItems?.[serviceId]?.[svcItem.id];
+        return svcItem.protectionInvalid && isSelected;
+      });
 
-  if (stillHasInvalid) {
-    console.log(
-      `⚠️ Another protectionInvalid item still selected for ${serviceId}, keeping protection disabled`
-    );
-    newServices[serviceIndex] = {
-      ...service,
-      order_protection: false,
-      order_protection_disabled: true,
-    };
-  } else if (originalService) {
-    // ♻️ Revert back to original defaults
-    console.log(`♻️ Reverting protection defaults for ${serviceId}`);
-    newServices[serviceIndex] = {
-      ...service,
-      order_protection: originalService.order_protection,
-      order_protection_disabled:
-        originalService.order_protection_disabled ?? false,
-    };
-  }
-}
+      if (stillHasInvalid) {
+        console.log(
+          `⚠️ Another protectionInvalid item still selected for ${serviceId}, keeping protection disabled`
+        );
+        newServices[serviceIndex] = {
+          ...service,
+          order_protection: false,
+          order_protection_disabled: true,
+        };
+      } else if (originalService) {
+        // ♻️ Revert back to original defaults
+        console.log(`♻️ Reverting protection defaults for ${serviceId}`);
+        newServices[serviceIndex] = {
+          ...service,
+          order_protection: originalService.order_protection,
+          order_protection_disabled:
+            originalService.order_protection_disabled ?? false,
+        };
+      }
+    }
 
     if (service?.order_protection) {
       handleProtectionToggle(service?.order_protection, service);
@@ -1015,6 +1079,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
     };
     // Recalculate totals
     const calculationResult = calculateCartTotals(newFormData, newServices);
+
     setServices(newServices);
     newFormData = calculationResult.nextFormData;
     console.log(`nextForm ${JSON.stringify(newFormData, null, 3)}`);
@@ -1088,16 +1153,26 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
           // Accumulate effects
           if (change.type === "add") {
             accumulatedAdd += Number(change.value || 0);
-          } else if (change.type === "multiple") {
-            // Multiples expect a numeric isActive (count)
-            if (typeof isActive === "number") {
-              const add = Number(change.value || 0) * isActive;
-              accumulatedAdd += add;
-            }
+          } else if (change.type === "multiple" && typeof isActive === "number") {
+          if (change.value) {
+            // normal case: multiply defined value
+            const add = Number(change.value || 0) * isActive;
+            accumulatedAdd += add;
+          } else {
+            // 🧠 NEW BEHAVIOR: no change.value -> multiply item price
+            
+            const multiplied = finalPrice * (isActive - 1);
+            console.log(
+              `⚙️ '${item.id}' uses multiple type with no value: basePrice ${basePrice} * count ${isActive} = +${multiplied}`
+            );
+            accumulatedAdd =0;
+            finalPrice = finalPrice +multiplied
           }
+        }
         });
 
         finalPrice = finalPrice + accumulatedAdd;
+        console.log(`final price ${finalPrice} ${accumulatedAdd}`)
       }
 
       return { ...item, price: finalPrice };
@@ -1408,6 +1483,45 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
     return qualifiedCount;
   };
 
+const DisclosureMessages = ({ disclosures }) => {
+  if (!disclosures || disclosures.length === 0) return null;
+
+  const typeConfig = {
+    info: {
+     
+      bg: "text-gray-700",
+    },
+    warning: {
+     
+      bg: " text-amber-800",
+    },
+    success: {
+     
+      bg: " text-green-700",
+    },
+    danger: {
+    
+    },
+  };
+
+  return (
+    <>
+      {disclosures.map((disc, index) => {
+        const cfg = typeConfig[disc.type] || typeConfig.info;
+        return (
+          <p
+            key={index}
+            className={` text-xs text-start ${cfg.bg}`}
+          >
+            {/* {cfg.icon} */}
+            <span><sup>*</sup>{disc.message}</span>
+          </p>
+        );
+      })}
+   </>
+  );
+};
+
   const RenderServiceForm = ({
     service,
     // open
@@ -1434,11 +1548,18 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                   <span className="text-sm font-medium">What's Included</span>
                 </button>
               </div>
+
+              {service?.header &&
+              <div className="text-start my-2 pt-1 pb-4">
+              <h2 className="font-extrabold text-xl py-1">{service?.header}</h2>
+              {service?.subheader}
+              </div>}
               {/* service grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                 {service.form.items.map((item) => {
                   const isSelected =
                     formData.selectedItems?.[service.id]?.[item.id] || false;
+                 
 
                   return (
                     <label
@@ -1574,13 +1695,20 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                               </span>
                               <button
                                 type="button"
-                                onClick={() =>
+                                onClick={() =>{
+                                  
                                   handleSubmenuChange(
                                     service.id,
                                     submenuItem.id,
-                                    Math.max(0, currentValue - 1),
+                                    submenuItem.min
+                                      ? Math.max(
+                                         submenuItem.min,
+                                          currentValue - 1
+                                        )
+                                      : currentValue - 1,
                                     "counter"
                                   )
+                                }
                                 }
                                 className="w-6 h-6 bg-gray-200 rounded text-sm"
                               >
@@ -1591,13 +1719,16 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                               <input
                                 type="number"
                                 value={currentValue}
-                                min={0}
+                                min={submenuItem.min ?? 0}
                                 max={submenuItem.max ?? 99}
                                 onChange={(e) => {
                                   let newVal = parseInt(e.target.value, 10);
                                   if (isNaN(newVal)) newVal = 0;
                                   if (submenuItem.max !== undefined) {
                                     newVal = Math.min(newVal, submenuItem.max);
+                                  }
+                                  if (submenuItem.min !== undefined){
+                                    newVal = Math.max(submenuItem.min, newVal)
                                   }
                                   handleSubmenuChange(
                                     service.id,
@@ -1691,6 +1822,33 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                   </div>
                 </div>
               )}
+<div className="mt-2">
+{service.disclosure && service.disclosure.length > 0 && (
+  <DisclosureMessages disclosures={service.disclosure} />
+)}
+
+{(() => {
+  // find all selected items with protectionInvalid = true
+  const invalidItems =
+    service.form.items?.filter(
+      (item) =>
+        item.protectionInvalid &&
+        formData.selectedItems?.[service.id]?.[item.id]
+    ) || [];
+
+  if (invalidItems.length > 0) {
+    return (
+      <p className="text-xs text-red-600 ">
+         <sup>*</sup>Order Protection not available for{" "}
+        <span className="font-semibold"> {invalidItems.map((i) => i.title).join(", ")}</span>
+      </p>
+    );
+  }
+  return null;
+})()}
+</div>
+
+              
 
               {/* Order Protection row */}
               {(() => {
@@ -1730,7 +1888,14 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
                       >
                         Order Protection
                       </span>
-                      <span className="text-[#0BC88C] font-semibold ml-1">
+                    {/* Dynamic Shield Icon */}
+{service?.order_protection_disabled ? (
+  <Shield className="w-5 h-5 text-gray-400 flex-shrink-0" />
+) : service?.order_protection ? (
+  <ShieldCheck className="w-5 h-5 text-[#0BC88C] flex-shrink-0" />
+) : (
+  <Shield className="w-5 h-5 text-[#0BC88C] flex-shrink-0" />
+)}           <span className="text-[#0BC88C] font-semibold ml-1">
                         {/* ${ORDER_PROTECTION_PRICE} */}
                         {formData?.serviceTotals?.[service.id]?.protectionAmount
                           ? `$${

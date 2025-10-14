@@ -21,10 +21,13 @@ export default function useFormPersistence({
     }
 
     const saved = localStorage.getItem(storageKey);
-    if (saved) {
+    if (saved && status == "cancel") {
       try {
         const parsed = JSON.parse(saved);
         console.log(`💾 Loaded saved formData for user_id=${userId}`);
+        const url = new URL(window.location.href);
+        url.searchParams.delete("status");
+        window.history.replaceState({}, document.title, url.toString());
         setFormData((prev) => ({ ...prev, ...parsed }));
       } catch (err) {
         console.error("⚠️ Failed to parse saved formData:", err);

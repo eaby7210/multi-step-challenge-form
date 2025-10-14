@@ -12,6 +12,7 @@ import {
        } from 'lucide-react';
 import useGetApi from '../apis/hooks/useGetApi';
 import LoadingOverlay from './Spinner';
+import { isValidUSPhoneNumber, formatUSPhoneNumber } from '../lib/phoneUtils';
 
 
 // import TextEditor from './TextEditor';
@@ -83,9 +84,12 @@ const handleValidation = () => {
   if (!formData.contact_phone_type_sched){
     newErrors.contact_phone_type_sched = "Phone type is required"
   }
-  if (!formData.contact_phone_sched || !formData.contact_phone_sched.trim()) {
-    newErrors.contact_phone_sched = "Phone number is required.";
-  }
+if (!formData.contact_phone_sched || !formData.contact_phone_sched.trim()) {
+  newErrors.contact_phone_sched = "Phone number is required";
+} else if (!isValidUSPhoneNumber(formData.contact_phone_sched)) {
+  newErrors.contact_phone_sched = "Invalid phone number format.";
+}
+
   // if (!formData.contact_email_sched || !formData.contact_email_sched.trim()) {
   //   newErrors.contact_email_sched = "Email address is required.";
   // } else if (

@@ -3,10 +3,15 @@ import React, {
   //  useEffect
 } from "react";
 import { PlusCircle, CheckSquare } from "lucide-react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight , ShieldCheck, Shield } from "lucide-react";
 import AlaCartePage from "./AlaCartePage";
 import ModalWrapper from "./ModalWrapper";
+
 import OrderProtectionModal from "../config/OrderProtectionModal";
+const BundlesHeaders = {
+  header:"Pre-built packages with built-in savings",
+  subheader:"Our most popular products, at the lowest available prices",
+}
 const Bundles = [
   {
     name: "Deal Accelerator",
@@ -392,6 +397,12 @@ console.log(JSON.stringify(formData,null,3))
                   <span className="text-sm font-medium">What's Included</span>
                 </button>
               </div>
+               
+              {BundlesHeaders &&
+              <div className="text-start my-2 pt-1 pb-3">
+              <h2 className="font-extrabold text-xl py-1">{BundlesHeaders?.header}</h2>
+              <p className="text-xs md:text-sm">{BundlesHeaders?.subheader}</p>
+              </div>}
               {/* Bundles */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 {Bundles.map((b) => {
@@ -449,6 +460,12 @@ console.log(JSON.stringify(formData,null,3))
                 />
                 <span className="text-main font-medium">Order Protection</span>
                 </div>
+                { (formData?.order_protection
+                  ) ? (
+                  <ShieldCheck className="w-5 h-5 text-[#0BC88C] flex-shrink-0" />
+                ) : (
+                  <Shield className="w-5 h-5 text-[#0BC88C] flex-shrink-0" />
+                )}
                 <span className="font-semibold ml-1 text-[#0bc88c]">
                   {formData?.order_protection_price &&
                   formData.order_protection_price > 0
