@@ -137,3 +137,14 @@
 .animate-iconPulse {
   animation: iconPulse 1.2s ease-in-out infinite;
 }
+input[type="checkbox"]:checked::before {
+  content: "\2714";
+  color: white;
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.1rem;
+  line-height:1;
+  font-weight: 900;
+}

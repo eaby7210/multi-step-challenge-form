@@ -617,7 +617,7 @@ if (status === "success") {
             </div>
           </div>
         </div>
-        <div className="bg-card p-4 md:p-10 max-w-3xl mx-auto mt-4 md:mt-10 w-full md:w-auto flex-1 flex flex-col">
+        <div className="bg-card py-4 px-1 md:py-10 max-w-3xl mx-auto mt-4 md:mt-10 w-full md:w-auto flex-1 flex flex-col">
           <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-primary font-sans tracking-tight leading-snug md:leading-tight">
             {steps[currentStep].heading}
           </h1>

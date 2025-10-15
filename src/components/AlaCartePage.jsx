@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "./Accordian";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { ChevronDown, PlusCircle, ShieldCheck, Shield } from "lucide-react";
+import { ChevronDown, PlusCircle, ShieldCheck, Shield, Check, XCircle } from "lucide-react";
 import IndModals from "../config/IndividualModal";
 import ModalWrapper from "./ModalWrapper";
 import OrderProtectionModal from "../config/OrderProtectionModal";
@@ -1528,7 +1528,7 @@ const DisclosureMessages = ({ disclosures }) => {
   }) => {
     return (
       <>
-        <div className="flex flex-col min-h-0 border-2 border-gray-200 bg-white flex-1">
+        <div className="flex flex-col min-h-0 bg-[#fafbfd] border-2 border-gray-200 flex-1">
           <div className=" grid grid-cols-1 gap-1 md:gap-1.5 md:grid-cols-3 p-4 h-full w-full flex-1 ">
             {/* Bundle and Protection section */}
             <div className="col-span-1 md:col-span-2 flex flex-col h-full w-full items-center justify-between mb-4">
@@ -1552,7 +1552,7 @@ const DisclosureMessages = ({ disclosures }) => {
               {service?.header &&
               <div className="text-start my-2 pt-1 pb-4">
               <h2 className="font-extrabold text-xl py-1">{service?.header}</h2>
-              {service?.subheader}
+              <p className="text-sm font-medium">{service?.subheader}</p>
               </div>}
               {/* service grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
@@ -1564,7 +1564,7 @@ const DisclosureMessages = ({ disclosures }) => {
                   return (
                     <label
                       key={item.id}
-                      className={`text-left transition-all relative block cursor-pointer border shadow-sm p-4
+                      className={`text-left transition-all relative block cursor-pointer border border-gray-50 bg-white p-4
      
         ${
           isSelected
@@ -1604,24 +1604,7 @@ const DisclosureMessages = ({ disclosures }) => {
                       >
                         {item.subtitle}
                       </p>
-                      {/* <div className="flex items-baseline gap-3">
-                        {item.basePrice && (
-                          <span
-                            className={`text-sm line-through ${
-                              isSelected ? "text-inverse/80" : "text-gray-400"
-                            }`}
-                          >
-                            ${item.basePrice}
-                          </span>
-                        )}
-                        <span
-                          className={`text-lg font-bold ${
-                            isSelected ? "text-inverse" : "text-primary"
-                          }`}
-                        >
-                          {item.price === "xx" ? "$xx" : `$${item.price}`}
-                        </span>
-                      </div> */}
+                   
                       <div className="flex items-baseline gap-3">
                         {(() => {
                           const discountedInfo =
@@ -1851,77 +1834,114 @@ const DisclosureMessages = ({ disclosures }) => {
               
 
               {/* Order Protection row */}
-              {(() => {
-                return (
-                  <label
-                    className={`w-full mt-auto flex items-center justify-between gap-2 border px-3 py-3 bg-card 
+
+{(() => {
+  return (
+    <label
+      className={`w-full mt-auto flex items-center justify-between gap-2 border-2 px-3 py-3 bg-card 
         ${
           !service?.order_protection_value || service?.order_protection_disabled
-            ? "cursor-not-allowed"
-            : "cursor-pointer"
-        }
-        
-        
-        border-gray-300 rounded-md`}
-                  >
-                    <div className={`flex items-center justify-start gap-4 `}>
-                      <input
-                        type="checkbox"
-                        className="accent-primary"
-                        // checked={!!formData.order_protection}
-                        // disabled={!!service?.order_protection_disabled}
-                        checked={service?.order_protection}
-                        onChange={(e) => {
-                          handleProtectionToggle(e.target.checked, service);
-                        }}
-                        disabled={
-                          !service?.order_protection_value ||
-                          service?.order_protection_disabled
-                        }
-                      />
-                      <span
-                        className={`font-medium ${
-                          !service?.order_protection
-                            ? "text-gray-600 hover:text-black"
-                            : "text-gray-700 hover:text-black"
-                        }`}
-                      >
-                        Order Protection
-                      </span>
-                    {/* Dynamic Shield Icon */}
-{service?.order_protection_disabled ? (
-  <Shield className="w-5 h-5 text-gray-400 flex-shrink-0" />
-) : service?.order_protection ? (
-  <ShieldCheck className="w-5 h-5 text-[#0BC88C] flex-shrink-0" />
-) : (
-  <Shield className="w-5 h-5 text-[#0BC88C] flex-shrink-0" />
-)}           <span className="text-[#0BC88C] font-semibold ml-1">
-                        {/* ${ORDER_PROTECTION_PRICE} */}
-                        {formData?.serviceTotals?.[service.id]?.protectionAmount
-                          ? `$${
-                              formData?.serviceTotals?.[service.id]
-                                ?.protectionAmount
-                            }`
-                          : ""}
-                      </span>
-                    </div>
+            ? "cursor-not-allowed border-gray-300"
+            : "cursor-pointer border-[#0BC88C]"
+        }`}
+    >
+      <div className="flex items-center justify-start gap-4">
+        {/* Accessible Custom Checkbox */}
+        <div
+          role="checkbox"
+          tabIndex={
+            !service?.order_protection_value || service?.order_protection_disabled
+              ? -1
+              : 0
+          } // focusable only when active
+          aria-checked={!!service?.order_protection}
+          aria-disabled={
+            !service?.order_protection_value || service?.order_protection_disabled
+          }
+          onClick={() => {
+            if (
+              !service?.order_protection_disabled &&
+              service?.order_protection_value
+            ) {
+              handleProtectionToggle(!service?.order_protection, service);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (
+              (e.key === " " || e.key === "Enter") &&
+              !service?.order_protection_disabled &&
+              service?.order_protection_value
+            ) {
+              e.preventDefault(); // prevent scrolling on space
+              handleProtectionToggle(!service?.order_protection, service);
+            }
+          }}
+          className={`
+            w-5 h-5 border-2 rounded-xs flex items-center justify-center outline-none
+            ${
+              service?.order_protection
+                ? "bg-[#0BC88C] border-[#0BC88C]"
+                : "border-[#0BC88C] bg-white"
+            }
+            ${
+              !service?.order_protection_value || service?.order_protection_disabled
+                ? "cursor-not-allowed opacity-50"
+                : "cursor-pointer focus:ring-2 focus:ring-offset-1 focus:ring-[#0BC88C]"
+            }
+            transition-all duration-200
+          `}
+        >
+          {service?.order_protection && (
+            <Check className="w-4 h-5 text-white" strokeWidth={4.5} />
+          )}
+        </div>
 
-                    <button
-                      type="button"
-                      className={`flex items-center justify-end gap-2 transition-colors 
-          ${
+        {/* Label Text */}
+        <span
+          className={`font-medium ${
             !service?.order_protection
-              ? "text-gray-400 hover:text-black"
+              ? "text-gray-600 hover:text-black"
               : "text-gray-700 hover:text-black"
           }`}
-                      onClick={handlelearnModal}
-                      disabled={false}
-                    >
-                      <span className="text-sm font-medium">Learn More</span>
-                    </button>
-                  </label>
-                );
-              })()}
+        >
+          Order Protection
+        </span>
+
+        {/* Dynamic Shield Icon */}
+        {service?.order_protection_disabled ? (
+          <Shield className="w-5 h-5 text-gray-400 flex-shrink-0" />
+        ) : service?.order_protection ? (
+          <ShieldCheck className="w-5 h-5 text-[#0BC88C] flex-shrink-0" />
+        ) : (
+          <Shield className="w-5 h-5 text-[#0BC88C] flex-shrink-0" />
+        )}
+
+        {/* Price */}
+        <span className="text-[#0BC88C] font-semibold ml-1">
+          {formData?.serviceTotals?.[service.id]?.protectionAmount
+            ? `$${
+                formData?.serviceTotals?.[service.id]?.protectionAmount
+              }`
+            : ""}
+        </span>
+      </div>
+
+      {/* Learn More Button */}
+      <button
+        type="button"
+        className={`flex items-center justify-end gap-2 transition-colors ${
+          !service?.order_protection
+            ? "text-gray-600 hover:text-black"
+            : "text-gray-700 hover:text-black"
+        }`}
+        onClick={handlelearnModal}
+        disabled={false}
+      >
+        <span className="text-sm font-medium">Learn More</span>
+      </button>
+    </label>
+  );
+})()}
             </div>
 
             <div className="flex flex-col justify-end justify-self-end w-full h-full flex-1">
@@ -1961,6 +1981,7 @@ const DisclosureMessages = ({ disclosures }) => {
                 )}
 
               {/* 🔹 Item-level options (only render for selected items) */}
+              <div className=" flex flex-col justify-between gap-3">
               {service.form.items?.map((item) =>
                 formData.selectedItems?.[service.id]?.[item.id]
                   ? item.options?.type === "checkbox" && (
@@ -2024,9 +2045,10 @@ const DisclosureMessages = ({ disclosures }) => {
                     )
                   : null
               )}
-
+              </div>
+{/* <div className="py-5 my-5"></div> */}
               {/* 🔹 Totals + Cart */}
-              <div className="flex w-full flex-col justify-end justify-self-end">
+              <div className="flex w-full flex-col  justify-end justify-self-end">
                 <div className="border-t pt-4">
                   <div className="flex flex-col justify-between w-full">
                     <div className="w-full text-sm">
@@ -2082,6 +2104,123 @@ const DisclosureMessages = ({ disclosures }) => {
       </ModalWrapper>
     );
   };
+
+  const SelectedItemsSummary = ({ formData, services }) => {
+  if (!formData?.selectedItems) return null;
+
+  const lines = [];
+
+  Object.keys(formData.selectedItems).forEach((serviceId) => {
+    const serviceSelections = formData.selectedItems[serviceId];
+    const service = services.find((s) => s.id === serviceId);
+    if (!service) return;
+
+    Object.keys(serviceSelections).forEach((itemId) => {
+      if (!serviceSelections[itemId]) return;
+      const item = service.form.items.find((i) => i.id === itemId);
+      if (!item) return;
+
+      const itemOptions =
+        formData.selectedOptions?.[serviceId]?.[itemId] || {};
+      const submenuOptions = formData.selectedOptions?.[serviceId] || {};
+      const priceInfo =
+        formData.serviceTotals?.[serviceId]?.items?.[itemId] || {};
+
+      // Extract selected options
+      const selectedOptionLabels = Object.keys(itemOptions)
+        .filter((key) => itemOptions[key])
+        .map((key) => {
+          const opt = item.options?.items?.find((o) => o.id === key);
+          return opt?.label || key;
+        });
+
+      // Extract submenu non-boolean values
+      const submenuLabels = Object.keys(submenuOptions)
+        .filter(
+          (k) =>
+            (typeof submenuOptions[k] === "boolean" && submenuOptions[k]) ||
+            (typeof submenuOptions[k] === "number" && submenuOptions[k] > 0)
+        )
+        .map((k) => {
+          const sub = service.form.submenu?.items?.find((i) => i.id === k);
+          const val = submenuOptions[k];
+          if (!sub) return null;
+          if (typeof val === "number" && val > 0)
+            return `${sub.label}: ${val}`;
+          return sub.label;
+        })
+        .filter(Boolean);
+
+      const combinedDetails = [...selectedOptionLabels, ...submenuLabels].join(
+        ", "
+      );
+
+      lines.push({
+                serviceId,
+        itemId,
+
+        serviceTitle: service.title,
+        itemTitle: item.title,
+        details: combinedDetails || null,
+        price: priceInfo.discountedPrice ?? item.price,
+      });
+    });
+  });
+
+  if (lines.length === 0) return null;
+
+  return (
+    <div className="border-t mt-6 pt-4">
+      <h3 className="font-bold text-lg py-1 text-start mb-3 text-primary">
+        Items in Cart
+      </h3>
+      <ul className="space-y-2 py-1">
+        {lines.map((line, idx) => (
+          <li
+            key={idx}
+            className="flex justify-between items-center text-sm border-b py-2 border-gray-100 pb-1 bg-[#e5e9f6] px-4 rounded-4xl"
+          >
+            <div>
+              <span className="font-bold">{line.itemTitle}</span>
+              {line.details && (
+                <span className="text-gray-600 font-medium ml-2">({line.details})</span>
+              )}
+            </div>
+            <div className="flex items-center justify-between  gap-3 font-semibold">
+              <span>${line.price.toFixed(2)}</span>
+              <button
+                onClick={(e) =>{
+                  e.preventDefault();
+                  console.log("clicked", line.serviceId, line.itemId, JSON.stringify(line))
+                  handleItemSelection(line.serviceId, line.itemId, false)
+                }
+                }
+                className="text-gray-400 hover:text-red-500 hover:cursor-pointer transition-colors"
+                aria-label={`Remove ${line.itemTitle}`}
+              >
+                <XCircle className="w-5 h-5" />
+              </button>
+            </div>
+
+          </li>
+        ))}
+      </ul>
+
+      <div className="flex justify-between items-center px-6 mt-3 font-semibold text-sm">
+        <span>Total:</span>
+        <span className="pe-5">${formData.cartTotal?.toFixed(2)}</span>
+      </div>
+
+      {formData.cartSavings > 0 && (
+        <div className="flex justify-between px-6 text-[#0BC88C] text-sm">
+          <span>Savings:</span>
+          <span className="pe-5">-${formData.cartSavings.toFixed(2)}</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
   return (
     <>
       {learnModal && <OrderProtectionModal handleClose={handlelearnModal} />}
@@ -2171,7 +2310,9 @@ const DisclosureMessages = ({ disclosures }) => {
           })}
         </Accordion>
       </div>
+      <SelectedItemsSummary formData={formData} services={services}/>
       <div className="w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)]  px-4 py-3 mt-4 border-t">
+
         <div className="flex flex-col md:flex-row justify-between items-center">
           <button
             type="button"

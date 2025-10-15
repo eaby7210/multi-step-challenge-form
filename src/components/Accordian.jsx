@@ -13,7 +13,7 @@ function AccordionItem({ className, ...props }) {
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"
-      className={cn("my-3 p-3 bg-[#fafbfd] last:border-b-0", className)}
+      className={cn("my-3 p-3 bg-white  last:border-b-0", className)}
       {...props}
     />
   )
@@ -54,7 +54,7 @@ function AccordionTrigger({
              "flex items-center justify-center gap-2 h-9 w-36 min-w-[120px] px-4 text-sm transition-colors",
               disabled
                 ? "bg-gray-200 text-gray-500"
-                : "bg-blue-600 text-white hover:bg-blue-700"
+                : "bg-primary text-white hover:bg-blue-800"
             )}
           >
             <span>{actionText}</span>

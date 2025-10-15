@@ -377,7 +377,7 @@ console.log(JSON.stringify(formData,null,3))
           Bundle and Save
         </h3>
         {/* Grid section */}
-        <div className="flex flex-col min-h-0 border-2 border-gray-200 bg-white flex-1">
+        <div className="flex flex-col min-h-0 border-2 border-gray-200 bg-[#fafbfd] flex-1">
           <div className=" grid grid-cols-1 gap-1 md:gap-1.5 md:grid-cols-3 p-4 h-full w-full ">
             {/* Bundle and Protection section */}
             <div className="col-span-1 md:col-span-2 flex flex-col h-full w-full items-center justify-between mb-4">
@@ -399,9 +399,9 @@ console.log(JSON.stringify(formData,null,3))
               </div>
                
               {BundlesHeaders &&
-              <div className="text-start my-2 pt-1 pb-3">
+              <div className="text-start my-2 pt-1 pb-4">
               <h2 className="font-extrabold text-xl py-1">{BundlesHeaders?.header}</h2>
-              <p className="text-xs md:text-sm">{BundlesHeaders?.subheader}</p>
+              <p className="text-sm font-medium">{BundlesHeaders?.subheader}</p>
               </div>}
               {/* Bundles */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -450,7 +450,7 @@ console.log(JSON.stringify(formData,null,3))
                 })}
               </div>
               {/* Order Protection row */}
-              <label className="w-full mt-auto flex items-center justify-between gap-2 cursor-pointer border px-3 py-3 bg-card border-gray-300">
+              <label className="w-full mt-auto flex items-center justify-between gap-2 cursor-pointer border-2 px-3 py-3 bg-card border-[#0BC88C]">
                 <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
