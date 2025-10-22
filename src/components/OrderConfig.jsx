@@ -1,6 +1,6 @@
 import React, {
   useState,
-  //  useEffect
+   useEffect
 } from "react";
 import { PlusCircle, CheckSquare } from "lucide-react";
 import { ChevronRight , ShieldCheck, Shield } from "lucide-react";
@@ -12,7 +12,7 @@ const BundlesHeaders = {
   header:"Pre-built packages with built-in savings",
   subheader:"Our most popular products, at the lowest available prices",
 }
-const Bundles = [
+const BUNDLES = [
   {
     name: "Deal Accelerator",
     description: "Exterior and Interior photos + video walk through",
@@ -47,10 +47,27 @@ const OrderConfig = ({ formData = {}, handleChange, onNext, onPrev }) => {
   const [orderProtection, setOrderProtection] = useState(
     !!formData.order_protection
   );
+  const [Bundles, setBundles] = useState(BUNDLES);
   const [error, setError] = useState("");
   const [bundleModal, setBundleModal] = useState(false);
   const [indSerivceModal, setIndServiceModal] = useState(false);
   const [learnModal, setLearnModal] = useState(false);
+
+useEffect(() => {
+  if (formData?.unitType === "multiple" && formData?.numberOfUnits > 1) {
+    // multiply all bundle prices by numberOfUnits
+    const updatedBundles = BUNDLES.map((bundle) => ({
+      ...bundle,
+      basePrice: bundle.basePrice * formData.numberOfUnits,
+      price: bundle.price * formData.numberOfUnits,
+    }));
+    setBundles(updatedBundles);
+  } else {
+    // if not multiple, reset to default bundle pricing
+    setBundles(BUNDLES);
+  }
+}, [formData.unitType, formData.numberOfUnits]);
+
 
   const handlelearnModal = () => {
     return setLearnModal((state) => !state);
@@ -63,15 +80,11 @@ const OrderConfig = ({ formData = {}, handleChange, onNext, onPrev }) => {
     return setIndServiceModal((state) => !state);
   };
 
-  const calcOrderProtection = (subtotal) => {
-    return +(subtotal * 0.04).toFixed(2);
-  };
+
 
   const total =
-    formData?.cartTotal 
-    // ??(bundles.length
-    //   ? bundles.reduce((sum, b) => sum + b.price, 0) 
-    //   : formData.bundleTotal || 0);
+    formData?.cartTotal || 0
+
 console.log(JSON.stringify(formData,null,3))
   const savings =
     formData.cartSaving ??
@@ -79,29 +92,62 @@ console.log(JSON.stringify(formData,null,3))
       ? bundles.reduce((sum, b) => sum + (b.basePrice - b.price), 0)
       : formData.bundleSavings || 0);
 
-  const updateCartValues = (bundles, protectionChecked) => {
-    if (!handleChange) return;
+const updateCartValues = (bundles, protectionChecked) => {
+  if (!handleChange) return;
 
-    const alaCarte = formData.a_la_carte_total || 0;
-    const bundlePrice = bundles.reduce((sum, b) => sum + (b.price || 0), 0);
-    const bundleBase = bundles.reduce((sum, b) => sum + (b.basePrice || 0), 0);
+  // --- Normalize existing a la carte values ---
+  const alaCarteTotal = Number(formData.alaCarteTotal) || 0;
+  const alaCarteSavings = Number(formData.alaCarteSavings) || 0;
+  const alaCarteProtection = Number(formData.alaCarteOrderProtection) || 0;
 
-    let cartTotal = bundlePrice + alaCarte;
+  // --- Calculate bundle values safely ---
+  const bundleSubtotal = (bundles || []).reduce(
+    (sum, b) => sum + (Number(b.price) || 0),
+    0
+  );
+  const bundleBase = (bundles || []).reduce(
+    (sum, b) => sum + (Number(b.basePrice) || 0),
+    0
+  );
+  const bundleSavings = bundleBase - bundleSubtotal;
+  const bundleProtection = protectionChecked
+    ? Number((bundleSubtotal * 0.04).toFixed(2))
+    : 0;
 
-    // ✅ Always calculate protection dynamically
-    const protection = protectionChecked ? calcOrderProtection(cartTotal) : 0;
-    cartTotal += protection;
+  // --- Combine both parts ---
+  const totalBeforeProtection = alaCarteTotal + bundleSubtotal;
+  const totalProtection = alaCarteProtection + bundleProtection;
+  const totalSavings = alaCarteSavings + bundleSavings;
+  const grandTotal = totalBeforeProtection + totalProtection;
 
-    const cartSaving = bundleBase - bundlePrice;
+  // --- Update all fields in formData ---
+  handleChange({ name: "bundleTotal", value: Number(bundleSubtotal.toFixed(2)) });
+  handleChange({ name: "bundleSavings", value: Number(bundleSavings.toFixed(2)) });
+  handleChange({ name: "bundleOrderProtection", value: Number(bundleProtection.toFixed(2)) });
+  handleChange({ name: "bundleOrderProtectionCheck", value: protectionChecked });
 
-    handleChange({ name: "cartTotal", value: Number(cartTotal.toFixed(2)) });
-    handleChange({ name: "cartSaving", value: Number(cartSaving.toFixed(2)) });
-    handleChange({ name: "order_protection", value: protectionChecked });
-    handleChange({
-      name: "order_protection_price",
-      value: Number(protection.toFixed(2)),
-    });
-  };
+  handleChange({ name: "cartSubtotal", value: Number(totalBeforeProtection.toFixed(2)) });
+  handleChange({ name: "cartProtection", value: Number(totalProtection.toFixed(2)) });
+  handleChange({ name: "cartSavings", value: Number(totalSavings.toFixed(2)) });
+  handleChange({ name: "cartTotal", value: Number(grandTotal.toFixed(2)) });
+
+  handleChange({ name: "order_protection", value: protectionChecked });
+  handleChange({ name: "order_protection_price", value: Number(totalProtection.toFixed(2)) });
+
+  // --- Determine service type (combined logic) ---
+  const hasBundles = bundles.length > 0;
+  const hasAlaCarte = alaCarteTotal > 0;
+  handleChange({
+    name: "serviceType",
+    value: hasBundles && hasAlaCarte
+      ? "mixed"
+      : hasBundles
+      ? "bundled"
+      : "a_la_carte",
+  });
+};
+
+
 
   const handleSelectionLogic = (bundle) => {
     const bundles = formData.bundles || [];
@@ -114,10 +160,12 @@ console.log(JSON.stringify(formData,null,3))
       // add
       newSelection = [...bundles, bundle];
     }
-    if (formData?.serviceType === "a_la_carte") {
-      handleChange({ name: "selectedItems", remove: true });
-    }
-    handleChange({ name: "serviceType", value: "bundle" });
+let nextType = formData.serviceType;
+if (nextType === "a_la_carte") nextType = "mixed";
+else nextType = "bundled";
+
+handleChange({ name: "serviceType", value: nextType });
+
 
     handleChange({ name: "bundles", value: newSelection });
     // updateCartValues(newSelection, orderProtection);
@@ -137,28 +185,46 @@ console.log(JSON.stringify(formData,null,3))
 
     updateCartValues(bundles, checked);
   };
-
-  const handleValidation = () => {
-    const bundles = formData?.bundles || [];
-
-    if (!bundles.length) {
-      setError("Please select at least one bundled option to continue");
-      return;
+const validations =()=>{
+  const bundles = formData?.bundles || [];
+  let msgs=[]
+   if (!bundles.length) {
+    const msg= "Please select at least one bundled option to continue"
+      setError(msg);
+      msgs.push(msg)
+      return msgs;
     }
     setError("");
+    return msgs;
+
+}
+  const handleValidation = () => {
+    const msgs = validations();
+    if( msgs.length>0) {
+      return};
     onNext();
   };
 
-  const handleGoAlaCarte = () => {
-    if (handleChange) {
-      handleChange({ name: "serviceType", value: "a_la_carte" });
-      handleChange({ name: "bundles", remove: true });
-      handleChange({ name: "cartTotal", value: 0 });
-      handleChange({ name: "cartSaving", value: 0 });
-      onNext("a_la_carte");
-    }
-    // onNext && onNext();
-  };
+const handleGoAlaCarte = () => {
+  if (!handleChange) return;
+
+  const hasBundles = Array.isArray(formData.bundles) && formData.bundles.length > 0;
+
+  if (hasBundles) {
+
+    handleChange({ name: "serviceType", value: "mixed" });
+  } else {
+
+    handleChange({ name: "serviceType", value: "a_la_carte" });
+  }
+
+
+  handleChange({ name: "cartTotal", value: Number(formData.cartTotal) || 0 });
+  handleChange({ name: "cartSavings", value: Number(formData.cartSavings) || 0 });
+
+  onNext("a_la_carte");
+};
+
 
   return (
     <>
@@ -336,12 +402,15 @@ console.log(JSON.stringify(formData,null,3))
 
       <div className="flex flex-col flex-1 mb-8">
         {/* Order Individual Services */}
+                <h3 className="text-lg text-start font-bold text-primary mt-6 mb-3 ">
+          Build your order
+        </h3>
         <div className="flex flex-col sm:flex-row sm:gap-1 border-2 border-gray-200 bg-card p-4 items-center justify-between shadow-sm">
           <div className="flex w-full flex-col">
             <div className="col-span-1 md:col-span-2 flex flex-col h-full w-full items-center justify-between mb-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 {/* Left Title */}
-                <h3 className="text-md font-bold text-main lg:text-nowrap">
+                <h3 className="text-md font-bold text-start text-main lg:text-nowrap">
                   Order Individual Services
                 </h3>
 
@@ -381,9 +450,9 @@ console.log(JSON.stringify(formData,null,3))
           <div className=" grid grid-cols-1 gap-1 md:gap-1.5 md:grid-cols-3 p-4 h-full w-full ">
             {/* Bundle and Protection section */}
             <div className="col-span-1 md:col-span-2 flex flex-col h-full w-full items-center justify-between mb-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 w-full">
                 {/* Left Title */}
-                <h3 className="text-md font-bold text-main">
+                <h3 className="text-md text-start w-full font-bold text-main">
                   Bundled Order Options
                 </h3>
 
@@ -399,7 +468,7 @@ console.log(JSON.stringify(formData,null,3))
               </div>
                
               {BundlesHeaders &&
-              <div className="text-start my-2 pt-1 pb-4">
+              <div className="text-start my-2 pt-1 pb-4 w-full">
               <h2 className="font-extrabold text-xl py-1">{BundlesHeaders?.header}</h2>
               <p className="text-sm font-medium">{BundlesHeaders?.subheader}</p>
               </div>}
@@ -497,9 +566,14 @@ console.log(JSON.stringify(formData,null,3))
                   <button
                     type="button"
                     className="w-full px-4 py-2 bg-emerald-500 text-white font-semibold hover:bg-emerald-600"
-                    onClick={handleValidation}
+                    onClick={()=>{
+                      const msgs = validations()
+                      if( msgs.length>0) {
+                        return};
+                      handleGoAlaCarte()
+                    }}
                   >
-                    Checkout
+                    Next
                   </button>
                 </div>
               </div>

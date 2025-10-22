@@ -201,7 +201,7 @@ const handleChange = (e) => {
       validate: () => true,
       getNextStep: () => 5,
       getPrevStep: (/*formData*/) => {
-        if (formData.serviceType === "a_la_carte") return 3;
+        if (formData.serviceType === "a_la_carte" || formData.serviceType === "mixed") return 3;
         return 2;
       },
     },
@@ -325,12 +325,12 @@ if (status === "success") {
       };
       const acceptEnabled = hasScrolledToBottom && checked;
       return (
-        <div className="flex flex-col md:flex-row w-full items-center justify-around md:justify-between gap-3 mt-2">
-          <div className="flex flex-col items-center">
+        <div className="flex flex-col md:flex-row w-full items-center justify-end md:justify-end gap-4 mt-2">
+          <div className="flex flex-col items-end">
             <label
               htmlFor="accept-tos"
-              className={`text-sm select-none ${
-                !hasScrolledToBottom ? "text-gray-400" : "text-main"
+              className={`text-sm select-none text-end  ${
+                !hasScrolledToBottom ? "text-gray-400 cursor-not-allowed" : "text-main cursor-pointer"
               }`}
             >
               <input
@@ -343,11 +343,11 @@ if (status === "success") {
               />
               I accept the Terms of Service
             </label>
-            {!acceptEnabled && (
-              <span className="text-xs text-red-500 text-center">
+            {!acceptEnabled ? 
+              <span className="text-xs text-red-500 text-end">
                 Please scroll to the bottom and accept the Terms of Service
-              </span>
-            )}
+              </span >:<span className="text-xs  text-end">{"."}</span>
+            }
           </div>
 
           <button

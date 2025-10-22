@@ -17,11 +17,7 @@ const TextEditor = () => {
     setEditorState(state);
   };
 
-//   const getContent = () => {
-//     const rawContentState = editorState.getCurrentContent();
-//     const htmlContent = draftToHtml(convertToRaw(rawContentState));
-//     return DOMPurify.sanitize(htmlContent);
-//   };
+
 
   return (
     <div className="editor-container">

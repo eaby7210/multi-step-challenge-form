@@ -1,4 +1,4 @@
-import { MapPin, Building, Map } from "lucide-react";
+import { MapPin, Building, Map,Building2 } from "lucide-react";
 import { useState } from "react";
 
 const Step2 = ({ formData, handleChange, onNext, onPrev }) => {
@@ -31,6 +31,11 @@ const Step2 = ({ formData, handleChange, onNext, onPrev }) => {
     } else if ((formData.postalCode || "").length > 10) {
       errors.push("Postal code cannot be more than 10 characters.");
     }
+    else if ((formData.unitType === "multiple" && !formData.numberOfUnits) ||(formData.unitType === "multiple" &&  formData.numberOfUnits <1)) {
+  errors.push("Number of units is required.");
+}
+
+
     if (errors.length === 0) {
       onNext();
     }
@@ -255,6 +260,49 @@ const Step2 = ({ formData, handleChange, onNext, onPrev }) => {
             <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary pointer-events-none" />
           </div>
         </div>
+        {formData.unitType === "multiple" && (
+  <div className="mb-6">
+    <label
+      htmlFor="numberOfUnits"
+      className="mb-2 text-sm font-medium text-main flex items-center gap-2"
+    >
+      Number of Units <span className="text-red-500">*</span>
+    </label>
+    <div className="relative">
+      <input
+        type="number"
+        id="numberOfUnits"
+        name="numberOfUnits"
+        min="1"
+        max="10"
+        value={formData.numberOfUnits || ""}
+        onChange={(e) => {
+          let value = e.target.value.replace(/\D/g, "");
+          if (value > 10) {
+            value = 10;
+          }
+          
+          handleChange({ name: "numberOfUnits", value });
+        }}
+      
+        placeholder="Enter total number of units"
+        className="bg-card border border-primary text-main text-sm focus:ring-primary focus:border-primary block w-full p-2.5 pl-10 transition-all duration-200 shadow-sm focus:shadow-md"
+        required
+      />
+      <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary pointer-events-none" />
+    </div>
+    {nextClicked && !formData.numberOfUnits && (
+      <div className="text-red-600 text-xs mt-1 text-start">
+        Please enter the number of units.
+      </div>
+    )}
+    {nextClicked && formData.numberOfUnits && formData.numberOfUnits <=0 && (
+      <div className="text-red-600 text-xs mt-1 text-start">
+        Please enter a valid number of units.
+      </div>
+    )}
+  </div>
+)}
       </div>
 
       <div className="sticky bottom-0 left-0 w-full bg-white/90 backdrop-blur z-20 shadow-[0_-2px_8px_0_rgba(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-center px-4 py-3 mt-4 border-t">
