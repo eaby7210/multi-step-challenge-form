@@ -1274,7 +1274,7 @@ const AlaCartePage = ({ formData = {}, handleChange, onNext, onPrev }) => {
          activeOptionIds.forEach((optId) => {
           const activeOpt = item.options.items.find((opt) => opt.id === optId);
           if (activeOpt?.priceChange) {
-            const delta = activeOpt.priceChange - finalPrice;
+            // const delta = activeOpt.priceChange - finalPrice;
             finalPrice = activeOpt.priceChange;
             // itemBreakdown[optId] = activeOpt.priceChange;
           } else if (activeOpt?.priceAdd) {
